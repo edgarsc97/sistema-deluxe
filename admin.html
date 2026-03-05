@@ -15,73 +15,60 @@
             --gold-hover: #B08D4A;
             --success: #059669;
             --danger: #991B1B;
-            --purple: #8B5CF6; /* Color para los trabajos pausados */
+            --purple: #8B5CF6; 
             --border: rgba(255, 255, 255, 0.08);
             --whatsapp: #25D366;
         }
 
         body { font-family: 'Inter', sans-serif; background: var(--bg-body); color: var(--text-main); margin: 0; padding: 20px; }
         
-        /* LOGIN */
         #loginPanel { max-width: 380px; margin: 12vh auto; background: var(--bg-panel); padding: 40px; border-radius: 16px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); text-align: center; border: 1px solid var(--border); border-top: 4px solid var(--gold); }
         .logo-banco { font-size: 32px; letter-spacing: 4px; font-weight: 300; color: var(--gold); text-transform: uppercase; margin-bottom: 5px; }
         input { width: 100%; padding: 14px; margin: 10px 0; background: #1F2937; border: 1px solid var(--border); color: white; border-radius: 8px; box-sizing: border-box; font-size: 14px; transition: 0.3s; }
-        input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 10px rgba(212, 175, 55, 0.2); }
         .btn-login { width: 100%; padding: 14px; background: var(--gold); color: #000; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 15px; margin-top: 15px; transition: 0.3s; letter-spacing: 1px;}
-        .btn-login:hover { background: var(--gold-hover); }
 
-        /* PANEL PRINCIPAL */
         .panel { max-width: 850px; margin: 0 auto; background: var(--bg-panel); padding: 35px; border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); border: 1px solid var(--border); }
         .header-flex { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 25px; }
         
-        .btn-dashboard { background: transparent; color: var(--gold); border: 1px solid var(--gold); text-decoration: none; padding: 10px 20px; border-radius: 6px; font-weight: 600; font-size: 13px; transition: 0.3s; letter-spacing: 1px; text-transform: uppercase;}
+        .btn-dashboard { background: transparent; color: var(--gold); border: 1px solid var(--gold); text-decoration: none; padding: 10px 20px; border-radius: 6px; font-weight: 600; font-size: 11px; transition: 0.3s; letter-spacing: 1px; text-transform: uppercase;}
         .btn-dashboard:hover { background: var(--gold); color: #000; }
         
-        .btn-cascada { background: transparent; color: var(--text-muted); border: 1px dashed var(--text-muted); padding: 15px; border-radius: 8px; width: 100%; font-size: 14px; font-weight: 600; cursor: pointer; margin-bottom: 25px; transition: 0.3s; letter-spacing: 1px; }
-        .btn-cascada:hover { color: var(--danger); border-color: var(--danger); background: rgba(153, 27, 27, 0.1); }
+        .btn-cascada { background: transparent; color: var(--text-muted); border: 1px dashed var(--text-muted); padding: 15px; border-radius: 8px; width: 100%; font-size: 13px; font-weight: 600; cursor: pointer; margin-bottom: 25px; transition: 0.3s; letter-spacing: 1px; }
 
-        /* TARJETAS DE PEDIDOS */
-        .pedido-card { background: #1F2937; border: 1px solid var(--border); padding: 20px; margin-bottom: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--gold); transition: 0.3s; }
-        .pedido-card:hover { transform: translateX(5px); border-color: rgba(212, 175, 55, 0.4); }
+        .pedido-card { background: #1F2937; border: 1px solid var(--border); padding: 20px; margin-bottom: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid var(--gold); transition: 0.3s; }
         .pedido-card.listo { border-left-color: var(--success); background: rgba(5, 150, 105, 0.05); }
+        .pedido-card.pausado { border-left-color: var(--purple); opacity: 0.85; background: #151A2B; }
         
-        .info-cliente strong { font-size: 18px; letter-spacing: 0.5px; color: white; }
-        .info-servicio { color: var(--gold); font-size: 13px; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; margin: 4px 0 8px 0; display: block;}
-        .info-entrega { color: var(--text-muted); font-size: 13px; display: flex; align-items: center; gap: 5px; }
+        .info-cliente strong { font-size: 18px; color: white; }
+        .info-servicio { color: var(--gold); font-size: 12px; text-transform: uppercase; font-weight: 700; display: block; margin: 5px 0;}
+        .info-entrega { color: var(--text-muted); font-size: 13px; }
 
         .acciones-btn { display: flex; flex-direction: column; gap: 8px; }
-        .btn-accion { background: transparent; border: 1px solid; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 12px; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; min-width: 130px;}
+        .btn-accion { background: transparent; border: 1px solid; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 11px; transition: 0.3s; text-transform: uppercase; min-width: 140px;}
         
         .btn-verde { color: var(--success); border-color: var(--success); }
         .btn-verde:hover { background: var(--success); color: white; }
-        
         .btn-gris { color: var(--text-muted); border-color: var(--text-muted); }
         .btn-gris:hover { background: var(--text-muted); color: #000; }
-        
-        /* BOTONES PAUSA/REANUDAR */
         .btn-pausa { color: var(--purple); border-color: var(--purple); }
         .btn-pausa:hover { background: var(--purple); color: white; }
-        
         .btn-reanudar { color: var(--gold); border-color: var(--gold); }
-        .btn-reanudar:hover { background: var(--gold); color: #000; }
 
-        .btn-wa { background: transparent; color: var(--whatsapp); text-decoration: none; border: 1px solid rgba(37, 211, 102, 0.3); padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; margin-top: 10px; width: 100%; transition: 0.3s; display: block; text-align: center; box-sizing: border-box;}
-        .btn-wa:hover { background: rgba(37, 211, 102, 0.1); border-color: var(--whatsapp); }
+        .btn-wa { background: transparent; color: var(--whatsapp); border: 1px solid var(--whatsapp); padding: 8px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; margin-top: 10px; width: 100%; transition: 0.3s; text-transform: uppercase;}
+        .btn-wa:hover { background: var(--whatsapp); color: #000; }
 
-        /* SEPARADOR SECCIÓN PAUSADOS */
-        .titulo-pausados { font-size: 14px; color: var(--purple); border-bottom: 1px dashed var(--purple); padding-bottom: 10px; margin-top: 40px; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px; font-weight: 600;}
+        .titulo-pausados { font-size: 13px; color: var(--purple); border-bottom: 1px solid var(--purple); padding-bottom: 8px; margin: 40px 0 20px 0; text-transform: uppercase; letter-spacing: 2px; font-weight: 800;}
     </style>
 </head>
 <body>
 
     <div id="loginPanel">
         <div class="logo-banco">DELUXE</div>
-        <div style="width: 40px; height: 2px; background: var(--gold); margin: 0 auto 20px auto;"></div>
-        <p id="status" style="color: var(--text-muted); font-size: 13px; margin-bottom: 25px;">Autenticación Requerida</p>
+        <p id="status" style="color: var(--text-muted); font-size: 13px;">Panel de Producción</p>
         <form id="formLogin">
-            <input type="email" id="email" placeholder="ID de Usuario (Correo)" required>
-            <input type="password" id="password" placeholder="Código de Seguridad" required>
-            <button type="submit" class="btn-login">AUTORIZAR ACCESO</button>
+            <input type="email" id="email" placeholder="Usuario Administrador" required>
+            <input type="password" id="password" placeholder="Clave" required>
+            <button type="submit" class="btn-login">INGRESAR AL SISTEMA</button>
         </form>
     </div>
 
@@ -89,30 +76,24 @@
         <div class="panel">
             <div class="header-flex">
                 <div>
-                    <h1 style="margin:0; font-size:24px; font-weight: 300; letter-spacing: 2px;">OPERACIONES</h1>
-                    <div id="reloj" style="font-weight:600; color:var(--gold); font-size: 14px; margin-top: 5px; letter-spacing: 1px;"></div>
+                    <h1 style="margin:0; font-size:22px; font-weight: 300;">ORDENES ACTIVAS</h1>
+                    <div id="reloj" style="color:var(--gold); font-size: 13px; font-weight: 700;"></div>
                 </div>
-                <div style="display: flex; gap: 15px;">
-                    <a href="pos.html" class="btn-dashboard" style="background: var(--gold); color: #000;">🛒 IR A CAJA</a>
-                    <a href="index.html" class="btn-dashboard">DASHBOARD</a>
+                <div style="display: flex; gap: 12px;">
+                    <a href="pos.html" class="btn-dashboard" style="background: var(--gold); color: #000;">🛒 CAJA</a>
+                    <a href="estadisticas.html" class="btn-dashboard">📊 FINANZAS</a>
                 </div>
             </div>
 
-            <button class="btn-cascada" onclick="retrasarTodo(5)">
-                [ + ] AJUSTE DE TIEMPO GLOBAL (+5 MIN)
-            </button>
+            <button class="btn-cascada" onclick="retrasarTodo(5)">➕ RETRASAR TODA LA FILA (+5 MINUTOS)</button>
 
-            <div id="listaPedidos">
-                <div style="text-align: center; padding: 40px; color: var(--text-muted);">Sincronizando con el servidor...</div>
-            </div>
+            <div id="listaPedidos"></div>
             
-            <div class="titulo-pausados">⏸️ EN ESPERA / PARA MAÑANA</div>
-            <div id="listaPausados">
-                <div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 13px;">No hay trabajos pausados.</div>
-            </div>
+            <div class="titulo-pausados">⏸️ TRABAJOS PAUSADOS (NO SE BORRAN EN CIERRE)</div>
+            <div id="listaPausados"></div>
 
             <div style="text-align: right; margin-top: 40px; border-top: 1px solid var(--border); padding-top: 20px;">
-                <button onclick="firebase.auth().signOut()" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s;" onmouseover="this.style.color='#991B1B'" onmouseout="this.style.color='#9CA3AF'">Cerrar Conexión Segura</button>
+                <button onclick="firebase.auth().signOut()" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size: 11px; text-transform: uppercase;">Cerrar Sesión</button>
             </div>
         </div>
     </div>
@@ -122,6 +103,12 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <script>
+        // ==========================================
+// CONFIGURACIÓN DE GITHUB PAGES
+// ==========================================
+const USUARIO_GH = "edgarsc97";       // <--- SOLO tu nombre de usuario
+const REPO_GH = "sistema-deluxe";    // <--- SOLO el nombre de tu repositorio
+const LINK_RASTREO = `https://${USUARIO_GH}.github.io/${REPO_GH}/rastreo.html`;
         const firebaseConfig = {
             apiKey: "AIzaSyAn0H-50sbh8sMcqn_k8IlVnJX6ko58ws4",
             authDomain: "sistemafotos-cf459.firebaseapp.com",
@@ -148,182 +135,106 @@
 
         document.getElementById('formLogin').addEventListener('submit', e => {
             e.preventDefault();
-            const btn = document.querySelector('.btn-login');
-            btn.innerText = "VERIFICANDO...";
             auth.signInWithEmailAndPassword(document.getElementById('email').value, document.getElementById('password').value)
-                .catch(err => {
-                    btn.innerText = "AUTORIZAR ACCESO";
-                    document.getElementById('status').innerText = "❌ Acceso Denegado";
-                    document.getElementById('status').style.color = "var(--danger)";
-                });
+                .catch(err => alert("Acceso Denegado"));
         });
 
         function escucharPedidos() {
             db.ref('turnos').on('value', snap => {
-                const contenedorActivos = document.getElementById('listaPedidos');
-                const contenedorPausados = document.getElementById('listaPausados');
+                const contActivos = document.getElementById('listaPedidos');
+                const contPausados = document.getElementById('listaPausados');
+                let hActivos = '', hPausados = '';
                 
-                let htmlActivos = '';
-                let htmlPausados = '';
-                
-                if (!snap.exists()) { 
-                    contenedorActivos.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--text-muted); border: 1px dashed var(--border); border-radius: 12px;">No hay transacciones pendientes.</div>`; 
-                    contenedorPausados.innerHTML = `<div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 13px;">No hay trabajos pausados.</div>`;
-                    return; 
+                if (!snap.exists()) {
+                    contActivos.innerHTML = '<div style="text-align:center; padding:20px; color:gray;">No hay ordenes</div>';
+                    contPausados.innerHTML = '<div style="text-align:center; padding:20px; color:gray;">Sin pausados</div>';
+                    return;
                 }
 
-                let turnosArray = [];
-                snap.forEach(child => { turnosArray.push({ id: child.key, ...child.val() }); });
+                let turnos = [];
+                snap.forEach(c => { turnos.push({id: c.key, ...c.val()}); });
+                turnos.sort((a,b) => a.timestampEntrega - b.timestampEntrega);
 
-                // Ordenar por hora de entrega
-                turnosArray.sort((a, b) => a.timestampEntrega - b.timestampEntrega);
-
-                turnosArray.forEach(p => {
+                turnos.forEach(p => {
                     if (p.estado === 'archivado') return;
 
                     const btnWA = (p.telefono && p.telefono.length >= 10) 
-                        ? `<button onclick="notificarWhatsApp('${p.telefono}', '${p.nombre}', '${p.servicio}')" class="btn-wa">🟢 Avisar por WhatsApp</button>` 
+                        ? `<button onclick="notificarWA('${p.telefono}', '${p.nombre}', '${p.servicio}', '${p.numeroTicket}')" class="btn-wa">🟢 Avisar WhatsApp</button>` 
                         : '';
 
-                    // SI ESTÁ PAUSADO (Para Mañana)
-                    if (p.estado === 'pausado') {
-                        htmlPausados += `
-                            <div class="pedido-card" style="border-left-color: var(--purple); opacity: 0.8; background: #151A2B;">
-                                <div class="info-cliente">
-                                    <strong>${p.nombre}</strong><br>
-                                    <span class="info-servicio" style="color: var(--purple);">${p.servicio}</span>
-                                    <span class="info-entrega">⏸️ Guardado para después</span>
-                                    ${btnWA}
-                                </div>
-                                <div class="acciones-btn">
-                                    <button class="btn-accion btn-verde" onclick="cambiarEstado('${p.id}', 'listo')">✅ Finalizar Ahora</button>
-                                    <button class="btn-accion btn-reanudar" onclick="reanudarPedido('${p.id}', ${p.minutosServicio || 0})">▶️ Meter a fila actual</button>
-                                </div>
+                    const cardHTML = `
+                        <div class="pedido-card ${p.estado}">
+                            <div class="info-cliente">
+                                <strong>#${p.numeroTicket} - ${p.nombre}</strong>
+                                <span class="info-servicio">${p.servicio}</span>
+                                <span class="info-entrega">${p.estado === 'pausado' ? '⏸️ PAUSADO' : '🕒 ' + p.horaFormateada}</span>
+                                ${btnWA}
                             </div>
-                        `;
-                    } 
-                    // SI ESTÁ PENDIENTE O LISTO
-                    else {
-                        const esListo = p.estado === 'listo';
-                        htmlActivos += `
-                            <div class="pedido-card ${esListo ? 'listo' : ''}">
-                                <div class="info-cliente">
-                                    <strong>${p.nombre}</strong><br>
-                                    <span class="info-servicio">${p.servicio}</span>
-                                    <span class="info-entrega">🕒 ${p.horaFormateada || '--:--'}</span>
-                                    ${btnWA}
-                                </div>
-                                <div class="acciones-btn">
-                                    ${!esListo ? `
-                                        <button class="btn-accion btn-verde" onclick="cambiarEstado('${p.id}', 'listo')">✅ Finalizar</button>
-                                        <button class="btn-accion btn-pausa" onclick="pausarPedido('${p.id}')">⏸️ Pausar / Mañana</button>
-                                    ` : `
-                                        <button class="btn-accion btn-gris" onclick="cambiarEstado('${p.id}', 'archivado')">📦 Archivar</button>
-                                    `}
-                                </div>
+                            <div class="acciones-btn">
+                                ${p.estado === 'pendiente' ? `
+                                    <button class="btn-accion btn-verde" onclick="cambiarEstado('${p.id}', 'listo')">✅ Finalizar</button>
+                                    <button class="btn-accion btn-pausa" onclick="pausarPedido('${p.id}')">⏸️ Pausar</button>
+                                ` : p.estado === 'listo' ? `
+                                    <button class="btn-accion btn-gris" onclick="cambiarEstado('${p.id}', 'archivado')">📦 Archivar</button>
+                                ` : `
+                                    <button class="btn-accion btn-reanudar" onclick="reanudarPedido('${p.id}', ${p.minutosServicio || 0})">▶️ Reanudar</button>
+                                `}
                             </div>
-                        `;
-                    }
+                        </div>`;
+
+                    if (p.estado === 'pausado') hPausados += cardHTML;
+                    else hActivos += cardHTML;
                 });
 
-                contenedorActivos.innerHTML = htmlActivos || `<div style="text-align: center; padding: 40px; color: var(--text-muted); border: 1px dashed var(--border); border-radius: 12px;">Fila de producción vacía.</div>`;
-                contenedorPausados.innerHTML = htmlPausados || `<div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 13px;">No hay trabajos pausados.</div>`;
+                contActivos.innerHTML = hActivos || '<div style="text-align:center; padding:20px; color:gray;">Fila vacía</div>';
+                contPausados.innerHTML = hPausados || '<div style="text-align:center; padding:20px; color:gray;">Sin pausados</div>';
             });
         }
 
-        // ========================================================
-        // MAGIA MATEMÁTICA: PAUSAR Y ADELANTAR A LOS DEMÁS
-        // ========================================================
-        window.pausarPedido = function(idTurno) {
-            if(!confirm("¿Quitar de la fila y guardar para después? Esto adelantará el tiempo de los demás clientes automáticamente.")) return;
-
-            db.ref('turnos').once('value', snap => {
-                if (!snap.exists()) return;
-
-                let turnos = [];
-                snap.forEach(child => { turnos.push({ id: child.key, ...child.val() }); });
-
-                const target = turnos.find(t => t.id === idTurno);
-                if (!target || target.estado !== 'pendiente') return;
-
-                const targetTime = target.timestampEntrega;
-                const targetMins = target.minutosServicio || 0;
-                const msToSubtract = targetMins * 60000;
-                const actualizaciones = {};
-
-                // Le restamos el tiempo a los que estaban programados para DESPUÉS de él.
-                turnos.forEach(t => {
-                    if (t.estado === 'pendiente' && t.id !== idTurno && t.timestampEntrega > targetTime) {
-                        const newT = t.timestampEntrega - msToSubtract;
-                        actualizaciones[`/turnos/${t.id}/timestampEntrega`] = newT;
-                        actualizaciones[`/turnos/${t.id}/horaFormateada`] = new Date(newT).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: true });
-                    }
-                });
-
-                // Cambiamos su estado a "pausado" para que desaparezca de la TV y del cálculo actual
-                actualizaciones[`/turnos/${idTurno}/estado`] = 'pausado';
-                actualizaciones[`/turnos/${idTurno}/horaFormateada`] = '--:-- (Pausado)';
-
-                db.ref().update(actualizaciones)
-                    .catch(e => alert("Error: " + e.message));
-            });
+        window.notificarWA = function(tel, nom, serv, ticket) {
+            let num = tel.replace(/\D/g, '');
+            if(num.length === 10) num = "52" + num;
+            const msj = `¡Hola ${nom}! 👋 Tu pedido *#${ticket}* de *${serv}* está LISTO ✅.\n\nSíguelo aquí:\n🔗 ${LINK_RASTREO}`;
+            window.open(`https://wa.me/${num}?text=${encodeURIComponent(msj)}`, '_blank');
         };
 
-        // ========================================================
-        // REANUDAR: METER AL FINAL DE LA FILA DEL DÍA DE HOY
-        // ========================================================
-        window.reanudarPedido = function(idTurno, minutosServicio) {
+        window.cambiarEstado = (id, est) => db.ref('turnos/' + id).update({estado: est});
+
+        window.pausarPedido = function(id) {
+            if(!confirm("¿Pausar este trabajo? Se quitará de la TV y se ajustará el tiempo de los demás.")) return;
+            db.ref('turnos/' + id).update({estado: 'pausado', horaFormateada: '--:--'});
+        };
+
+        window.reanudarPedido = function(id, mins) {
             db.ref('turnos').once('value', snap => {
-                let maxTime = Date.now();
-                
-                // Buscamos cuál es el último pedido que está activo ahorita
-                snap.forEach(child => {
-                    const val = child.val();
-                    if(val.estado === 'pendiente' && val.timestampEntrega > maxTime) {
-                        maxTime = val.timestampEntrega;
-                    }
-                });
-                
-                // Lo metemos al final sumando sus minutos
-                const newT = maxTime + (minutosServicio * 60000);
-                
-                db.ref('turnos/' + idTurno).update({
+                let max = Date.now();
+                snap.forEach(c => { if(c.val().estado === 'pendiente' && c.val().timestampEntrega > max) max = c.val().timestampEntrega; });
+                const nt = max + (mins * 60000);
+                db.ref('turnos/' + id).update({
                     estado: 'pendiente',
-                    timestampEntrega: newT,
-                    horaFormateada: new Date(newT).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: true })
+                    timestampEntrega: nt,
+                    horaFormateada: new Date(nt).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true})
                 });
             });
         };
 
-        window.notificarWhatsApp = function(telefono, nombre, servicio) {
-            let numWA = telefono.replace(/\D/g, '');
-            if(numWA.length === 10) { numWA = "52" + numWA; }
-            const mensaje = `¡Hola ${nombre}! 👋\nTe avisamos que tu pedido de *${servicio}* ya está LISTO ✅.\n\nPuedes pasar a recogerlo al mostrador de Foto Estudio Deluxe.\n¡Te esperamos!`;
-            const url = `https://wa.me/${numWA}?text=${encodeURIComponent(mensaje)}`;
-            window.open(url, '_blank');
-        };
-
-        window.cambiarEstado = (id, estado) => db.ref('turnos/' + id).update({ estado: estado });
-
-        window.retrasarTodo = function(mins) {
-            if(!confirm(`¿Autoriza sumar ${mins} min a toda la línea de producción?`)) return;
+        window.retrasarTodo = function(m) {
+            if(!confirm(`¿Retrasar toda la producción ${m} minutos?`)) return;
             db.ref('turnos').once('value', snap => {
                 const ups = {};
-                snap.forEach(child => {
-                    const v = child.val();
-                    if (v.estado === 'pendiente' && v.timestampEntrega) {
-                        const nt = v.timestampEntrega + (mins * 60000);
-                        ups[`/turnos/${child.key}/timestampEntrega`] = nt;
-                        ups[`/turnos/${child.key}/horaFormateada`] = new Date(nt).toLocaleTimeString('es-MX', {hour: '2-digit', minute:'2-digit'});
+                snap.forEach(c => {
+                    const v = c.val();
+                    if(v.estado === 'pendiente') {
+                        const nt = v.timestampEntrega + (m * 60000);
+                        ups[`turnos/${c.key}/timestampEntrega`] = nt;
+                        ups[`turnos/${c.key}/horaFormateada`] = new Date(nt).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true});
                     }
                 });
                 db.ref().update(ups);
             });
         };
 
-        setInterval(() => { 
-            document.getElementById('reloj').innerText = new Date().toLocaleTimeString('es-MX', { hour12: false }) + ' HRS'; 
-        }, 1000);
+        setInterval(() => { document.getElementById('reloj').innerText = new Date().toLocaleTimeString('es-MX', {hour12:false}) + ' HRS'; }, 1000);
     </script>
 </body>
 </html>
