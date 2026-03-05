@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FINANZAS - SISTEMA DELUXE</title>
+    <title>FINANZAS Y RRHH - SISTEMA DELUXE</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         :root { 
@@ -16,6 +16,7 @@
             --success: #10B981;
             --danger: #991B1B;
             --border: rgba(255, 255, 255, 0.08);
+            --purple: #8B5CF6;
         }
 
         body { font-family: 'Inter', sans-serif; background: var(--bg-body); color: var(--text-main); margin: 0; padding: 20px; }
@@ -37,7 +38,14 @@
         .kpi-titulo { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
         .kpi-valor { font-size: 40px; font-weight: 800; color: var(--success); }
 
-        /* BOTONES DE ACCIÓN */
+        /* MÓDULO RRHH */
+        .modulo-rrhh { background: #151A2B; border: 1px solid var(--purple); padding: 25px; border-radius: 12px; margin-bottom: 30px; display: flex; gap: 20px; align-items: center; box-shadow: inset 0 0 20px rgba(139, 92, 246, 0.05);}
+        .rrhh-info { flex: 1; }
+        .rrhh-form { display: flex; gap: 10px; flex: 2; }
+        .rrhh-form input { margin: 0; padding: 12px; }
+        .btn-purple { background: var(--purple); color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; white-space: nowrap; transition: 0.3s;}
+        .btn-purple:hover { background: #7C3AED; box-shadow: 0 0 15px rgba(139, 92, 246, 0.4); }
+
         .area-acciones { display: flex; gap: 15px; margin-bottom: 30px; }
         .btn-accion { flex: 1; padding: 18px; border-radius: 8px; font-size: 14px; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; border: none; color: white; }
         .btn-reporte { background: #1F2937; border: 1px solid var(--gold); color: var(--gold); }
@@ -66,7 +74,7 @@
     <div id="adminPanel" style="display:none;">
         <div class="panel">
             <div class="header-flex">
-                <h1 style="margin:0; font-size:22px; letter-spacing: 2px;">AUDITORÍA DE CAJA</h1>
+                <h1 style="margin:0; font-size:22px; letter-spacing: 2px;">AUDITORÍA Y CONTROL</h1>
                 <div class="nav-botones">
                     <a href="pos.html" class="btn-nav">🛒 Caja</a>
                     <a href="admin.html" class="btn-nav">🛠️ Producción</a>
@@ -76,6 +84,18 @@
             <div class="grid-kpi">
                 <div class="kpi-card"><div class="kpi-titulo">Ingresos de Hoy</div><div class="kpi-valor" id="kpiIngresos">$0.00</div></div>
                 <div class="kpi-card"><div class="kpi-titulo">Ventas Totales</div><div class="kpi-valor" id="kpiVentas" style="color: var(--gold);">0</div></div>
+            </div>
+
+            <div class="modulo-rrhh">
+                <div class="rrhh-info">
+                    <h3 style="margin: 0 0 5px 0; color: var(--purple); font-size: 16px; text-transform: uppercase;">Alta de Cajeros</h3>
+                    <p style="margin: 0; font-size: 12px; color: var(--text-muted);">Crea accesos para tus empleados sin salir del sistema.</p>
+                </div>
+                <div class="rrhh-form">
+                    <input type="email" id="nuevoEmpleadoEmail" placeholder="Correo del cajero (ej. caja1@deluxe.com)">
+                    <input type="password" id="nuevoEmpleadoPass" placeholder="Contraseña (Min 6 letras)">
+                    <button class="btn-purple" onclick="crearEmpleado()">Registrar Cajero</button>
+                </div>
             </div>
 
             <div class="area-acciones">
@@ -116,22 +136,74 @@
         const db = firebase.database();
         let ventasGlobales = [];
 
+        // --- CONFIGURACIÓN DE SEGURIDAD ELITE ---
+        const CORREO_ADMIN_MAESTRO = "edgaruriel.deluxe@outlook.com"; // <--- NO OLVIDES PONER TU CORREO AQUÍ
+
         firebase.auth().onAuthStateChanged(user => {
-            if (user) { document.getElementById('loginPanel').style.display='none'; document.getElementById('adminPanel').style.display='block'; cargarDatos(); }
-            else { document.getElementById('loginPanel').style.display='block'; document.getElementById('adminPanel').style.display='none'; }
+            if (user) { 
+                if (user.email.toLowerCase() === CORREO_ADMIN_MAESTRO.toLowerCase()) {
+                    document.getElementById('loginPanel').style.display='none'; 
+                    document.getElementById('adminPanel').style.display='block'; 
+                    cargarDatos(); 
+                } else {
+                    alert("🔒 ACCESO DENEGADO: Solo el Administrador Maestro puede ver las finanzas.");
+                    firebase.auth().signOut();
+                }
+            }
+            else { 
+                document.getElementById('loginPanel').style.display='block'; 
+                document.getElementById('adminPanel').style.display='none'; 
+            }
         });
 
         document.getElementById('formLogin').addEventListener('submit', e => {
             e.preventDefault();
             firebase.auth().signInWithEmailAndPassword(document.getElementById('email').value, document.getElementById('password').value)
-                .catch(err => alert("Acceso denegado"));
+                .catch(err => alert("Error: Credenciales inválidas"));
         });
+
+        // ========================================================
+        // RRHH: CREACIÓN DE EMPLEADOS (HACK SECUNDARIO)
+        // ========================================================
+        window.crearEmpleado = function() {
+            const email = document.getElementById('nuevoEmpleadoEmail').value;
+            const pass = document.getElementById('nuevoEmpleadoPass').value;
+
+            if (!email || !pass || pass.length < 6) {
+                return alert("⚠️ Por favor ingresa un correo válido y una contraseña de al menos 6 caracteres.");
+            }
+
+            // Creamos una "Aplicación Secundaria" fantasma para no cerrar la sesión del jefe
+            const appRRHH = firebase.initializeApp(firebaseConfig, "AppRRHH");
+            
+            appRRHH.auth().createUserWithEmailAndPassword(email, pass)
+                .then((userCredential) => {
+                    // Cerramos la sesión del empleado recién creado en la app secundaria
+                    appRRHH.auth().signOut();
+                    // Destruimos la app secundaria para limpiar la memoria
+                    appRRHH.delete(); 
+                    
+                    alert(`✅ CAJERO REGISTRADO CON ÉXITO\n\nCorreo: ${email}\nYa puede iniciar sesión en la Caja (POS).`);
+                    
+                    // Limpiamos los campos
+                    document.getElementById('nuevoEmpleadoEmail').value = '';
+                    document.getElementById('nuevoEmpleadoPass').value = '';
+                })
+                .catch((error) => {
+                    appRRHH.delete(); // Limpiamos incluso si hay error
+                    alert("❌ Error al crear usuario: " + error.message);
+                });
+        };
 
         function cargarDatos() {
             db.ref('ventas').on('value', snap => {
                 const tbody = document.getElementById('cuerpoTabla'); tbody.innerHTML = '';
                 let ingresos = 0; ventasGlobales = [];
-                if(!snap.exists()) return;
+                if(!snap.exists()) {
+                    document.getElementById('kpiIngresos').innerText = "$0.00";
+                    document.getElementById('kpiVentas').innerText = "0";
+                    return;
+                }
                 snap.forEach(child => {
                     const v = child.val(); v.id = child.key;
                     ventasGlobales.push(v); ingresos += parseFloat(v.total || 0);
@@ -145,7 +217,7 @@
         }
 
         window.exportarExcel = function() {
-            if(ventasGlobales.length === 0) return alert("No hay ventas");
+            if(ventasGlobales.length === 0) return alert("No hay ventas para exportar");
             let csv = "\uFEFFFecha,Ticket,Cliente,Metodo,Total\n";
             ventasGlobales.forEach(v => { csv += `"${v.fecha}",${v.ticket},"${v.cliente}","${v.pago}",${v.total}\n`; });
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -155,42 +227,31 @@
             link.click();
         };
 
-        // ========================================================
-// FUNCIÓN MAESTRA: CIERRE DE CAJA (CORREGIDA)
-// ========================================================
-window.ejecutarCierreCaja = function() {
-    const confirmacion = confirm("⚠️ ATENCIÓN: Se generará el reporte y se limpiará la TV.\n\nLos pedidos PAUSADOS para mañana NO se borrarán.\n\n¿Deseas finalizar el día?");
-    if (!confirmacion) return;
+        window.ejecutarCierreCaja = function() {
+            const confirmacion = confirm("⚠️ ATENCIÓN: Se generará el reporte y se limpiará la TV.\n\nLos pedidos PAUSADOS para mañana NO se borrarán.\n\n¿Deseas finalizar el día?");
+            if (!confirmacion) return;
 
-    const clave = prompt("Para confirmar el borrado de ventas y fila activa, escribe: CERRAR CAJA");
-    if (clave !== "CERRAR CAJA") return alert("Cierre cancelado. Clave incorrecta.");
+            const clave = prompt("Para confirmar el borrado de ventas y fila activa, escribe: CERRAR CAJA");
+            if (clave !== "CERRAR CAJA") return alert("Cierre cancelado. Clave incorrecta.");
 
-    // 1. Descargamos el reporte primero por seguridad
-    exportarExcel();
+            exportarExcel();
 
-    // 2. Limpieza Selectiva
-    // Primero limpiamos todas las ventas (Libro mayor)
-    db.ref('ventas').remove();
+            db.ref('ventas').remove();
 
-    // Luego limpiamos Producción pero CON FILTRO
-    db.ref('turnos').once('value', snap => {
-        if (!snap.exists()) return;
-
-        const actualizaciones = {};
-        snap.forEach(child => {
-            const turno = child.val();
-            // SOLO BORRAMOS los que ya terminaron o los que se quedaron pendientes hoy
-            // Los 'pausados' no se agregan al objeto de eliminación
-            if (turno.estado === 'pendiente' || turno.estado === 'listo') {
-                actualizaciones[child.key] = null; // null en Firebase significa borrar
-            }
-        });
-
-        db.ref('turnos').update(actualizaciones).then(() => {
-            alert("✨ CIERRE EXITOSO\n\n1. Reporte descargado.\n2. Fila de TV limpia.\n3. Los pedidos PAUSADOS siguen guardados para mañana.");
-        });
-    }).catch(e => alert("Error al conectar con la base de datos."));
-};
+            db.ref('turnos').once('value', snap => {
+                if (!snap.exists()) return;
+                const actualizaciones = {};
+                snap.forEach(child => {
+                    const turno = child.val();
+                    if (turno.estado === 'pendiente' || turno.estado === 'listo') {
+                        actualizaciones[child.key] = null;
+                    }
+                });
+                db.ref('turnos').update(actualizaciones).then(() => {
+                    alert("✨ CIERRE EXITOSO\n\n1. Reporte descargado.\n2. Fila de TV limpia.\n3. Pedidos PAUSADOS protegidos.");
+                });
+            }).catch(e => alert("Error en el servidor"));
+        };
     </script>
 </body>
 </html>

@@ -8,7 +8,9 @@
     <style>
         :root {
             --bg-body: #0A0E17; --bg-caja: #111827; --texto-principal: #F3F4F6;
-            --acento-proceso: #D4AF37; --acento-listo: #10B981;
+            --texto-secundario: #9CA3AF;
+            --acento-proceso: #D4AF37; --acento-listo: #10B981; 
+            --purple: #8B5CF6; /* Color para los pausados */
         }
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-body); color: var(--texto-principal); margin: 0; padding: 20px; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
         
@@ -17,7 +19,9 @@
         #pantallaDinamica { position: relative; flex: 1; overflow: hidden; }
 
         /* VISTA 1: COLAS */
-        #vistaColas { display: flex; gap: 20px; width: 100%; height: 100%; position: absolute; top: 0; left: 0; transition: opacity 1s ease-in-out; opacity: 1; z-index: 5;}
+        #vistaColas { display: flex; flex-direction: column; gap: 20px; width: 100%; height: 100%; position: absolute; top: 0; left: 0; transition: opacity 1s ease-in-out; opacity: 1; z-index: 5;}
+        
+        .columnas-principales { display: flex; gap: 20px; flex: 1; overflow: hidden; }
         .columna { flex: 1; background: var(--bg-caja); border-radius: 16px; padding: 25px; display: flex; flex-direction: column; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
         
         .turno { background: #1F2937; margin-bottom: 15px; padding: 25px; border-radius: 12px; border-left: 8px solid var(--acento-proceso); display: flex; justify-content: space-between; align-items: center; animation: entrada 0.5s ease-out; }
@@ -29,11 +33,25 @@
         .nombre { font-size: 2.5em; font-weight: 800; color: white; }
         .status-txt { font-size: 1.2em; font-weight: 600; color: var(--acento-proceso); text-transform: uppercase; }
 
+        /* NUEVA BARRA DE AGENDA (PAUSADOS) */
+        .barra-pausados { background: #151A2B; border: 1px solid var(--purple); border-radius: 12px; padding: 15px 20px; display: flex; align-items: center; gap: 15px; box-shadow: 0 5px 20px rgba(139, 92, 246, 0.15); animation: entrada 0.5s ease-out; }
+        .titulo-pausados-tv { color: var(--purple); font-weight: 800; font-size: 1.2em; text-transform: uppercase; white-space: nowrap; letter-spacing: 2px;}
+        .contenedor-pausados { display: flex; flex: 1; overflow: hidden; align-items: center; }
+        .badge-pausado { background: rgba(139, 92, 246, 0.15); color: #C4B5FD; padding: 8px 18px; border-radius: 8px; font-weight: 600; font-size: 1.2em; border: 1px solid rgba(139, 92, 246, 0.3); margin-right: 20px; display: inline-block;}
+
         /* VISTA 2: ANUNCIOS */
         #vistaPromos { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transition: opacity 1s ease-in-out; opacity: 0; z-index: 1; display: flex; justify-content: center; align-items: center; background: #000; border-radius: 16px; overflow: hidden; }
-        .promo-imagen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 1.5s ease-in-out, transform 8s linear; transform: scale(1); }
+        .promo-imagen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 1.5s ease-in-out, transform 8s linear; transform: scale(1); filter: brightness(0.8); }
         .promo-imagen.activa { opacity: 1; transform: scale(1.1); }
-        .aviso-retorno { position: absolute; bottom: 30px; background: rgba(0,0,0,0.7); padding: 15px 30px; border-radius: 30px; border: 1px solid var(--acento-proceso); color: white; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; z-index: 20; backdrop-filter: blur(5px); }
+        .aviso-retorno { position: absolute; bottom: 40px; background: rgba(0,0,0,0.8); padding: 15px 30px; border-radius: 30px; border: 1px solid var(--acento-proceso); color: white; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; z-index: 20; backdrop-filter: blur(5px); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+
+        /* QR FLOTANTE VIP */
+        .qr-flotante { position: fixed; bottom: 30px; right: 30px; background: var(--bg-caja); border: 1px solid var(--acento-proceso); border-radius: 16px; padding: 15px; box-shadow: 0 20px 40px rgba(0,0,0,0.6); display: flex; flex-direction: column; align-items: center; z-index: 50; animation: flotar 4s ease-in-out infinite; backdrop-filter: blur(10px);}
+        .qr-texto { text-align: center; font-size: 11px; font-weight: 600; color: var(--texto-secundario); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1.5px; }
+        .qr-texto span { color: var(--acento-proceso); font-size: 14px; display: block; margin-top: 4px; font-weight: 800;}
+        .qr-img { width: 120px; height: 120px; border-radius: 8px; background: white; padding: 5px; }
+
+        @keyframes flotar { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
 
         /* INICIO */
         #pantallaInicio { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); display: flex; justify-content: center; align-items: center; z-index: 1000; flex-direction: column; }
@@ -60,13 +78,22 @@
 
     <div id="pantallaDinamica">
         <div id="vistaColas">
-            <div class="columna">
-                <h2 style="color:var(--acento-proceso); text-align: center; letter-spacing: 3px; font-weight: 300;">⏳ PROCESANDO</h2>
-                <div id="listaProceso"></div>
+            <div class="columnas-principales">
+                <div class="columna">
+                    <h2 style="color:var(--acento-proceso); text-align: center; letter-spacing: 3px; font-weight: 300; margin-top:0;">⏳ PROCESANDO</h2>
+                    <div id="listaProceso"></div>
+                </div>
+                <div class="columna">
+                    <h2 style="color:var(--acento-listo); text-align: center; letter-spacing: 3px; font-weight: 300; margin-top:0;">✅ LISTOS</h2>
+                    <div id="listaListos"></div>
+                </div>
             </div>
-            <div class="columna">
-                <h2 style="color:var(--acento-listo); text-align: center; letter-spacing: 3px; font-weight: 300;">✅ LISTOS</h2>
-                <div id="listaListos"></div>
+            
+            <div class="barra-pausados" id="barraPausadosContainer" style="display: none;">
+                <div class="titulo-pausados-tv">📅 EN AGENDA:</div>
+                <div class="contenedor-pausados">
+                    <marquee id="listaPausadosTv" scrollamount="6" scrolldelay="50"></marquee>
+                </div>
             </div>
         </div>
 
@@ -76,6 +103,14 @@
             <img src="promo3.jpg" class="promo-imagen" onerror="this.src='https://images.unsplash.com/photo-1554046920-90dc20696352?w=1600'">
             <div class="aviso-retorno">Tu turno aparecerá en pantalla en breve...</div>
         </div>
+    </div>
+
+    <div class="qr-flotante">
+        <div class="qr-texto">
+            ¿Deseas salir del estudio?
+            <span>Rastrea tu orden</span>
+        </div>
+        <img src="qr-code.png" alt="QR" class="qr-img">
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -110,18 +145,15 @@
             resetLogicaVista();
         }
 
-        // --- LÓGICA DE VISTAS (Turnos vs Anuncios) ---
         function resetLogicaVista() {
             clearTimeout(timerInactividad);
             clearTimeout(timerRetorno);
             
-            // Mostrar Turnos
             document.getElementById('vistaColas').style.opacity = '1';
             document.getElementById('vistaColas').style.zIndex = '5';
             document.getElementById('vistaPromos').style.opacity = '0';
             document.getElementById('vistaPromos').style.zIndex = '1';
 
-            // En 20 segundos de inactividad, pasar a anuncios
             timerInactividad = setTimeout(mostrarAnuncios, 20000);
         }
 
@@ -131,7 +163,6 @@
             document.getElementById('vistaColas').style.opacity = '0';
             document.getElementById('vistaColas').style.zIndex = '1';
 
-            // Si hay gente esperando, solo mostramos 10 segundos y volvemos
             if (totalFila > 0) {
                 timerRetorno = setTimeout(resetLogicaVista, 10000);
             }
@@ -162,9 +193,15 @@
         db.ref('turnos').on('value', snapshot => {
             const listaP = document.getElementById('listaProceso');
             const listaL = document.getElementById('listaListos');
-            listaP.innerHTML = ''; listaL.innerHTML = '';
+            const listaPausadosTv = document.getElementById('listaPausadosTv');
+            const barraPausadosCont = document.getElementById('barraPausadosContainer');
+            
+            listaP.innerHTML = ''; 
+            listaL.innerHTML = '';
+            let htmlPausados = '';
+            
             let listosActuales = [];
-            let cP = 0, cL = 0;
+            let cP = 0, cL = 0, cPausados = 0;
 
             snapshot.forEach(child => {
                 const t = child.val();
@@ -175,10 +212,23 @@
                     cL++;
                     listosActuales.push({id: child.key, nombre: t.nombre});
                     listaL.innerHTML += `<div class="turno listo"><span class="nombre">${t.nombre}</span><span class="status-txt" style="color:var(--acento-listo)">RECOGER</span></div>`;
+                } else if (t.estado === 'pausado') {
+                    cPausados++;
+                    // Creamos el badge morado para la cinta de noticias
+                    htmlPausados += `<span class="badge-pausado">${t.nombre} - ${t.servicio}</span>`;
                 }
             });
 
             totalFila = cP + cL;
+
+            // Manejo de la barra de pausados
+            if (cPausados > 0) {
+                listaPausadosTv.innerHTML = htmlPausados;
+                barraPausadosCont.style.display = 'flex';
+            } else {
+                barraPausadosCont.style.display = 'none';
+                listaPausadosTv.innerHTML = '';
+            }
 
             if (!primeraCarga) {
                 listosActuales.forEach(nuevo => {
@@ -186,7 +236,7 @@
                         vocearIA(nuevo.nombre);
                     }
                 });
-                resetLogicaVista(); // Al haber cambios, mostramos la lista
+                resetLogicaVista();
             }
             ultimosListos = listosActuales;
             primeraCarga = false;
