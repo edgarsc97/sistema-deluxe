@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SISTEMA DE COLAS DELUXE - CHROME EDITION</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #0A0E17; --bg-caja: #111827; --texto-principal: #F3F4F6;
+            --acento-proceso: #D4AF37; --acento-listo: #10B981;
+        }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-body); color: var(--texto-principal); margin: 0; padding: 20px; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        
+        .header-deluxe { text-align: center; margin-bottom: 25px; padding: 15px; background: var(--bg-caja); border-radius: 16px; border-bottom: 4px solid var(--acento-proceso); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        
+        #vistaColas { display: flex; gap: 20px; width: 100%; height: 100%; }
+        .columna { flex: 1; background: var(--bg-caja); border-radius: 16px; padding: 25px; display: flex; flex-direction: column; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
+        
+        .turno { background: #1F2937; margin-bottom: 15px; padding: 25px; border-radius: 12px; border-left: 8px solid var(--acento-proceso); display: flex; justify-content: space-between; align-items: center; animation: entrada 0.5s ease-out; }
+        .turno.listo { border-left-color: var(--acento-listo); background: rgba(16, 185, 129, 0.05); animation: parpadeo 2s infinite; }
+        
+        @keyframes entrada { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes parpadeo { 0%, 100% { border-color: var(--acento-listo); } 50% { border-color: white; } }
+
+        .nombre { font-size: 2.5em; font-weight: 800; color: white; }
+        .status-txt { font-size: 1.2em; font-weight: 600; color: var(--acento-proceso); text-transform: uppercase; }
+
+        #pantallaInicio { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); display: flex; justify-content: center; align-items: center; z-index: 1000; flex-direction: column; }
+        .btn-inicio { padding: 30px 60px; font-size: 28px; background: var(--acento-proceso); color: #000; border: none; border-radius: 15px; cursor: pointer; font-weight: 800; text-transform: uppercase; box-shadow: 0 0 30px rgba(212, 175, 55, 0.4); }
+        
+        #noSleepVideo { position: absolute; width: 1px; height: 1px; opacity: 0.01; }
+    </style>
+</head>
+<body>
+
+    <video id="noSleepVideo" loop playsinline muted>
+        <source src="https://raw.githubusercontent.com/anars/blank-audio/master/250-milliseconds-of-silence.mp3" type="video/mp4">
+    </video>
+
+    <div id="pantallaInicio">
+        <h1 style="color: var(--acento-proceso); margin-bottom: 40px; letter-spacing:10px; font-weight:300;">DELUXE POS</h1>
+        <button class="btn-inicio" onclick="iniciarSistema()">ENCENDER TABLERO</button>
+        <p style="color: #4b5563; margin-top: 25px; font-size: 14px; letter-spacing: 2px;">PLATAFORMA DE PRODUCCIÓN EN VIVO</p>
+    </div>
+
+    <div class="header-deluxe">
+        <h1 id="reloj" style="margin:0; font-size: 3em; font-weight: 800; letter-spacing: 5px;">00:00:00</h1>
+    </div>
+
+    <div id="vistaColas">
+        <div class="columna">
+            <h2 style="color:var(--acento-proceso); text-align: center; letter-spacing: 3px; font-weight: 300;">⏳ PROCESANDO</h2>
+            <div id="listaProceso"></div>
+        </div>
+        <div class="columna">
+            <h2 style="color:var(--acento-listo); text-align: center; letter-spacing: 3px; font-weight: 300;">✅ LISTOS</h2>
+            <div id="listaListos"></div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAn0H-50sbh8sMcqn_k8IlVnJX6ko58ws4",
+            authDomain: "sistemafotos-cf459.firebaseapp.com",
+            databaseURL: "https://sistemafotos-cf459-default-rtdb.firebaseio.com",
+            projectId: "sistemafotos-cf459",
+            storageBucket: "sistemafotos-cf459.firebasestorage.app",
+            messagingSenderId: "599045837547",
+            appId: "1:599045837547:web:7bb72110d3cf36739ea4ae"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        let primeraCarga = true;
+        let ultimosListos = [];
+
+        function iniciarSistema() {
+            document.getElementById('noSleepVideo').play();
+            // "Calentamos" el motor de voz de Chrome con un mensaje vacío
+            if ('speechSynthesis' in window) {
+                const initVoz = new SpeechSynthesisUtterance('');
+                window.speechSynthesis.speak(initVoz);
+            }
+            document.getElementById('pantallaInicio').style.display = 'none';
+        }
+
+        function vocearIA(nombre) {
+            // 1. Sonar campana local
+            const audio = new Audio('listo.mp3');
+            audio.play().then(() => {
+                // 2. Vocear con IA de Chrome 1.2 segundos después
+                setTimeout(() => {
+                    const msg = new SpeechSynthesisUtterance(`Atención. El pedido de ${nombre}, está listo.`);
+                    msg.lang = 'es-MX';
+                    msg.rate = 0.85; // Velocidad elegante
+                    msg.pitch = 1;
+                    window.speechSynthesis.speak(msg);
+                }, 1200);
+            });
+        }
+
+        db.ref('turnos').on('value', snapshot => {
+            const listaP = document.getElementById('listaProceso');
+            const listaL = document.getElementById('listaListos');
+            listaP.innerHTML = ''; listaL.innerHTML = '';
+            let listosActuales = [];
+
+            snapshot.forEach(child => {
+                const t = child.val();
+                if (t.estado === 'pendiente') {
+                    listaP.innerHTML += `<div class="turno"><span class="nombre">${t.nombre}</span><span class="status-txt">${t.horaFormateada}</span></div>`;
+                } else if (t.estado === 'listo') {
+                    listosActuales.push({id: child.key, nombre: t.nombre});
+                    listaL.innerHTML += `<div class="turno listo"><span class="nombre">${t.nombre}</span><span class="status-txt" style="color:var(--acento-listo)">RECOGER</span></div>`;
+                }
+            });
+
+            if (!primeraCarga) {
+                listosActuales.forEach(nuevo => {
+                    if (!ultimosListos.find(v => v.id === nuevo.id)) {
+                        vocearIA(nuevo.nombre);
+                    }
+                });
+            }
+            ultimosListos = listosActuales;
+            primeraCarga = false;
+        });
+
+        setInterval(() => {
+            document.getElementById('reloj').innerText = new Date().toLocaleTimeString('es-MX', {hour12: false});
+        }, 1000);
+    </script>
+</body>
+</html>

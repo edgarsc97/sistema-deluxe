@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SUITE DELUXE - Centro de Mando</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --bg-body: #0A0E17; /* Azul noche profundo */
+            --bg-panel: #111827; /* Gris carbón */
+            --text-main: #F3F4F6; /* Blanco platinado */
+            --text-muted: #9CA3AF; /* Gris sutil */
+            --gold: #D4AF37; /* Oro champagne */
+            --gold-hover: #B08D4A;
+            --border: rgba(255, 255, 255, 0.08);
+            --danger: #991B1B;
+        }
+
+        body { font-family: 'Inter', sans-serif; background: var(--bg-body); color: var(--text-main); margin: 0; padding: 0; }
+        
+        /* PANTALLA DE LOGIN ESTILO BÓVEDA */
+        #loginPanel { display: flex; justify-content: center; align-items: center; height: 100vh; background: var(--bg-body); position: fixed; top:0; left:0; width: 100%; z-index: 100;}
+        .login-box { background: var(--bg-panel); padding: 40px; border-radius: 16px; text-align: center; width: 100%; max-width: 380px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); border: 1px solid var(--border); border-top: 4px solid var(--gold); }
+        .logo-banco { font-size: 32px; letter-spacing: 4px; font-weight: 300; color: var(--gold); text-transform: uppercase; margin-bottom: 5px; }
+        .linea-oro { width: 40px; height: 2px; background: var(--gold); margin: 0 auto 20px auto; }
+        .login-box input { width: 100%; padding: 14px; margin: 10px 0; background: #1F2937; border: 1px solid var(--border); color: white; border-radius: 8px; box-sizing: border-box; font-size: 14px; transition: 0.3s; }
+        .login-box input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 10px rgba(212, 175, 55, 0.2); }
+        .login-box button { width: 100%; padding: 14px; background: var(--gold); color: #000; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 14px; margin-top: 15px; transition: 0.3s; letter-spacing: 1px; text-transform: uppercase;}
+        .login-box button:hover { background: var(--gold-hover); }
+
+        #dashboardMain { display: none; padding-bottom: 50px; }
+
+        /* HEADER PREMIUM */
+        .header { background: var(--bg-panel); padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.3);}
+        .header h1 { margin: 0; font-size: 20px; font-weight: 300; letter-spacing: 3px; color: var(--text-main); display: flex; align-items: center; gap: 10px;}
+        .header h1 span { color: var(--gold); font-weight: 600; }
+        .user-info { display: flex; align-items: center; gap: 20px; }
+        .user-email { font-size: 13px; color: var(--text-muted); letter-spacing: 0.5px; }
+        .btn-logout { background: transparent; color: var(--text-muted); border: 1px solid var(--border); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;}
+        .btn-logout:hover { background: rgba(153, 27, 27, 0.1); color: var(--danger); border-color: var(--danger); }
+
+        /* CONTENEDOR DASHBOARD */
+        .dashboard-container { max-width: 1100px; margin: 50px auto 0 auto; padding: 0 20px; }
+        .dashboard-title { font-size: 14px; margin-bottom: 30px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; font-weight: 600; border-bottom: 1px solid var(--border); padding-bottom: 10px;}
+
+        /* GRID DE MÓDULOS */
+        .modulos-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; }
+
+        /* TARJETAS DE MÓDULO ESTILO FINTECH */
+        .modulo-card { 
+            background: var(--bg-panel); 
+            border: 1px solid var(--border);
+            border-radius: 16px; 
+            padding: 35px 25px; 
+            text-align: center; 
+            text-decoration: none; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Línea superior dorada invisible hasta hacer hover */
+        .modulo-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 3px;
+            background: var(--gold);
+            opacity: 0;
+            transition: 0.4s ease;
+        }
+
+        .modulo-card:hover { 
+            transform: translateY(-8px); 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4); 
+            border-color: rgba(212, 175, 55, 0.3);
+            background: #151e32; /* Ligeramente más claro al hacer hover */
+        }
+
+        .modulo-card:hover::before { opacity: 1; }
+
+        .modulo-icono { font-size: 45px; margin-bottom: 20px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
+        .modulo-titulo { font-size: 16px; font-weight: 600; margin-bottom: 12px; color: var(--text-main); letter-spacing: 1px; text-transform: uppercase;}
+        .modulo-desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+        /* ETIQUETA DORADA PARA MÓDULOS CLAVE */
+        .badge-premium { background: rgba(212, 175, 55, 0.1); color: var(--gold); border: 1px solid rgba(212, 175, 55, 0.3); font-size: 10px; padding: 4px 8px; border-radius: 4px; font-weight: 600; text-transform: uppercase; margin-top: 15px; letter-spacing: 1px;}
+    </style>
+</head>
+<body>
+
+    <div id="loginPanel">
+        <div class="login-box">
+            <div class="logo-banco">DELUXE</div>
+            <div class="linea-oro"></div>
+            <p style="color: var(--text-muted); margin-bottom: 25px; font-size: 13px;">Terminal de Acceso Global</p>
+            <form id="formLogin">
+                <input type="email" id="email" placeholder="ID de Usuario" required>
+                <input type="password" id="password" placeholder="Clave de Seguridad" required>
+                <button type="submit">Autenticar</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="dashboardMain">
+        <header class="header">
+            <h1>SUITE <span>DELUXE</span></h1>
+            <div class="user-info">
+                <span class="user-email" id="userEmail">Cargando...</span>
+                <button class="btn-logout" onclick="cerrarSesion()">Desconectar</button>
+            </div>
+        </header>
+
+        <div class="dashboard-container">
+            <div class="dashboard-title">Módulos del Sistema</div>
+            
+            <div class="modulos-grid">
+                
+                <a href="pos.html" class="modulo-card">
+                    <div class="modulo-icono">🛒</div>
+                    <div class="modulo-titulo">Terminal POS</div>
+                    <div class="modulo-desc">Motor principal de ventas, caja registradora, inventario físico y emisión de tickets térmicos.</div>
+                </a>
+
+                <a href="admin.html" class="modulo-card">
+                    <div class="modulo-icono">⚙️</div>
+                    <div class="modulo-titulo">Operaciones</div>
+                    <div class="modulo-desc">Gestión de tiempos, alteración de fila en cascada y notificaciones directas por WhatsApp.</div>
+                </a>
+
+                <a href="tv.html" target="_blank" class="modulo-card">
+                    <div class="modulo-icono">📺</div>
+                    <div class="modulo-titulo">Monitor de Turnos</div>
+                    <div class="modulo-desc">Interfaz visual para clientes. Proyección de progreso en tiempo real para mostrador o sala de espera.</div>
+                </a>
+
+                <a href="estadisticas.html" class="modulo-card">
+                    <div class="modulo-icono">📊</div>
+                    <div class="modulo-titulo">Inteligencia Financiera</div>
+                    <div class="modulo-desc">Análisis de flujo de caja, desglose por métodos de pago y métricas de rendimiento por servicio.</div>
+                    <div class="badge-premium">Módulo Analítico</div>
+                </a>
+
+                <a href="rastreo.html" target="_blank" class="modulo-card">
+                    <div class="modulo-icono">📱</div>
+                    <div class="modulo-titulo">Cliente Móvil</div>
+                    <div class="modulo-desc">Simulador del portal web donde el usuario final rastrea su orden desde su dispositivo personal.</div>
+                </a>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+
+    <script>
+        // CONFIGURACIÓN FIREBASE INTACTA
+        const firebaseConfig = {
+            apiKey: "AIzaSyAn0H-50sbh8sMcqn_k8IlVnJX6ko58ws4",
+            authDomain: "sistemafotos-cf459.firebaseapp.com",
+            databaseURL: "https://sistemafotos-cf459-default-rtdb.firebaseio.com",
+            projectId: "sistemafotos-cf459",
+            storageBucket: "sistemafotos-cf459.firebasestorage.app",
+            messagingSenderId: "599045837547",
+            appId: "1:599045837547:web:7bb72110d3cf36739ea4ae"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+
+        // CONTROL DE SESIÓN
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                document.getElementById('loginPanel').style.display = 'none';
+                document.getElementById('dashboardMain').style.display = 'block';
+                document.getElementById('userEmail').innerText = "ID: " + user.email;
+            } else {
+                document.getElementById('loginPanel').style.display = 'flex';
+                document.getElementById('dashboardMain').style.display = 'none';
+            }
+        });
+
+        document.getElementById('formLogin').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('password').value;
+            const btn = e.target.querySelector('button');
+            btn.innerText = "AUTENTICANDO...";
+            
+            auth.signInWithEmailAndPassword(email, pass).catch(err => {
+                alert('Credenciales incorrectas. Acceso denegado.');
+                btn.innerText = "AUTENTICAR";
+            });
+        });
+
+        window.cerrarSesion = function() {
+            auth.signOut();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FINANZAS - SISTEMA DELUXE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --bg-body: #0A0E17;
+            --bg-panel: #111827;
+            --text-main: #F3F4F6;
+            --text-muted: #9CA3AF;
+            --gold: #D4AF37;
+            --gold-hover: #B08D4A;
+            --success: #10B981;
+            --danger: #991B1B;
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        body { font-family: 'Inter', sans-serif; background: var(--bg-body); color: var(--text-main); margin: 0; padding: 20px; }
+        
+        #loginPanel { max-width: 380px; margin: 12vh auto; background: var(--bg-panel); padding: 40px; border-radius: 16px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); text-align: center; border: 1px solid var(--border); border-top: 4px solid var(--gold); }
+        .logo-banco { font-size: 32px; letter-spacing: 4px; font-weight: 300; color: var(--gold); text-transform: uppercase; margin-bottom: 5px; }
+        input { width: 100%; padding: 14px; margin: 10px 0; background: #1F2937; border: 1px solid var(--border); color: white; border-radius: 8px; box-sizing: border-box; font-size: 14px; }
+        .btn-login { width: 100%; padding: 14px; background: var(--gold); color: #000; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 15px; margin-top: 15px; text-transform: uppercase; letter-spacing: 1px;}
+
+        .panel { max-width: 1000px; margin: 0 auto; background: var(--bg-panel); padding: 35px; border-radius: 16px; border: 1px solid var(--border); }
+        .header-flex { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 25px; }
+        
+        .nav-botones { display: flex; gap: 15px; }
+        .btn-nav { background: transparent; color: var(--gold); border: 1px solid var(--gold); text-decoration: none; padding: 10px 20px; border-radius: 6px; font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: 1px;}
+        .btn-nav:hover { background: var(--gold); color: #000; }
+
+        .grid-kpi { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .kpi-card { background: #1F2937; border: 1px solid var(--border); padding: 30px; border-radius: 12px; text-align: center; }
+        .kpi-titulo { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
+        .kpi-valor { font-size: 40px; font-weight: 800; color: var(--success); }
+
+        /* BOTONES DE ACCIÓN */
+        .area-acciones { display: flex; gap: 15px; margin-bottom: 30px; }
+        .btn-accion { flex: 1; padding: 18px; border-radius: 8px; font-size: 14px; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; border: none; color: white; }
+        .btn-reporte { background: #1F2937; border: 1px solid var(--gold); color: var(--gold); }
+        .btn-reporte:hover { background: var(--gold); color: #000; }
+        .btn-cierre { background: linear-gradient(135deg, var(--danger) 0%, #7F1D1D 100%); box-shadow: 0 10px 20px rgba(153, 27, 27, 0.3); }
+        .btn-cierre:hover { transform: translateY(-3px); filter: brightness(1.1); }
+
+        .tabla-container { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; background: #1F2937;}
+        table { width: 100%; border-collapse: collapse; }
+        th { background: #111827; color: var(--gold); padding: 15px; font-size: 11px; text-transform: uppercase; text-align: left; border-bottom: 1px solid var(--border);}
+        td { padding: 15px; border-bottom: 1px solid var(--border); font-size: 14px; color: var(--text-main);}
+    </style>
+</head>
+<body>
+
+    <div id="loginPanel">
+        <div class="logo-banco">DELUXE</div>
+        <p id="status" style="color: var(--text-muted); font-size: 13px;">Bóveda Administrativa</p>
+        <form id="formLogin">
+            <input type="email" id="email" placeholder="Usuario" required>
+            <input type="password" id="password" placeholder="Contraseña" required>
+            <button type="submit" class="btn-login">Entrar</button>
+        </form>
+    </div>
+
+    <div id="adminPanel" style="display:none;">
+        <div class="panel">
+            <div class="header-flex">
+                <h1 style="margin:0; font-size:22px; letter-spacing: 2px;">AUDITORÍA DE CAJA</h1>
+                <div class="nav-botones">
+                    <a href="pos.html" class="btn-nav">🛒 Caja</a>
+                    <a href="admin.html" class="btn-nav">🛠️ Producción</a>
+                </div>
+            </div>
+
+            <div class="grid-kpi">
+                <div class="kpi-card"><div class="kpi-titulo">Ingresos de Hoy</div><div class="kpi-valor" id="kpiIngresos">$0.00</div></div>
+                <div class="kpi-card"><div class="kpi-titulo">Ventas Totales</div><div class="kpi-valor" id="kpiVentas" style="color: var(--gold);">0</div></div>
+            </div>
+
+            <div class="area-acciones">
+                <button class="btn-accion btn-reporte" onclick="exportarExcel()">📥 Descargar Reporte</button>
+                <button class="btn-accion btn-cierre" onclick="ejecutarCierreCaja()">🌙 Realizar Cierre de Caja</button>
+            </div>
+
+            <div class="tabla-container">
+                <table>
+                    <thead>
+                        <tr><th>Fecha</th><th>Ticket</th><th>Cliente</th><th>Monto</th></tr>
+                    </thead>
+                    <tbody id="cuerpoTabla"></tbody>
+                </table>
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <button onclick="firebase.auth().signOut()" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size: 11px; text-transform: uppercase; letter-spacing: 2px;">Salir del Sistema</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAn0H-50sbh8sMcqn_k8IlVnJX6ko58ws4",
+            authDomain: "sistemafotos-cf459.firebaseapp.com",
+            databaseURL: "https://sistemafotos-cf459-default-rtdb.firebaseio.com",
+            projectId: "sistemafotos-cf459",
+            storageBucket: "sistemafotos-cf459.firebasestorage.app",
+            messagingSenderId: "599045837547",
+            appId: "1:599045837547:web:7bb72110d3cf36739ea4ae"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+        let ventasGlobales = [];
+
+        firebase.auth().onAuthStateChanged(user => {
+            if (user) { document.getElementById('loginPanel').style.display='none'; document.getElementById('adminPanel').style.display='block'; cargarDatos(); }
+            else { document.getElementById('loginPanel').style.display='block'; document.getElementById('adminPanel').style.display='none'; }
+        });
+
+        document.getElementById('formLogin').addEventListener('submit', e => {
+            e.preventDefault();
+            firebase.auth().signInWithEmailAndPassword(document.getElementById('email').value, document.getElementById('password').value)
+                .catch(err => alert("Acceso denegado"));
+        });
+
+        function cargarDatos() {
+            db.ref('ventas').on('value', snap => {
+                const tbody = document.getElementById('cuerpoTabla'); tbody.innerHTML = '';
+                let ingresos = 0; ventasGlobales = [];
+                if(!snap.exists()) return;
+                snap.forEach(child => {
+                    const v = child.val(); v.id = child.key;
+                    ventasGlobales.push(v); ingresos += parseFloat(v.total || 0);
+                });
+                ventasGlobales.reverse().forEach(v => {
+                    tbody.innerHTML += `<tr><td>${v.fecha}</td><td><strong style="color:var(--gold)">#${v.ticket}</strong></td><td>${v.cliente}</td><td style="color:var(--success); font-weight:bold;">$${v.total.toFixed(2)}</td></tr>`;
+                });
+                document.getElementById('kpiIngresos').innerText = "$" + ingresos.toFixed(2);
+                document.getElementById('kpiVentas').innerText = ventasGlobales.length;
+            });
+        }
+
+        window.exportarExcel = function() {
+            if(ventasGlobales.length === 0) return alert("No hay ventas");
+            let csv = "\uFEFFFecha,Ticket,Cliente,Metodo,Total\n";
+            ventasGlobales.forEach(v => { csv += `"${v.fecha}",${v.ticket},"${v.cliente}","${v.pago}",${v.total}\n`; });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = `Reporte_Deluxe_${new Date().toLocaleDateString().replace(/\//g,'-')}.csv`;
+            link.click();
+        };
+
+        // ========================================================
+// FUNCIÓN MAESTRA: CIERRE DE CAJA (CORREGIDA)
+// ========================================================
+window.ejecutarCierreCaja = function() {
+    const confirmacion = confirm("⚠️ ATENCIÓN: Se generará el reporte y se limpiará la TV.\n\nLos pedidos PAUSADOS para mañana NO se borrarán.\n\n¿Deseas finalizar el día?");
+    if (!confirmacion) return;
+
+    const clave = prompt("Para confirmar el borrado de ventas y fila activa, escribe: CERRAR CAJA");
+    if (clave !== "CERRAR CAJA") return alert("Cierre cancelado. Clave incorrecta.");
+
+    // 1. Descargamos el reporte primero por seguridad
+    exportarExcel();
+
+    // 2. Limpieza Selectiva
+    // Primero limpiamos todas las ventas (Libro mayor)
+    db.ref('ventas').remove();
+
+    // Luego limpiamos Producción pero CON FILTRO
+    db.ref('turnos').once('value', snap => {
+        if (!snap.exists()) return;
+
+        const actualizaciones = {};
+        snap.forEach(child => {
+            const turno = child.val();
+            // SOLO BORRAMOS los que ya terminaron o los que se quedaron pendientes hoy
+            // Los 'pausados' no se agregan al objeto de eliminación
+            if (turno.estado === 'pendiente' || turno.estado === 'listo') {
+                actualizaciones[child.key] = null; // null en Firebase significa borrar
+            }
+        });
+
+        db.ref('turnos').update(actualizaciones).then(() => {
+            alert("✨ CIERRE EXITOSO\n\n1. Reporte descargado.\n2. Fila de TV limpia.\n3. Los pedidos PAUSADOS siguen guardados para mañana.");
+        });
+    }).catch(e => alert("Error al conectar con la base de datos."));
+};
+    </script>
+</body>
+</html>
