@@ -12,9 +12,12 @@
         }
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-body); color: var(--texto-principal); margin: 0; padding: 20px; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
         
-        .header-deluxe { text-align: center; margin-bottom: 25px; padding: 15px; background: var(--bg-caja); border-radius: 16px; border-bottom: 4px solid var(--acento-proceso); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .header-deluxe { text-align: center; margin-bottom: 25px; padding: 15px; background: var(--bg-caja); border-radius: 16px; border-bottom: 4px solid var(--acento-proceso); box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10; }
         
-        #vistaColas { display: flex; gap: 20px; width: 100%; height: 100%; }
+        #pantallaDinamica { position: relative; flex: 1; overflow: hidden; }
+
+        /* VISTA 1: COLAS */
+        #vistaColas { display: flex; gap: 20px; width: 100%; height: 100%; position: absolute; top: 0; left: 0; transition: opacity 1s ease-in-out; opacity: 1; z-index: 5;}
         .columna { flex: 1; background: var(--bg-caja); border-radius: 16px; padding: 25px; display: flex; flex-direction: column; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
         
         .turno { background: #1F2937; margin-bottom: 15px; padding: 25px; border-radius: 12px; border-left: 8px solid var(--acento-proceso); display: flex; justify-content: space-between; align-items: center; animation: entrada 0.5s ease-out; }
@@ -26,6 +29,13 @@
         .nombre { font-size: 2.5em; font-weight: 800; color: white; }
         .status-txt { font-size: 1.2em; font-weight: 600; color: var(--acento-proceso); text-transform: uppercase; }
 
+        /* VISTA 2: ANUNCIOS */
+        #vistaPromos { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transition: opacity 1s ease-in-out; opacity: 0; z-index: 1; display: flex; justify-content: center; align-items: center; background: #000; border-radius: 16px; overflow: hidden; }
+        .promo-imagen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 1.5s ease-in-out, transform 8s linear; transform: scale(1); }
+        .promo-imagen.activa { opacity: 1; transform: scale(1.1); }
+        .aviso-retorno { position: absolute; bottom: 30px; background: rgba(0,0,0,0.7); padding: 15px 30px; border-radius: 30px; border: 1px solid var(--acento-proceso); color: white; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; z-index: 20; backdrop-filter: blur(5px); }
+
+        /* INICIO */
         #pantallaInicio { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); display: flex; justify-content: center; align-items: center; z-index: 1000; flex-direction: column; }
         .btn-inicio { padding: 30px 60px; font-size: 28px; background: var(--acento-proceso); color: #000; border: none; border-radius: 15px; cursor: pointer; font-weight: 800; text-transform: uppercase; box-shadow: 0 0 30px rgba(212, 175, 55, 0.4); }
         
@@ -48,14 +58,23 @@
         <h1 id="reloj" style="margin:0; font-size: 3em; font-weight: 800; letter-spacing: 5px;">00:00:00</h1>
     </div>
 
-    <div id="vistaColas">
-        <div class="columna">
-            <h2 style="color:var(--acento-proceso); text-align: center; letter-spacing: 3px; font-weight: 300;">⏳ PROCESANDO</h2>
-            <div id="listaProceso"></div>
+    <div id="pantallaDinamica">
+        <div id="vistaColas">
+            <div class="columna">
+                <h2 style="color:var(--acento-proceso); text-align: center; letter-spacing: 3px; font-weight: 300;">⏳ PROCESANDO</h2>
+                <div id="listaProceso"></div>
+            </div>
+            <div class="columna">
+                <h2 style="color:var(--acento-listo); text-align: center; letter-spacing: 3px; font-weight: 300;">✅ LISTOS</h2>
+                <div id="listaListos"></div>
+            </div>
         </div>
-        <div class="columna">
-            <h2 style="color:var(--acento-listo); text-align: center; letter-spacing: 3px; font-weight: 300;">✅ LISTOS</h2>
-            <div id="listaListos"></div>
+
+        <div id="vistaPromos">
+            <img src="promo1.jpg" class="promo-imagen activa" onerror="this.src='https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=1600'">
+            <img src="promo2.jpg" class="promo-imagen" onerror="this.src='https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=1600'">
+            <img src="promo3.jpg" class="promo-imagen" onerror="this.src='https://images.unsplash.com/photo-1554046920-90dc20696352?w=1600'">
+            <div class="aviso-retorno">Tu turno aparecerá en pantalla en breve...</div>
         </div>
     </div>
 
@@ -77,27 +96,64 @@
 
         let primeraCarga = true;
         let ultimosListos = [];
+        let totalFila = 0;
+        let timerInactividad;
+        let timerRetorno;
 
         function iniciarSistema() {
-            document.getElementById('noSleepVideo').play();
-            // "Calentamos" el motor de voz de Chrome con un mensaje vacío
+            document.getElementById('noSleepVideo').play().catch(()=>{});
             if ('speechSynthesis' in window) {
-                const initVoz = new SpeechSynthesisUtterance('');
-                window.speechSynthesis.speak(initVoz);
+                window.speechSynthesis.speak(new SpeechSynthesisUtterance(''));
             }
             document.getElementById('pantallaInicio').style.display = 'none';
+            iniciarCarrusel();
+            resetLogicaVista();
+        }
+
+        // --- LÓGICA DE VISTAS (Turnos vs Anuncios) ---
+        function resetLogicaVista() {
+            clearTimeout(timerInactividad);
+            clearTimeout(timerRetorno);
+            
+            // Mostrar Turnos
+            document.getElementById('vistaColas').style.opacity = '1';
+            document.getElementById('vistaColas').style.zIndex = '5';
+            document.getElementById('vistaPromos').style.opacity = '0';
+            document.getElementById('vistaPromos').style.zIndex = '1';
+
+            // En 20 segundos de inactividad, pasar a anuncios
+            timerInactividad = setTimeout(mostrarAnuncios, 20000);
+        }
+
+        function mostrarAnuncios() {
+            document.getElementById('vistaPromos').style.opacity = '1';
+            document.getElementById('vistaPromos').style.zIndex = '5';
+            document.getElementById('vistaColas').style.opacity = '0';
+            document.getElementById('vistaColas').style.zIndex = '1';
+
+            // Si hay gente esperando, solo mostramos 10 segundos y volvemos
+            if (totalFila > 0) {
+                timerRetorno = setTimeout(resetLogicaVista, 10000);
+            }
+        }
+
+        function iniciarCarrusel() {
+            const imgs = document.querySelectorAll('.promo-imagen');
+            let idx = 0;
+            setInterval(() => {
+                imgs[idx].classList.remove('activa');
+                idx = (idx + 1) % imgs.length;
+                imgs[idx].classList.add('activa');
+            }, 8000);
         }
 
         function vocearIA(nombre) {
-            // 1. Sonar campana local
             const audio = new Audio('listo.mp3');
             audio.play().then(() => {
-                // 2. Vocear con IA de Chrome 1.2 segundos después
                 setTimeout(() => {
                     const msg = new SpeechSynthesisUtterance(`Atención. El pedido de ${nombre}, está listo.`);
                     msg.lang = 'es-MX';
-                    msg.rate = 0.85; // Velocidad elegante
-                    msg.pitch = 1;
+                    msg.rate = 0.85;
                     window.speechSynthesis.speak(msg);
                 }, 1200);
             });
@@ -108,16 +164,21 @@
             const listaL = document.getElementById('listaListos');
             listaP.innerHTML = ''; listaL.innerHTML = '';
             let listosActuales = [];
+            let cP = 0, cL = 0;
 
             snapshot.forEach(child => {
                 const t = child.val();
                 if (t.estado === 'pendiente') {
+                    cP++;
                     listaP.innerHTML += `<div class="turno"><span class="nombre">${t.nombre}</span><span class="status-txt">${t.horaFormateada}</span></div>`;
                 } else if (t.estado === 'listo') {
+                    cL++;
                     listosActuales.push({id: child.key, nombre: t.nombre});
                     listaL.innerHTML += `<div class="turno listo"><span class="nombre">${t.nombre}</span><span class="status-txt" style="color:var(--acento-listo)">RECOGER</span></div>`;
                 }
             });
+
+            totalFila = cP + cL;
 
             if (!primeraCarga) {
                 listosActuales.forEach(nuevo => {
@@ -125,6 +186,7 @@
                         vocearIA(nuevo.nombre);
                     }
                 });
+                resetLogicaVista(); // Al haber cambios, mostramos la lista
             }
             ultimosListos = listosActuales;
             primeraCarga = false;
