@@ -50,34 +50,16 @@
         /* CONTENEDOR PRINCIPAL DIVIDIDO */
         .main-container { display: flex; width: 100%; margin-top: 65px; height: calc(100vh - 65px); }
 
-        /* =========================================
-           NUEVA ARQUITECTURA DEL PANEL IZQUIERDO
-           ========================================= */
-        .panel-productos { 
-            flex: 6.5; 
-            padding: 25px 15px 25px 25px; 
-            display: flex; 
-            flex-direction: column; 
-            overflow: hidden; /* Evita que el panel entero crezca */
-        }
+        /* LADO IZQUIERDO: CATÁLOGO DE PRODUCTOS */
+        .panel-productos { flex: 6.5; padding: 25px; overflow-y: auto; }
+        .mensaje-vacio { text-align: center; color: var(--text-muted); font-size: 14px; margin-top: 50px; padding: 30px; background: var(--bg-panel); border-radius: 12px; border: 1px dashed var(--border);}
         
-        /* Cajas con Scroll Independiente */
-        #seccionCatalogo { flex: 6; overflow-y: auto; padding-right: 10px; }
-        #seccionHistorial { flex: 4; overflow-y: auto; padding-right: 10px; border-top: 1px dashed var(--border); margin-top: 15px; padding-top: 15px; }
-
-        /* Scrollbar Deluxe para PC */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: var(--bg-body); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb { background: var(--text-muted); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
-
-        .mensaje-vacio { text-align: center; color: var(--text-muted); font-size: 14px; margin-top: 20px; padding: 30px; background: var(--bg-panel); border-radius: 12px; border: 1px dashed var(--border);}
-        
-        .grid-items { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 15px; }
+        .grid-items { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; }
         .item-btn { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 12px; padding: 25px 15px; text-align: center; cursor: pointer; box-shadow: 0 10px 20px rgba(0,0,0,0.2); transition: 0.3s; display: flex; flex-direction: column; align-items: center; border-top: 3px solid transparent; color: var(--text-main);}
         .item-btn:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.4); border-color: rgba(255,255,255,0.2); background: #151e32;}
         .item-nombre { font-size: 13px; font-weight: 600; margin-bottom: 12px; line-height: 1.3; letter-spacing: 0.5px;}
         .item-precio { font-size: 18px; color: var(--success); font-weight: 800;}
+        .item-tiempo { font-size: 10px; color: var(--gold); margin-top: 8px; background: rgba(212, 175, 55, 0.1); padding: 4px 8px; border-radius: 4px; font-weight: 600; letter-spacing: 1px;}
 
         /* LADO DERECHO: TICKET / CARRITO */
         .panel-ticket { flex: 3.5; background: var(--bg-panel); border-left: 1px solid var(--border); display: flex; flex-direction: column; box-shadow: -10px 0 30px rgba(0,0,0,0.5); z-index: 5;}
@@ -121,7 +103,7 @@
         .btn-guardar-prod:hover { background: var(--gold-hover); }
         
         .lista-inventario { margin-top: 40px; border-top: 1px solid var(--border); padding-top: 20px;}
-        .inv-item { display: flex; justify-content: space-between; align-items: center; background: var(--bg-input); padding: 15px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid var(--gold); border: 1px solid var(--border);}
+        .inv-item { display: flex; justify-content: space-between; align-items: center; background: var(--bg-input); padding: 15px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid var(--primary); border: 1px solid var(--border);}
         .btn-borrar-prod { background: transparent; color: var(--text-muted); border: 1px solid var(--text-muted); padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; transition: 0.2s;}
         .btn-borrar-prod:hover { color: var(--danger); border-color: var(--danger); background: rgba(153,27,27,0.1);}
 
@@ -136,7 +118,7 @@
         .btn-hist-danger:hover { background: rgba(153, 27, 27, 0.1); }
 
         /* =========================================
-           ZONA IMPRESIÓN 47mm
+           ZONA IMPRESIÓN
            ========================================= */
         #zonaImpresion { display: none; }
         
@@ -195,7 +177,7 @@
             <h1>TERMINAL <span>POS</span></h1>
             <div class="nav-botones">
                 <a href="admin.html" class="btn-nav" style="background: var(--gold); color: #000; border-color: var(--gold);">🛠️ IR A PRODUCCIÓN</a>
-                <button class="btn-nav" onclick="abrirModalReimpresion()">🖨️ Buscar Ticket Antiguo</button>
+                <button class="btn-nav" onclick="abrirModalReimpresion()">🖨️ Historial</button>
                 <button class="btn-nav btn-inventario" onclick="abrirModal()">⚙️ Catálogo</button>
                 <a href="index.html" class="btn-nav">Dashboard</a>
                 <button class="btn-nav btn-logout" onclick="cerrarSesion()">Cerrar Caja</button>
@@ -204,21 +186,9 @@
 
         <div class="main-container">
             <div class="panel-productos" id="panelCatalogo">
-                
-                <div id="seccionCatalogo">
-                    <h3 style="margin-top:0; color:var(--text-main); font-weight: 300; letter-spacing: 2px;">MENÚ DE SERVICIOS</h3>
-                    <div id="contenedorProductos" class="grid-items">
-                        <div class="mensaje-vacio">Cargando base de datos...</div>
-                    </div>
+                <div id="contenedorProductos" class="grid-items">
+                    <div class="mensaje-vacio">Cargando base de datos...</div>
                 </div>
-
-                <div id="seccionHistorial">
-                    <h3 style="color:var(--gold); font-weight: 300; letter-spacing: 2px; text-transform: uppercase; margin-top: 0;">📊 Ventas Recientes</h3>
-                    <div id="listaVentasMain">
-                        <div class="mensaje-vacio">Sincronizando operaciones...</div>
-                    </div>
-                </div>
-
             </div>
 
             <div class="panel-ticket">
@@ -270,7 +240,7 @@
         <div class="modal-overlay" id="modalReimpresion">
             <div class="modal-content" style="max-width: 700px;">
                 <button class="btn-cerrar-modal" onclick="cerrarModalReimpresion()">✖</button>
-                <h2 class="modal-titulo">Historial de Ventas Antiguas</h2>
+                <h2 class="modal-titulo">Historial de Ventas</h2>
                 <div id="listaReimpresion" style="margin-top: 20px; max-height: 50vh; overflow-y: auto;"></div>
             </div>
         </div>
@@ -310,8 +280,8 @@
         // ==========================================
         // 🚨 CONFIGURACIÓN DE SEGURIDAD 🚨
         // ==========================================
-        const EMAIL_ADMIN = "edgaruriel.deluxe@outlook.com"; 
-        const LINK_RASTREO = "https://edgarsc97.github.io/sistema-deluxe/rastreo.html"; 
+        const EMAIL_ADMIN = "edgaruriel.deluxe@outlook.com"; // CAMBIA ESTO POR TU CORREO
+        const LINK_RASTREO = "https://sistemadeluxe.netlify.app/rastreo"; 
         
         const firebaseConfig = {
             apiKey: "AIzaSyAn0H-50sbh8sMcqn_k8IlVnJX6ko58ws4",
@@ -326,23 +296,12 @@
         const db = firebase.database();
         const auth = firebase.auth();
 
-        let inventario = []; 
-        let carrito = [];
-        let esJefe = false;
-        window.ventasHistorialMemoria = {}; 
+        let inventario = []; let carrito = [];
 
+        // SESIÓN
         auth.onAuthStateChanged(user => {
-            if (user) { 
-                document.getElementById('loginPanel').style.display = 'none'; 
-                document.getElementById('posPanel').style.display = 'block'; 
-                esJefe = (user.email.toLowerCase() === EMAIL_ADMIN.toLowerCase());
-                iniciarPOS(); 
-                escucharVentasRecientes(); 
-            } 
-            else { 
-                document.getElementById('loginPanel').style.display = 'flex'; 
-                document.getElementById('posPanel').style.display = 'none'; 
-            }
+            if (user) { document.getElementById('loginPanel').style.display = 'none'; document.getElementById('posPanel').style.display = 'block'; iniciarPOS(); } 
+            else { document.getElementById('loginPanel').style.display = 'flex'; document.getElementById('posPanel').style.display = 'none'; }
         });
 
         document.getElementById('formLogin').addEventListener('submit', e => {
@@ -370,27 +329,10 @@
                             <div class="item-precio">$${parseFloat(prod.precio).toFixed(2)}</div>
                         </button>
                     `;
-                    const btnEliminarProd = esJefe ? `<button class="btn-borrar-prod" onclick="eliminarProducto('${prod.id}')">Eliminar</button>` : '';
-                    listaAdm.innerHTML += `<div class="inv-item" style="border-left-color:${prod.color}"><span><strong style="color:var(--text-main)">${prod.nombre}</strong> <span style="color:var(--gold)">$${prod.precio}</span></span>${btnEliminarProd}</div>`;
+                    listaAdm.innerHTML += `<div class="inv-item" style="border-left-color:${prod.color}"><span><strong style="color:var(--text-main)">${prod.nombre}</strong> <span style="color:var(--gold)">$${prod.precio}</span></span><button class="btn-borrar-prod" onclick="eliminarProducto('${prod.id}')">Eliminar</button></div>`;
                 });
             });
         }
-
-        document.getElementById('formNuevoProducto').addEventListener('submit', e => {
-            e.preventDefault();
-            const nom = document.getElementById('prodNombre').value;
-            const pre = document.getElementById('prodPrecio').value;
-            const min = document.getElementById('prodTiempo').value;
-            const tip = document.getElementById('prodTipo').value;
-            const col = document.getElementById('prodColor').value;
-            
-            db.ref('productos').push({ nombre: nom, precio: parseFloat(pre), tiempoMinutos: parseInt(min), tipo: tip, color: col }).then(() => {
-                alert("✅ Servicio guardado en el catálogo.");
-                e.target.reset(); 
-            });
-        });
-
-        window.eliminarProducto = id => { if(confirm("¿Seguro que deseas eliminar este servicio del catálogo?")) db.ref('productos/' + id).remove(); };
 
         window.agregarAlCarrito = id => {
             const p = inventario.find(i => i.id === id); const ex = carrito.find(i => i.id === id);
@@ -444,49 +386,54 @@
             prepararTicketImpresion(nom, tCobro, pago, tic, tel);
             window.print();
 
-            if (numLimpio.length >= 10) { setTimeout(() => window.open(generarLinkWA(numLimpio, nom, tic), '_blank'), 1500); }
+            if (numLimpio.length >= 10) { window.open(generarLinkWA(numLimpio, nom, tic), '_blank'); }
 
             carrito = []; document.getElementById('nombreCliente').value = ''; document.getElementById('telefonoCliente').value = ''; document.getElementById('metodoPago').selectedIndex = 0; actualizarCarritoUI();
         }
 
-        // ==========================================================
-        //  LISTA VIVA DE VENTAS PANTALLA PRINCIPAL
-        // ==========================================================
-        function escucharVentasRecientes() {
-            db.ref('ventas').limitToLast(15).on('value', snap => {
-                const listaMain = document.getElementById('listaVentasMain');
-                listaMain.innerHTML = '';
-                if(!snap.exists()) { listaMain.innerHTML = '<div class="mensaje-vacio">No hay ventas registradas.</div>'; return; }
-                let vArr = []; snap.forEach(c => { vArr.push({ id: c.key, ...c.val() }); window.ventasHistorialMemoria[c.key] = c.val(); });
-                
+        window.ventasHistorialMemoria = {};
+        window.abrirModalReimpresion = function() {
+            document.getElementById('modalReimpresion').style.display = 'flex';
+            const lista = document.getElementById('listaReimpresion');
+            db.ref('ventas').orderByChild('timestamp').limitToLast(30).once('value', snapshot => {
+                lista.innerHTML = '';
+                let vArr = []; snapshot.forEach(c => { vArr.push({ id: c.key, ...c.val() }); window.ventasHistorialMemoria[c.key] = c.val(); });
                 vArr.reverse().forEach(v => {
                     let btnWA = ""; if(v.telefono && v.telefono.replace(/\D/g, '').length >= 10) btnWA = `<button class="btn-hist-wa" onclick="reenviarWADigital('${v.id}')">📱 WhatsApp</button>`;
-                    const btnReembolso = esJefe ? `<button class="btn-hist-danger" onclick="reembolsarVenta('${v.id}')">❌ Reembolso</button>` : '';
-
-                    listaMain.innerHTML += `<div class="inv-item" style="border-left-color:var(--gold);">
+                    lista.innerHTML += `<div class="inv-item" style="border-left-color:var(--gold);">
                         <div style="flex:1;"><strong style="color:var(--text-main);">#${v.ticket} - ${v.cliente}</strong><br><span style="font-size:12px; color:var(--text-muted);">${v.fecha} | <strong style="color:var(--success)">$${v.total.toFixed(2)}</strong></span></div>
-                        <div class="acciones-historial">${btnWA}<button class="btn-hist-print" onclick="reimprimirTicketFisico('${v.id}')">🖨️ Imprimir</button>${btnReembolso}</div>
+                        <div class="acciones-historial">
+                            ${btnWA}
+                            <button class="btn-hist-print" onclick="reimprimirTicketFisico('${v.id}')">🖨️ Imprimir</button>
+                            <button class="btn-hist-danger" onclick="reembolsarVenta('${v.id}')">❌ Reembolso</button>
+                        </div>
                     </div>`;
                 });
             });
         }
 
-        window.abrirModalReimpresion = function() {
-            document.getElementById('modalReimpresion').style.display = 'flex';
-            document.getElementById('listaReimpresion').innerHTML = document.getElementById('listaVentasMain').innerHTML; 
-        }
-
+        // ==========================================================
+        //  FUNCIÓN DE REEMBOLSO CON BLOQUEO POR USUARIO
+        // ==========================================================
         window.reembolsarVenta = function(idVenta) {
-            if (!esJefe) { alert("⛔ ACCESO DENEGADO\nSolo el administrador puede hacer reembolsos."); return; }
+            const userActual = firebase.auth().currentUser;
+            
+            // VERIFICACIÓN DE JERARQUÍA
+            if (userActual.email !== EMAIL_ADMIN) {
+                alert("⛔ ACCESO DENEGADO\nNo tienes permisos de administrador para realizar reembolsos. Contacta al gerente.");
+                return;
+            }
+
             const venta = window.ventasHistorialMemoria[idVenta];
             const pass = prompt(`Vas a ELIMINAR el ticket #${venta.ticket} por $${venta.total.toFixed(2)}.\n\nEscribe la palabra CANCELAR para autorizar:`);
+            
             if (pass === "CANCELAR" || pass === "cancelar") {
                 db.ref('ventas/' + idVenta).remove().then(() => {
                     db.ref('turnos').orderByChild('numeroTicket').equalTo(venta.ticket).once('value', snap => {
                         if(snap.exists()) snap.forEach(child => db.ref('turnos/' + child.key).remove());
                     });
-                    alert("✅ Venta reembolsada y eliminada con éxito.");
-                    cerrarModalReimpresion();
+                    alert("✅ Venta reembolsada con éxito.");
+                    abrirModalReimpresion();
                 });
             }
         };
