@@ -24,14 +24,23 @@
         .columnas-principales { display: flex; gap: 20px; flex: 1; overflow: hidden; }
         .columna { flex: 1; background: var(--bg-caja); border-radius: 16px; padding: 25px; display: flex; flex-direction: column; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
         
-        .turno { background: #1F2937; margin-bottom: 15px; padding: 25px; border-radius: 12px; border-left: 8px solid var(--acento-proceso); display: flex; justify-content: space-between; align-items: center; animation: entrada 0.5s ease-out; }
+        /* ESTILOS DE LOS TURNOS MODIFICADOS PARA SOPORTAR LA DESCRIPCIÓN */
+        .turno { background: #1F2937; margin-bottom: 15px; padding: 20px 25px; border-radius: 12px; border-left: 8px solid var(--acento-proceso); display: flex; justify-content: space-between; align-items: center; animation: entrada 0.5s ease-out; }
         .turno.listo { border-left-color: var(--acento-listo); background: rgba(16, 185, 129, 0.05); animation: parpadeo 2s infinite; }
         
+        /* CONTENEDOR PARA EL NOMBRE Y EL SERVICIO */
+        .turno-info { display: flex; flex-direction: column; gap: 5px; }
+        
         @keyframes entrada { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
-        @keyframes parpadeo { 0%, 100% { border-color: var(--acento-listo); } 50% { border-color: white; } }
+        @keyframes parpadeo { 0%, 100% { border-color: var(--acento-listo); box-shadow: 0 0 20px rgba(16, 185, 129, 0.2); } 50% { border-color: white; box-shadow: 0 0 40px rgba(16, 185, 129, 0.6); } }
 
-        .nombre { font-size: 2.5em; font-weight: 800; color: white; }
-        .status-txt { font-size: 1.2em; font-weight: 600; color: var(--acento-proceso); text-transform: uppercase; }
+        .nombre { font-size: 2.2em; font-weight: 800; color: white; line-height: 1; }
+        
+        /* NUEVO ESTILO DE LA DESCRIPCIÓN DEL SERVICIO */
+        .descripcion-servicio { font-size: 1.1em; color: var(--acento-proceso); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; background: rgba(212, 175, 55, 0.1); padding: 4px 10px; border-radius: 6px; width: fit-content; }
+        .turno.listo .descripcion-servicio { color: var(--acento-listo); background: rgba(16, 185, 129, 0.1); }
+        
+        .status-txt { font-size: 1.4em; font-weight: 800; color: var(--acento-proceso); text-transform: uppercase; }
 
         /* NUEVA BARRA DE AGENDA (PAUSADOS) */
         .barra-pausados { background: #151A2B; border: 1px solid var(--purple); border-radius: 12px; padding: 15px 20px; display: flex; align-items: center; gap: 15px; box-shadow: 0 5px 20px rgba(139, 92, 246, 0.15); animation: entrada 0.5s ease-out; }
@@ -134,6 +143,7 @@
         let totalFila = 0;
         let timerInactividad;
         let timerRetorno;
+        window.ultimoCP = 0; // Guardará la cantidad de clientes en "Procesando"
 
         function iniciarSistema() {
             document.getElementById('noSleepVideo').play().catch(()=>{});
@@ -187,7 +197,7 @@
                     msg.rate = 0.85;
                     window.speechSynthesis.speak(msg);
                 }, 1200);
-            });
+            }).catch(e => console.log("Error reproduciendo audio:", e));
         }
 
         db.ref('turnos').on('value', snapshot => {
@@ -205,23 +215,37 @@
 
             snapshot.forEach(child => {
                 const t = child.val();
+                const descripcionHtml = t.servicio ? `<span class="descripcion-servicio">${t.servicio}</span>` : '';
+
                 if (t.estado === 'pendiente') {
                     cP++;
-                    listaP.innerHTML += `<div class="turno"><span class="nombre">${t.nombre}</span><span class="status-txt">${t.horaFormateada}</span></div>`;
+                    listaP.innerHTML += `
+                        <div class="turno">
+                            <div class="turno-info">
+                                <span class="nombre">${t.nombre}</span>
+                                ${descripcionHtml}
+                            </div>
+                            <span class="status-txt">${t.horaFormateada}</span>
+                        </div>`;
                 } else if (t.estado === 'listo') {
                     cL++;
                     listosActuales.push({id: child.key, nombre: t.nombre});
-                    listaL.innerHTML += `<div class="turno listo"><span class="nombre">${t.nombre}</span><span class="status-txt" style="color:var(--acento-listo)">RECOGER</span></div>`;
+                    listaL.innerHTML += `
+                        <div class="turno listo">
+                            <div class="turno-info">
+                                <span class="nombre">${t.nombre}</span>
+                                ${descripcionHtml}
+                            </div>
+                            <span class="status-txt" style="color:var(--acento-listo)">RECOGER</span>
+                        </div>`;
                 } else if (t.estado === 'pausado') {
                     cPausados++;
-                    // Creamos el badge morado para la cinta de noticias
                     htmlPausados += `<span class="badge-pausado">${t.nombre} - ${t.servicio}</span>`;
                 }
             });
 
             totalFila = cP + cL;
 
-            // Manejo de la barra de pausados
             if (cPausados > 0) {
                 listaPausadosTv.innerHTML = htmlPausados;
                 barraPausadosCont.style.display = 'flex';
@@ -231,14 +255,24 @@
             }
 
             if (!primeraCarga) {
+                // 1. Vocear cliente que ya está listo
                 listosActuales.forEach(nuevo => {
                     if (!ultimosListos.find(v => v.id === nuevo.id)) {
                         vocearIA(nuevo.nombre);
                     }
                 });
+
+                // 2. Hacer sonar nuevo.mp3 cuando ingresa un cliente a Procesando
+                if (cP > window.ultimoCP) {
+                    new Audio('nuevo.mp3').play().catch(e => console.log("Audio bloqueado:", e));
+                }
+
                 resetLogicaVista();
             }
+
+            // Actualizar memorias para la siguiente vez que cambie la base de datos
             ultimosListos = listosActuales;
+            window.ultimoCP = cP;
             primeraCarga = false;
         });
 
