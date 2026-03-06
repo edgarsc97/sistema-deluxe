@@ -30,7 +30,6 @@
         .panel { max-width: 850px; margin: 0 auto; background: var(--bg-panel); padding: 35px; border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); border: 1px solid var(--border); }
         .header-flex { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 25px; }
         
-        /* AQUÍ ESTÁ LA CORRECCIÓN DE LOS BOTONES */
         .nav-botones { display: flex; gap: 10px; }
         .btn-nav { background: transparent; color: var(--gold); border: 1px solid var(--gold); text-decoration: none; padding: 10px 20px; border-radius: 6px; font-weight: 600; font-size: 11px; transition: 0.3s; letter-spacing: 1px; text-transform: uppercase;}
         .btn-nav:hover { background: var(--gold); color: #000; }
@@ -107,11 +106,12 @@
 
     <script>
         // ==========================================
-        // CONFIGURACIÓN DE GITHUB PAGES
+        // CONFIGURACIÓN DE ENLACES
         // ==========================================
-        const USUARIO_GH = "edgarsc97";       // <--- SOLO tu nombre de usuario
-        const REPO_GH = "sistema-deluxe";    // <--- SOLO el nombre de tu repositorio
+        const USUARIO_GH = "edgarsc97";
+        const REPO_GH = "sistema-deluxe";
         const LINK_RASTREO = `https://${USUARIO_GH}.github.io/${REPO_GH}/rastreo.html`;
+
         const firebaseConfig = {
             apiKey: "AIzaSyAn0H-50sbh8sMcqn_k8IlVnJX6ko58ws4",
             authDomain: "sistemafotos-cf459.firebaseapp.com",
@@ -194,10 +194,14 @@
             });
         }
 
+        // --- CORRECCIÓN DE FUNCIÓN DE WHATSAPP ---
         window.notificarWA = function(tel, nom, serv, ticket) {
             let num = tel.replace(/\D/g, '');
             if(num.length === 10) num = "52" + num;
-            const msj = `¡Hola ${nom}! 👋 Tu pedido *#${ticket}* de *${serv}* está LISTO ✅.\n\nSíguelo aquí:\n🔗 ${LINK_RASTREO}`;
+            
+            // Aquí usamos la variable global LINK_RASTREO corregida
+            const msj = `¡Hola ${nom}! 👋 Tu pedido *#${ticket}* de *${serv}* está LISTO ✅.\n\nPuedes pasar a recogerlo al estudio. Si quieres ver el detalle de tu orden, entra aquí:\n🔗 ${LINK_RASTREO}`;
+            
             window.open(`https://wa.me/${num}?text=${encodeURIComponent(msj)}`, '_blank');
         };
 
