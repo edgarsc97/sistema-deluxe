@@ -283,7 +283,7 @@
                     <input type="number" id="prodPrecio" placeholder="Precio ($)" required>
                     <input type="number" id="prodTiempo" placeholder="Minutos" required>
                 </div>
-                <button type="submit" class="btn-cobrar" style="background:var(--gold); color:black;">Guardar en Catálogo</button>
+                <button type="submit" id="btnGuardarCatalogo" class="btn-cobrar" style="background:var(--gold); color:black;">Guardar en Catálogo</button>
             </form>
             <div id="listaInventarioAdmin" style="max-height:300px; overflow-y:auto; border-top: 1px solid var(--border); padding-top: 10px;"></div>
             <button onclick="cerrarModalCatalogo()" style="margin-top:20px; background:none; border:none; color:var(--text-muted); cursor:pointer; font-weight: bold;">Cerrar Gestor</button>
@@ -321,6 +321,7 @@
         let inventario = []; let carrito = []; let esJefe = false;
         window.ventasMemoria = {};
         let baseClientes = [];
+        window.productoEditandoId = null; // Variable para controlar la edición del catálogo
 
         function mostrarNotificacion(mensaje, tipo = 'success') {
             const container = document.getElementById('toast-container');
@@ -415,7 +416,6 @@
 
         // --- SISTEMA BLINDADO DE FOLIOS CONSECUTIVOS ---
         function generarFolioConsecutivo(carrito, callback) {
-            // 1. Convertimos todo a minúsculas y le quitamos los acentos usando normalize
             let textoCarrito = carrito.map(p => {
                 return String(p.nombre || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
             }).join(" ");
@@ -423,7 +423,6 @@
             let categoriaDB = "general";
             let numBase = 40000;
 
-            // 2. Buscamos fragmentos cortos de la palabra, ignorando acentos y variaciones
             if (textoCarrito.includes("titul")) {
                 categoriaDB = "titulacion"; 
                 numBase = 10000;
@@ -464,6 +463,7 @@
             });
         });
 
+        // --- FUNCIONES DEL CATÁLOGO CON EDICIÓN ---
         function iniciarPOS() {
             db.ref('productos').on('value', snapshot => {
                 inventario = [];
@@ -475,16 +475,70 @@
                     const p = { id: child.key, ...child.val() };
                     inventario.push(p);
                     cont.innerHTML += `<button class="item-btn" onclick="agregarAlCarrito('${p.id}')"><span class="item-nombre">${p.nombre}</span><span class="item-precio">$${parseFloat(p.precio).toFixed(2)}</span></button>`;
-                    listaAdm.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid var(--border); align-items:center;"><span><strong>${p.nombre}</strong> <span style="color:var(--gold)">$${p.precio}</span></span><button onclick="db.ref('productos/${p.id}').remove()" style="color:var(--danger); background:rgba(153, 27, 27, 0.1); border:1px solid var(--danger); padding: 5px 10px; border-radius: 4px; cursor:pointer;">Eliminar</button></div>`;
+                    
+                    // Escapar comillas para evitar errores en onclick
+                    const nombreSeguro = p.nombre.replace(/'/g, "\\'"); 
+                    const tiempo = p.tiempoMinutos || 0;
+
+                    listaAdm.innerHTML += `
+                        <div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid var(--border); align-items:center;">
+                            <span><strong>${p.nombre}</strong> <span style="color:var(--gold)">$${p.precio}</span> (⏱️ ${tiempo}m)</span>
+                            <div style="display:flex; gap:5px;">
+                                <button onclick="prepararEdicionCatalogo('${p.id}', '${nombreSeguro}', ${p.precio}, ${tiempo})" style="color:var(--blue); background:rgba(59, 130, 246, 0.1); border:1px solid var(--blue); padding: 5px 10px; border-radius: 4px; cursor:pointer;">Editar</button>
+                                <button onclick="db.ref('productos/${p.id}').remove()" style="color:var(--danger); background:rgba(153, 27, 27, 0.1); border:1px solid var(--danger); padding: 5px 10px; border-radius: 4px; cursor:pointer;">Eliminar</button>
+                            </div>
+                        </div>`;
                 });
             });
         }
 
+        window.prepararEdicionCatalogo = function(id, nombre, precio, tiempo) {
+            window.productoEditandoId = id;
+            document.getElementById('prodNombre').value = nombre;
+            document.getElementById('prodPrecio').value = precio;
+            document.getElementById('prodTiempo').value = tiempo;
+            
+            const btn = document.getElementById('btnGuardarCatalogo');
+            btn.innerText = "🔄 Actualizar Producto";
+            btn.style.background = "var(--blue)";
+            btn.style.color = "white";
+        };
+
+        function resetFormCatalogo() {
+            document.getElementById('formNuevoProducto').reset();
+            window.productoEditandoId = null;
+            const btn = document.getElementById('btnGuardarCatalogo');
+            btn.innerText = "Guardar en Catálogo";
+            btn.style.background = "var(--gold)";
+            btn.style.color = "black";
+        }
+
         document.getElementById('formNuevoProducto').addEventListener('submit', e => {
             e.preventDefault();
-            db.ref('productos').push({ nombre: document.getElementById('prodNombre').value, precio: parseFloat(document.getElementById('prodPrecio').value), tiempoMinutos: parseInt(document.getElementById('prodTiempo').value) }).then(() => { mostrarNotificacion("🛒 Producto agregado al catálogo"); e.target.reset(); });
+            const nombre = document.getElementById('prodNombre').value;
+            const precio = parseFloat(document.getElementById('prodPrecio').value);
+            const tiempo = parseInt(document.getElementById('prodTiempo').value);
+
+            if (window.productoEditandoId) {
+                // ACTUALIZAR PRODUCTO EXISTENTE
+                db.ref('productos/' + window.productoEditandoId).update({
+                    nombre: nombre, precio: precio, tiempoMinutos: tiempo
+                }).then(() => { 
+                    mostrarNotificacion("🔄 Producto actualizado correctamente", "info"); 
+                    resetFormCatalogo(); 
+                });
+            } else {
+                // CREAR PRODUCTO NUEVO
+                db.ref('productos').push({
+                    nombre: nombre, precio: precio, tiempoMinutos: tiempo
+                }).then(() => { 
+                    mostrarNotificacion("🛒 Producto agregado al catálogo"); 
+                    resetFormCatalogo(); 
+                });
+            }
         });
 
+        // --- CARRITO ---
         function agregarAlCarrito(id) {
             const p = inventario.find(i => i.id === id);
             const ex = carrito.find(i => i.id === id);
@@ -572,6 +626,7 @@
             });
         }
 
+        // --- SISTEMA INTELIGENTE DE TIEMPOS DE ESPERA ---
         function completarVentaFinal(folioConsecutivo) {
             let nom = document.getElementById('nombreCliente').value.trim();
             if (!nom) nom = "General";
@@ -596,18 +651,38 @@
             let minsTotal = carrito.reduce((sum, p) => sum + ((p.tiempoMinutos || 0) * p.cantidad), 0);
             let serviciosText = carrito.map(i => `${i.cantidad}x ${i.nombre}`).join(' + ');
 
-            db.ref('turnos').push({
-                nombre: nom, numeroTicket: folioConsecutivo, telefono: tel, estado: 'pendiente',
-                servicio: serviciosText, minutosServicio: minsTotal,
-                timestampEntrega: Date.now() + (minsTotal * 60000),
-                horaFormateada: new Date(Date.now() + (minsTotal * 60000)).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true})
+            // Lógica de Acumulación de Tiempo
+            db.ref('turnos').once('value', snap => {
+                let tiempoBase = Date.now();
+                
+                if (snap.exists()) {
+                    snap.forEach(child => {
+                        let turno = child.val();
+                        if (turno.estado === 'pendiente' && turno.timestampEntrega > tiempoBase) {
+                            tiempoBase = turno.timestampEntrega;
+                        }
+                    });
+                }
+
+                let tiempoFinal = tiempoBase + (minsTotal * 60000);
+
+                db.ref('turnos').push({
+                    nombre: nom, 
+                    numeroTicket: folioConsecutivo, 
+                    telefono: tel, 
+                    estado: 'pendiente',
+                    servicio: serviciosText, 
+                    minutosServicio: minsTotal,
+                    timestampEntrega: tiempoFinal,
+                    horaFormateada: new Date(tiempoFinal).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true})
+                });
+
+                imprimirTicket(nom, folioConsecutivo, total, tel, pago);
+                if (tel.length >= 10) enviarWhatsApp(tel, nom, folioConsecutivo);
+
+                carrito = []; document.getElementById('nombreCliente').value = ''; document.getElementById('telefonoCliente').value = ''; document.getElementById('metodoPago').selectedIndex = 0; actualizarUI();
+                mostrarNotificacion("✅ Venta cobrada con éxito");
             });
-
-            imprimirTicket(nom, folioConsecutivo, total, tel, pago);
-            if (tel.length >= 10) enviarWhatsApp(tel, nom, folioConsecutivo);
-
-            carrito = []; document.getElementById('nombreCliente').value = ''; document.getElementById('telefonoCliente').value = ''; document.getElementById('metodoPago').selectedIndex = 0; actualizarUI();
-            mostrarNotificacion("✅ Venta cobrada con éxito");
         }
 
         function imprimirTicket(nom, tic, total, tel, pago) {
@@ -682,7 +757,7 @@
         function abrirModalCaja() { document.getElementById('modalCaja').style.display = 'flex'; }
         function cerrarModalCaja() { document.getElementById('modalCaja').style.display = 'none'; document.getElementById('formCaja').reset(); }
         function abrirModalCatalogo() { document.getElementById('modalCatalogo').style.display = 'flex'; }
-        function cerrarModalCatalogo() { document.getElementById('modalCatalogo').style.display = 'none'; }
+        function cerrarModalCatalogo() { document.getElementById('modalCatalogo').style.display = 'none'; resetFormCatalogo(); }
         function abrirModalHistorial() { document.getElementById('modalHistorial').style.display = 'flex'; document.getElementById('listaReimpresion').innerHTML = document.getElementById('listaVentasMain').innerHTML; }
         function cerrarModalHistorial() { document.getElementById('modalHistorial').style.display = 'none'; }
         function abrirModalDirectorio() { document.getElementById('modalDirectorio').style.display = 'flex'; }
