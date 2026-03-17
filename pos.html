@@ -97,18 +97,19 @@
         .toast.info { background: var(--blue); }
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
 
+        /* ESTILOS DE LÍNEAS DE PAGO */
+        .linea-pago { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
+        .linea-pago select { margin: 0; flex: 1; }
+        .linea-pago input { margin: 0; flex: 1; text-align: right; font-size: 16px; font-weight: bold; color: var(--gold); }
+        .btn-quitar-pago { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 18px; padding: 0 5px; }
+
         /* ZONA IMPRESIÓN */
         #zonaImpresion { display: none; }
         @media print {
-            @page { margin: 0; size: auto; }
-            body, html { margin: 0 !important; padding: 0 !important; background: white !important; display: block !important; }
-            .header, .main-container, .panel-login-container, .modal-overlay, #loginPanel, #posPanel { display: none !important; }
-            
-            #zonaImpresion { 
-                display: block !important; position: absolute !important; top: 0 !important; left: 0 !important; 
-                width: 47mm; max-width: 47mm; box-sizing: border-box; font-family: 'Arial', sans-serif; font-size: 11px; 
-                padding: 0 4px 0 0; margin: 0 !important; color: #000000; line-height: 1.2;
-            }
+            @page { margin: 0; }
+            body, html { margin: 0 !important; padding: 0 !important; background: white !important; display: block !important; height: auto !important; min-height: auto !important; overflow: visible !important;}
+            .header, .main-container, .panel-login-container, .modal-overlay, #loginPanel, #posPanel, #toast-container { display: none !important; }
+            #zonaImpresion { display: block !important; position: relative !important; width: 47mm; max-width: 47mm; box-sizing: border-box; font-family: 'Arial', sans-serif; font-size: 11px; padding: 0 4px 0 0; margin: 0 !important; color: #000000; line-height: 1.2;}
             .tk-header { text-align: center; border-bottom: 1px dashed #000; padding-bottom: 6px;}
             .tk-logo { max-width: 60%; filter: invert(1); margin: 0 auto; display: block;}
             .tk-titulo { font-size: 15px; margin: 4px 0; font-weight: bold;}
@@ -122,6 +123,9 @@
             .tk-tabla .td-desc { width: 50%; padding-right: 5px;}
             .tk-tabla .td-precio { width: 35%; text-align: right; }
             .tk-totales { border-top: 1px dashed #000; text-align: right; font-weight: bold; font-size: 15px; padding-top: 6px;}
+            .tk-descuento-row { font-size: 12px; font-weight: normal; margin-top: 5px;}
+            .tk-pago-row { font-size: 11px; font-weight: normal; margin-top: 2px; color: #333;}
+            .tk-saldo-row { font-size: 13px; font-weight: bold; margin-top: 4px; border-top: 1px solid #000; padding-top: 4px;}
             .tk-footer { text-align: center; margin-top: 12px; font-size: 10px; border-top: 1px dashed #000; padding-top: 10px;}
             .tk-rastreo-caja { border: 1px solid #000; padding: 5px; margin: 5px 0; font-weight: bold;}
             .tk-rastreo-codigo { display: block; font-size: 17px; margin-top: 3px;}
@@ -144,13 +148,18 @@
             Fecha: <span id="tkFecha"></span><br>
             Cliente: <strong id="tkCliente"></strong><br>
             <span id="filaTelefono" style="display: none;">Tel: <strong id="tkTelefono"></strong><br></span>
-            Pago vía: <strong id="tkPago"></strong>
         </div>
         <table class="tk-tabla">
             <thead><tr><th class="td-cant">Cant</th><th class="td-desc">Desc</th><th class="td-precio">Total</th></tr></thead>
             <tbody id="tkDetalle"></tbody>
         </table>
-        <div class="tk-totales">TOTAL: <span id="tkTotalF"></span></div>
+        <div class="tk-totales">
+            <div id="tkDescuentoUI" class="tk-descuento-row" style="display:none;">Desc: <span id="tkDescuentoValor"></span></div>
+            TOTAL: <span id="tkTotalF"></span>
+            
+            <div id="tkListaPagos" style="margin-top: 5px; text-align: right;"></div>
+            <div id="tkSaldoUICaja" class="tk-saldo-row" style="display:none;"></div>
+        </div>
         <div class="tk-footer">
             <strong>¿QUIERES VER TU ORDEN?</strong><br>
             <div class="tk-rastreo-caja">Folio: <span id="tkCodigoRastreo" class="tk-rastreo-codigo"></span></div>
@@ -204,13 +213,7 @@
                         <input type="text" id="nombreCliente" placeholder="Nombre del Cliente" autocomplete="off" oninput="buscarCliente(this.value)" onfocus="buscarCliente(this.value)">
                         <div id="sugerenciasClientes" class="sugerencias-box"></div>
                     </div>
-                    
                     <input type="text" id="telefonoCliente" placeholder="WhatsApp (10 dígitos)" autocomplete="off">
-                    <select id="metodoPago">
-                        <option value="Efectivo">💵 Efectivo</option>
-                        <option value="Transferencia">📱 Transferencia (SPEI)</option>
-                        <option value="Tarjeta">💳 Tarjeta</option>
-                    </select>
                 </div>
                 <div class="lista-carrito" id="contenedorCarrito"></div>
                 <div class="resumen-cobro">
@@ -218,85 +221,59 @@
                         <span style="color:var(--text-muted)">TOTAL:</span>
                         <span id="txtTotal" class="total-valor">$0.00</span>
                     </div>
-                    <button class="btn-cobrar" id="btnCobrar" onclick="iniciarProcesoCobro()" disabled>COBRAR E IMPRIMIR</button>
+                    <button class="btn-cobrar" id="btnCobrar" onclick="abrirModalPagoAvanzado()" disabled>COBRAR E IMPRIMIR</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="modal-overlay" id="modalDirectorio">
-        <div class="modal-content">
-            <h2 style="color:var(--gold); margin-top:0;">👥 DIRECTORIO DE CLIENTES</h2>
-            <p style="color:var(--text-muted); font-size:12px; margin-bottom:15px;">Aquí están todos los clientes guardados en tu base de datos.</p>
-            <div id="listaDirectorioUI" style="max-height: 400px; overflow-y: auto; margin-bottom: 20px; border-top: 1px solid var(--border); padding-top: 10px;"></div>
-            <button onclick="cerrarModalDirectorio()" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-weight: bold; width:100%; padding:10px;">Cerrar Directorio</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="modalEfectivo" style="z-index: 600;">
-        <div class="modal-content" style="text-align: center; max-width: 400px; padding: 40px;">
-            <h2 style="color:var(--success); margin-top:0; letter-spacing: 2px;">💵 COBRO EN EFECTIVO</h2>
-            <div style="font-size: 20px; color:var(--text-muted); margin-bottom: 20px;">Total a pagar: <strong id="efectivoTotal" style="color:white; font-size:28px;">$0.00</strong></div>
+    <div class="modal-overlay" id="modalPagoAvanzado" style="z-index: 600;">
+        <div class="modal-content" style="max-width: 500px; padding: 30px;">
+            <h2 style="color:var(--gold); margin-top:0; border-bottom:1px solid var(--border); padding-bottom:10px;">💳 PROCESAR COBRO</h2>
             
-            <div id="cajaIngresoEfectivo">
-                <input type="number" id="efectivoRecibido" placeholder="¿Con cuánto pagan?" style="font-size: 24px; text-align: center; padding: 15px; font-weight:bold;" onkeyup="calcularCambioEnter(event)">
-                <div id="efectivoMensaje" style="color:var(--danger); font-size:14px; height: 20px; margin-bottom:10px;"></div>
-                
-                <div style="display:flex; gap:10px; justify-content:center;">
-                    <button class="btn-nav" onclick="pagoExacto()" style="background:var(--success); color:white; border-color:var(--success); font-weight:800; font-size: 14px; padding: 12px 20px;">💵 PAGO EXACTO</button>
-                    <button class="btn-cobrar" onclick="confirmarEfectivo()" style="margin-top:0; width:auto; padding: 12px 30px;">CONFIRMAR</button>
+            <div style="display:flex; justify-content:space-between; align-items:center; background:#192233; padding:15px; border-radius:8px; margin-bottom:15px; border: 1px dashed var(--border);">
+                <span style="font-weight:600;">Descuento Global:</span>
+                <div style="display:flex; gap:5px;">
+                    <select id="mpTipoDesc" style="width:120px; margin:0; padding:8px; font-size:12px;" onchange="calcularTotalesPago()">
+                        <option value="fijo">$ Fijo</option>
+                        <option value="porcentaje">% Porcentaje</option>
+                    </select>
+                    <input type="number" id="mpValorDesc" value="0" min="0" style="width:100px; margin:0; padding:8px; text-align:center;" oninput="calcularTotalesPago()">
                 </div>
-
-                <button onclick="cerrarModalEfectivo()" style="margin-top:15px; background:none; border:none; color:var(--text-muted); cursor:pointer; font-weight:bold;">Cancelar</button>
             </div>
 
-            <div id="cajaMostrarCambio" style="display: none; padding: 20px 0;">
-                <h3 style="color:var(--text-muted); margin:0; font-size:18px;">SU CAMBIO ES:</h3>
-                <div id="efectivoCambioFijo" style="font-size: 55px; font-weight: 800; color:var(--gold); margin: 15px 0;">$0.00</div>
-                <p style="color:var(--success); font-size:14px; font-weight:bold; animation: parpadeo 1.5s infinite;" id="textoProcesandoCobro">Generando Folio...</p>
+            <div style="text-align:right; margin-bottom:20px; font-size:16px;">
+                Subtotal: <span id="mpSubtotal">$0.00</span><br>
+                <strong style="font-size:24px;">Total a Pagar: <span id="mpTotalNeto" style="color:var(--success);">$0.00</span></strong>
+            </div>
+
+            <div id="mpLineasPago" style="margin-bottom:15px;">
+                </div>
+            
+            <button class="btn-nav" onclick="agregarLineaPago()" style="width:100%; border-style:dashed; margin-bottom:20px; padding:12px; font-size:13px;">➕ Añadir forma de pago (Dividir Cuenta)</button>
+
+            <div style="background:#0e1420; padding:20px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-left: 5px solid var(--blue);">
+                <div>
+                    <span style="color:var(--text-muted); font-size:12px;">Total Recibido:</span><br>
+                    <strong id="mpTotalRecibido" style="color:var(--blue); font-size:22px;">$0.00</strong>
+                </div>
+                <div id="mpCajaSaldo" style="text-align:right;">
+                    <span id="mpLabelSaldo" style="color:var(--text-muted); font-size:12px;">Falta (Saldo Pendiente):</span><br>
+                    <strong id="mpValorSaldo" style="color:var(--danger); font-size:22px;">$0.00</strong>
+                </div>
+            </div>
+
+            <div style="display:flex; gap:10px;">
+                <button class="btn-cobrar" id="btnConfirmarPagoFinal" onclick="confirmarPagoAvanzado()">CONFIRMAR COBRO</button>
+                <button class="btn-nav" onclick="cerrarModalPagoAvanzado()" style="padding:15px; width: 120px;">Cancelar</button>
             </div>
         </div>
     </div>
 
-    <div class="modal-overlay" id="modalCaja">
-        <div class="modal-content">
-            <h2 style="color:var(--blue); margin-top:0;">💵 MOVIMIENTO DE CAJA</h2>
-            <form id="formCaja" style="margin-bottom: 20px;">
-                <select id="tipoMovimiento">
-                    <option value="ingreso">⬇️ INGRESO (Fondo de caja, cambio...)</option>
-                    <option value="retiro">⬆️ RETIRO (Pago de material, comida...)</option>
-                </select>
-                <input type="text" id="conceptoMovimiento" placeholder="Concepto (Ej. Pago de Luz)" required autocomplete="off">
-                <input type="number" id="montoMovimiento" placeholder="Monto ($)" required min="1" step="0.50">
-                <button type="submit" class="btn-cobrar" style="background:var(--blue);">REGISTRAR MOVIMIENTO</button>
-            </form>
-            <button onclick="cerrarModalCaja()" style="margin-top:10px; background:none; border:none; color:var(--text-muted); cursor:pointer; font-weight: bold;">Cancelar</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="modalCatalogo">
-        <div class="modal-content">
-            <h2 style="color:var(--gold); margin-top:0;">GESTIÓN DE CATÁLOGO</h2>
-            <form id="formNuevoProducto" style="margin-bottom: 20px;">
-                <input type="text" id="prodNombre" placeholder="Nombre del Servicio" required>
-                <div style="display:flex; gap:10px;">
-                    <input type="number" id="prodPrecio" placeholder="Precio ($)" required>
-                    <input type="number" id="prodTiempo" placeholder="Minutos" required>
-                </div>
-                <button type="submit" id="btnGuardarCatalogo" class="btn-cobrar" style="background:var(--gold); color:black;">Guardar en Catálogo</button>
-            </form>
-            <div id="listaInventarioAdmin" style="max-height:300px; overflow-y:auto; border-top: 1px solid var(--border); padding-top: 10px;"></div>
-            <button onclick="cerrarModalCatalogo()" style="margin-top:20px; background:none; border:none; color:var(--text-muted); cursor:pointer; font-weight: bold;">Cerrar Gestor</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="modalHistorial">
-        <div class="modal-content" style="max-width: 700px;">
-            <h2 style="color:var(--gold); margin-top:0;">HISTORIAL DE VENTAS</h2>
-            <div id="listaReimpresion" style="max-height: 400px; overflow-y: auto;"></div>
-            <button onclick="cerrarModalHistorial()" style="margin-top:20px; background:none; border:none; color:var(--text-muted); cursor:pointer; font-weight: bold;">Cerrar Historial</button>
-        </div>
-    </div>
+    <div class="modal-overlay" id="modalDirectorio"><div class="modal-content"><h2 style="color:var(--gold); margin-top:0;">👥 DIRECTORIO DE CLIENTES</h2><p style="color:var(--text-muted); font-size:12px; margin-bottom:15px;">Aquí están todos los clientes guardados en tu base de datos.</p><div id="listaDirectorioUI" style="max-height: 400px; overflow-y: auto; margin-bottom: 20px; border-top: 1px solid var(--border); padding-top: 10px;"></div><button onclick="cerrarModalDirectorio()" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-weight: bold; width:100%; padding:10px;">Cerrar Directorio</button></div></div>
+    <div class="modal-overlay" id="modalCaja"><div class="modal-content"><h2 style="color:var(--blue); margin-top:0;">💵 MOVIMIENTO DE CAJA</h2><form id="formCaja" style="margin-bottom: 20px;"><select id="tipoMovimiento"><option value="ingreso">⬇️ INGRESO (Fondo de caja, cambio...)</option><option value="retiro">⬆️ RETIRO (Pago de material, comida...)</option></select><input type="text" id="conceptoMovimiento" placeholder="Concepto (Ej. Pago de Luz)" required autocomplete="off"><input type="number" id="montoMovimiento" placeholder="Monto ($)" required min="1" step="0.50"><button type="submit" class="btn-cobrar" style="background:var(--blue);">REGISTRAR MOVIMIENTO</button></form><button onclick="cerrarModalCaja()" style="margin-top:10px; background:none; border:none; color:var(--text-muted); cursor:pointer; font-weight: bold;">Cancelar</button></div></div>
+    <div class="modal-overlay" id="modalCatalogo"><div class="modal-content"><h2 style="color:var(--gold); margin-top:0;">GESTIÓN DE CATÁLOGO</h2><form id="formNuevoProducto" style="margin-bottom: 20px;"><input type="text" id="prodNombre" placeholder="Nombre del Servicio" required><div style="display:flex; gap:10px;"><input type="number" id="prodPrecio" placeholder="Precio ($)" required><input type="number" id="prodTiempo" placeholder="Minutos" required></div><button type="submit" id="btnGuardarCatalogo" class="btn-cobrar" style="background:var(--gold); color:black;">Guardar en Catálogo</button></form><div id="listaInventarioAdmin" style="max-height:300px; overflow-y:auto; border-top: 1px solid var(--border); padding-top: 10px;"></div><button onclick="cerrarModalCatalogo()" style="margin-top:20px; background:none; border:none; color:var(--text-muted); cursor:pointer; font-weight: bold;">Cerrar Gestor</button></div></div>
+    <div class="modal-overlay" id="modalHistorial"><div class="modal-content" style="max-width: 700px;"><h2 style="color:var(--gold); margin-top:0;">HISTORIAL DE VENTAS</h2><div id="listaReimpresion" style="max-height: 400px; overflow-y: auto;"></div><button onclick="cerrarModalHistorial()" style="margin-top:20px; background:none; border:none; color:var(--text-muted); cursor:pointer; font-weight: bold;">Cerrar Historial</button></div></div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
@@ -321,7 +298,13 @@
         let inventario = []; let carrito = []; let esJefe = false;
         window.ventasMemoria = {};
         let baseClientes = [];
-        window.productoEditandoId = null; // Variable para controlar la edición del catálogo
+        window.productoEditandoId = null; 
+        
+        // --- VARIABLES DEL MÓDULO DE PAGOS ---
+        let subtotalCarrito = 0;
+        let descuentoTotal = 0;
+        let totalNetoPagar = 0;
+        let lineasDePago = [];
 
         function mostrarNotificacion(mensaje, tipo = 'success') {
             const container = document.getElementById('toast-container');
@@ -342,9 +325,7 @@
                 document.getElementById('loginPanel').style.display = 'none';
                 document.getElementById('posPanel').style.display = 'block';
                 esJefe = (user.email.toLowerCase() === EMAIL_ADMIN.toLowerCase());
-                iniciarPOS();
-                escucharVentasRecientes();
-                escucharDirectorioClientes();
+                iniciarPOS(); escucharVentasRecientes(); escucharDirectorioClientes();
             } else {
                 document.getElementById('loginPanel').style.display = 'flex';
                 document.getElementById('posPanel').style.display = 'none';
@@ -357,12 +338,11 @@
                 .catch(() => alert("Credenciales incorrectas"));
         });
 
+        // --- SISTEMA CRM DE CLIENTES ---
         function escucharDirectorioClientes() {
             db.ref('clientes').on('value', snap => {
-                baseClientes = [];
-                const contUI = document.getElementById('listaDirectorioUI');
+                baseClientes = []; const contUI = document.getElementById('listaDirectorioUI');
                 if(contUI) contUI.innerHTML = '';
-
                 if(snap.exists()) {
                     snap.forEach(child => {
                         const c = { id: child.key, ...child.val() };
@@ -375,27 +355,18 @@
             });
         }
 
-        window.borrarClienteCRM = function(id) {
-            if(confirm("¿Eliminar a este cliente de tu directorio?")) {
-                db.ref('clientes/' + id).remove().then(() => mostrarNotificacion("🗑️ Cliente borrado", "info"));
-            }
-        };
+        window.borrarClienteCRM = function(id) { if(confirm("¿Eliminar a este cliente?")) db.ref('clientes/' + id).remove().then(() => mostrarNotificacion("🗑️ Cliente borrado", "info")); };
 
         function buscarCliente(texto) {
-            const box = document.getElementById('sugerenciasClientes');
-            box.innerHTML = '';
+            const box = document.getElementById('sugerenciasClientes'); box.innerHTML = '';
             if(!texto || texto.trim().length < 1) { box.style.display = 'none'; return; }
-
-            const query = texto.toLowerCase().trim();
-            let unicos = []; let vistos = new Set();
-
+            const query = texto.toLowerCase().trim(); let unicos = []; let vistos = new Set();
             baseClientes.forEach(c => {
                 if(c && c.nombre) {
                     const nomLower = String(c.nombre).toLowerCase();
                     if(nomLower.includes(query) && !vistos.has(nomLower)) { vistos.add(nomLower); unicos.push(c); }
                 }
             });
-
             if(unicos.length > 0) {
                 unicos.slice(0, 8).forEach(c => {
                     box.innerHTML += `<div class="sugerencia-item" onmousedown="seleccionarCliente('${c.nombre}', '${c.telefono || ''}')"><span style="font-weight:600; color:white;">${c.nombre}</span><span style="color:var(--gold); font-size:12px; margin-left:15px;">${c.telefono ? c.telefono : 'Sin teléfono'}</span></div>`;
@@ -405,300 +376,317 @@
         }
 
         window.seleccionarCliente = function(nombre, telefono) {
-            document.getElementById('nombreCliente').value = nombre;
-            document.getElementById('telefonoCliente').value = telefono || '';
-            document.getElementById('sugerenciasClientes').style.display = 'none';
+            document.getElementById('nombreCliente').value = nombre; document.getElementById('telefonoCliente').value = telefono || ''; document.getElementById('sugerenciasClientes').style.display = 'none';
         };
 
-        document.addEventListener('click', e => {
-            if(e.target.id !== 'nombreCliente' && !e.target.closest('#sugerenciasClientes')) document.getElementById('sugerenciasClientes').style.display = 'none';
-        });
+        document.addEventListener('click', e => { if(e.target.id !== 'nombreCliente' && !e.target.closest('#sugerenciasClientes')) document.getElementById('sugerenciasClientes').style.display = 'none'; });
 
-        // --- SISTEMA BLINDADO DE FOLIOS CONSECUTIVOS ---
+        // --- SISTEMA DE FOLIOS ---
         function generarFolioConsecutivo(carrito, callback) {
-            let textoCarrito = carrito.map(p => {
-                return String(p.nombre || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
-            }).join(" ");
+            let textoCarrito = carrito.map(p => String(p.nombre || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()).join(" ");
+            let categoriaDB = "general"; let numBase = 40000;
+            if (textoCarrito.includes("titul")) { categoriaDB = "titulacion"; numBase = 10000; } 
+            else if (textoCarrito.includes("servicio") || textoCarrito.includes("serv")) { categoriaDB = "servicio"; numBase = 20000; } 
+            else if (textoCarrito.includes("infantil") || textoCarrito.includes("infan")) { categoriaDB = "infantil"; numBase = 30000; }
             
-            let categoriaDB = "general";
-            let numBase = 40000;
-
-            if (textoCarrito.includes("titul")) {
-                categoriaDB = "titulacion"; 
-                numBase = 10000;
-            } else if (textoCarrito.includes("servicio") || textoCarrito.includes("serv")) {
-                categoriaDB = "servicio"; 
-                numBase = 20000;
-            } else if (textoCarrito.includes("infantil") || textoCarrito.includes("infan")) {
-                categoriaDB = "infantil"; 
-                numBase = 30000;
-            }
-
-            const refContador = db.ref('configuracion/folios/' + categoriaDB);
-            
-            refContador.transaction(function(valorActual) {
-                return (valorActual || numBase) + 1;
-            }, function(error, fueGuardado, snapshot) {
-                if (error) {
-                    mostrarNotificacion("Error al generar folio: " + error, "error");
-                    callback(null);
-                } else if (fueGuardado) {
-                    callback(snapshot.val().toString());
-                }
-            });
+            db.ref('configuracion/folios/' + categoriaDB).transaction(
+                function(val) { return (val || numBase) + 1; }, 
+                function(err, guardado, snap) { if (err) { callback(null); } else if (guardado) { callback(snap.val().toString()); } }
+            );
         }
 
+        // --- FLUJO CAJA Y CATALOGO ---
         document.getElementById('formCaja').addEventListener('submit', e => {
             e.preventDefault();
-            const tipo = document.getElementById('tipoMovimiento').value;
-            const concepto = document.getElementById('conceptoMovimiento').value.trim();
-            const monto = parseFloat(document.getElementById('montoMovimiento').value);
-            const tic = "CAJA-" + Math.floor(1000 + Math.random() * 9000); 
-            const f = new Date().toLocaleString('es-MX', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true });
+            const tipo = document.getElementById('tipoMovimiento').value; const concepto = document.getElementById('conceptoMovimiento').value.trim(); const monto = parseFloat(document.getElementById('montoMovimiento').value);
+            const tic = "CAJA-" + Math.floor(1000 + Math.random() * 9000); const f = new Date().toLocaleString('es-MX', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true });
             const totalReal = tipo === 'retiro' ? -Math.abs(monto) : Math.abs(monto);
-
-            db.ref('ventas').push({ ticket: tic, cliente: concepto, total: totalReal, pago: "Efectivo", fecha: f, timestamp: Date.now(), esMovimiento: true, tipoMovimiento: tipo }).then(() => {
-                mostrarNotificacion("✅ Movimiento registrado en caja", "info");
-                e.target.reset(); cerrarModalCaja();
-            });
+            db.ref('ventas').push({ ticket: tic, cliente: concepto, total: totalReal, pago: "Efectivo", fecha: f, timestamp: Date.now(), esMovimiento: true, tipoMovimiento: tipo }).then(() => { mostrarNotificacion("✅ Movimiento registrado", "info"); e.target.reset(); cerrarModalCaja(); });
         });
 
-        // --- FUNCIONES DEL CATÁLOGO CON EDICIÓN ---
         function iniciarPOS() {
             db.ref('productos').on('value', snapshot => {
-                inventario = [];
-                const cont = document.getElementById('contenedorProductos');
-                const listaAdm = document.getElementById('listaInventarioAdmin');
+                inventario = []; const cont = document.getElementById('contenedorProductos'); const listaAdm = document.getElementById('listaInventarioAdmin');
                 cont.innerHTML = ''; listaAdm.innerHTML = '';
                 if(!snapshot.exists()) return;
                 snapshot.forEach(child => {
-                    const p = { id: child.key, ...child.val() };
-                    inventario.push(p);
+                    const p = { id: child.key, ...child.val() }; inventario.push(p);
                     cont.innerHTML += `<button class="item-btn" onclick="agregarAlCarrito('${p.id}')"><span class="item-nombre">${p.nombre}</span><span class="item-precio">$${parseFloat(p.precio).toFixed(2)}</span></button>`;
-                    
-                    // Escapar comillas para evitar errores en onclick
-                    const nombreSeguro = p.nombre.replace(/'/g, "\\'"); 
-                    const tiempo = p.tiempoMinutos || 0;
-
-                    listaAdm.innerHTML += `
-                        <div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid var(--border); align-items:center;">
-                            <span><strong>${p.nombre}</strong> <span style="color:var(--gold)">$${p.precio}</span> (⏱️ ${tiempo}m)</span>
-                            <div style="display:flex; gap:5px;">
-                                <button onclick="prepararEdicionCatalogo('${p.id}', '${nombreSeguro}', ${p.precio}, ${tiempo})" style="color:var(--blue); background:rgba(59, 130, 246, 0.1); border:1px solid var(--blue); padding: 5px 10px; border-radius: 4px; cursor:pointer;">Editar</button>
-                                <button onclick="db.ref('productos/${p.id}').remove()" style="color:var(--danger); background:rgba(153, 27, 27, 0.1); border:1px solid var(--danger); padding: 5px 10px; border-radius: 4px; cursor:pointer;">Eliminar</button>
-                            </div>
-                        </div>`;
+                    const nombreSeguro = p.nombre.replace(/'/g, "\\'"); const tiempo = p.tiempoMinutos || 0;
+                    listaAdm.innerHTML += `<div style="display:flex; justify-content:space-between; padding:12px; border-bottom:1px solid var(--border); align-items:center;"><span><strong>${p.nombre}</strong> <span style="color:var(--gold)">$${p.precio}</span> (⏱️ ${tiempo}m)</span><div style="display:flex; gap:5px;"><button onclick="prepararEdicionCatalogo('${p.id}', '${nombreSeguro}', ${p.precio}, ${tiempo})" style="color:var(--blue); background:rgba(59, 130, 246, 0.1); border:1px solid var(--blue); padding: 5px 10px; border-radius: 4px; cursor:pointer;">Editar</button><button onclick="db.ref('productos/${p.id}').remove()" style="color:var(--danger); background:rgba(153, 27, 27, 0.1); border:1px solid var(--danger); padding: 5px 10px; border-radius: 4px; cursor:pointer;">Eliminar</button></div></div>`;
                 });
             });
         }
 
-        window.prepararEdicionCatalogo = function(id, nombre, precio, tiempo) {
-            window.productoEditandoId = id;
-            document.getElementById('prodNombre').value = nombre;
-            document.getElementById('prodPrecio').value = precio;
-            document.getElementById('prodTiempo').value = tiempo;
-            
-            const btn = document.getElementById('btnGuardarCatalogo');
-            btn.innerText = "🔄 Actualizar Producto";
-            btn.style.background = "var(--blue)";
-            btn.style.color = "white";
-        };
-
-        function resetFormCatalogo() {
-            document.getElementById('formNuevoProducto').reset();
-            window.productoEditandoId = null;
-            const btn = document.getElementById('btnGuardarCatalogo');
-            btn.innerText = "Guardar en Catálogo";
-            btn.style.background = "var(--gold)";
-            btn.style.color = "black";
-        }
+        window.prepararEdicionCatalogo = function(id, nombre, precio, tiempo) { window.productoEditandoId = id; document.getElementById('prodNombre').value = nombre; document.getElementById('prodPrecio').value = precio; document.getElementById('prodTiempo').value = tiempo; const btn = document.getElementById('btnGuardarCatalogo'); btn.innerText = "🔄 Actualizar Producto"; btn.style.background = "var(--blue)"; btn.style.color = "white"; };
+        function resetFormCatalogo() { document.getElementById('formNuevoProducto').reset(); window.productoEditandoId = null; const btn = document.getElementById('btnGuardarCatalogo'); btn.innerText = "Guardar en Catálogo"; btn.style.background = "var(--gold)"; btn.style.color = "black"; }
 
         document.getElementById('formNuevoProducto').addEventListener('submit', e => {
-            e.preventDefault();
-            const nombre = document.getElementById('prodNombre').value;
-            const precio = parseFloat(document.getElementById('prodPrecio').value);
-            const tiempo = parseInt(document.getElementById('prodTiempo').value);
-
-            if (window.productoEditandoId) {
-                // ACTUALIZAR PRODUCTO EXISTENTE
-                db.ref('productos/' + window.productoEditandoId).update({
-                    nombre: nombre, precio: precio, tiempoMinutos: tiempo
-                }).then(() => { 
-                    mostrarNotificacion("🔄 Producto actualizado correctamente", "info"); 
-                    resetFormCatalogo(); 
-                });
-            } else {
-                // CREAR PRODUCTO NUEVO
-                db.ref('productos').push({
-                    nombre: nombre, precio: precio, tiempoMinutos: tiempo
-                }).then(() => { 
-                    mostrarNotificacion("🛒 Producto agregado al catálogo"); 
-                    resetFormCatalogo(); 
-                });
-            }
+            e.preventDefault(); const nombre = document.getElementById('prodNombre').value; const precio = parseFloat(document.getElementById('prodPrecio').value); const tiempo = parseInt(document.getElementById('prodTiempo').value);
+            if (window.productoEditandoId) { db.ref('productos/' + window.productoEditandoId).update({ nombre: nombre, precio: precio, tiempoMinutos: tiempo }).then(() => { mostrarNotificacion("🔄 Producto actualizado", "info"); resetFormCatalogo(); });
+            } else { db.ref('productos').push({ nombre: nombre, precio: precio, tiempoMinutos: tiempo }).then(() => { mostrarNotificacion("🛒 Producto agregado"); resetFormCatalogo(); }); }
         });
 
         // --- CARRITO ---
-        function agregarAlCarrito(id) {
-            const p = inventario.find(i => i.id === id);
-            const ex = carrito.find(i => i.id === id);
-            if (ex) { ex.cantidad++; } else { carrito.push({ ...p, cantidad: 1 }); }
-            actualizarUI();
-        }
-
+        function agregarAlCarrito(id) { const p = inventario.find(i => i.id === id); const ex = carrito.find(i => i.id === id); if (ex) { ex.cantidad++; } else { carrito.push({ ...p, cantidad: 1 }); } actualizarUI(); }
         function quitarDelCarrito(index) { carrito.splice(index, 1); actualizarUI(); }
 
         function actualizarUI() {
-            const cont = document.getElementById('contenedorCarrito');
-            let total = 0; cont.innerHTML = '';
+            const cont = document.getElementById('contenedorCarrito'); subtotalCarrito = 0; cont.innerHTML = '';
             if(carrito.length === 0) cont.innerHTML = '<div style="text-align:center; color:var(--text-muted); margin-top:50px;">Cesta vacía</div>';
-
             carrito.forEach((p, idx) => {
-                total += (p.precio * p.cantidad);
+                subtotalCarrito += (p.precio * p.cantidad);
                 cont.innerHTML += `<div class="item-carrito"><div style="flex:1;"><span class="item-carrito-nombre">${p.nombre}</span><span class="item-carrito-detalle">${p.cantidad}x $${p.precio.toFixed(2)}</span></div><div style="display:flex; align-items:center;"><span style="font-weight:bold; font-size:16px;">$${(p.precio * p.cantidad).toFixed(2)}</span><button class="btn-quitar" onclick="quitarDelCarrito(${idx})">✕</button></div></div>`;
             });
-            document.getElementById('txtTotal').innerText = `$${total.toFixed(2)}`;
+            document.getElementById('txtTotal').innerText = `$${subtotalCarrito.toFixed(2)}`;
             document.getElementById('btnCobrar').disabled = carrito.length === 0;
-            document.getElementById('btnCobrar').innerText = `COBRAR $${total.toFixed(2)}`;
+            document.getElementById('btnCobrar').innerText = `COBRAR $${subtotalCarrito.toFixed(2)}`;
         }
 
-        function iniciarProcesoCobro() {
-            const pago = document.getElementById('metodoPago').value;
-            const total = carrito.reduce((sum, p) => sum + (p.precio * p.cantidad), 0);
+        // =========================================================================
+        // MÓDULO DE PAGOS AVANZADOS (DIVISIÓN, ABONOS, DESCUENTOS)
+        // =========================================================================
+        function abrirModalPagoAvanzado() {
+            // Resetear valores por defecto
+            document.getElementById('mpValorDesc').value = '0';
+            lineasDePago = [{ id: Date.now(), metodo: 'Efectivo', monto: subtotalCarrito }];
+            
+            document.getElementById('modalPagoAvanzado').style.display = 'flex';
+            calcularTotalesPago();
+        }
 
-            if (pago === 'Efectivo') {
-                document.getElementById('efectivoTotal').innerText = `$${total.toFixed(2)}`;
-                document.getElementById('efectivoRecibido').value = '';
-                document.getElementById('efectivoMensaje').innerText = '';
-                document.getElementById('cajaIngresoEfectivo').style.display = 'block';
-                document.getElementById('cajaMostrarCambio').style.display = 'none';
-                document.getElementById('modalEfectivo').style.display = 'flex';
-                setTimeout(() => document.getElementById('efectivoRecibido').focus(), 100);
-            } else {
-                iniciarGeneracionFolio(false);
+        function cerrarModalPagoAvanzado() {
+            document.getElementById('modalPagoAvanzado').style.display = 'none';
+        }
+
+        function agregarLineaPago() {
+            lineasDePago.push({ id: Date.now(), metodo: 'Tarjeta', monto: 0 });
+            renderizarLineasPago();
+            calcularTotalesPago();
+        }
+
+        function quitarLineaPago(id) {
+            lineasDePago = lineasDePago.filter(p => p.id !== id);
+            if(lineasDePago.length === 0) agregarLineaPago(); // Siempre debe haber mínimo 1
+            renderizarLineasPago();
+            calcularTotalesPago();
+        }
+
+        function actualizarMontoLinea(id, valorStr) {
+            let p = lineasDePago.find(l => l.id === id);
+            if(p) p.monto = parseFloat(valorStr) || 0;
+            calcularTotalesPago();
+        }
+
+        function actualizarMetodoLinea(id, metodo) {
+            let p = lineasDePago.find(l => l.id === id);
+            if(p) p.metodo = metodo;
+            calcularTotalesPago(); // Por si queremos cambiar logica por tarjeta despues
+        }
+
+        function renderizarLineasPago() {
+            const cont = document.getElementById('mpLineasPago');
+            cont.innerHTML = '';
+            lineasDePago.forEach(linea => {
+                cont.innerHTML += `
+                    <div class="linea-pago">
+                        <select onchange="actualizarMetodoLinea(${linea.id}, this.value)">
+                            <option value="Efectivo" ${linea.metodo === 'Efectivo' ? 'selected' : ''}>💵 Efectivo</option>
+                            <option value="Tarjeta" ${linea.metodo === 'Tarjeta' ? 'selected' : ''}>💳 Tarjeta</option>
+                            <option value="Transferencia" ${linea.metodo === 'Transferencia' ? 'selected' : ''}>📱 Transferencia (SPEI)</option>
+                        </select>
+                        <input type="number" step="0.50" min="0" value="${linea.monto}" oninput="actualizarMontoLinea(${linea.id}, this.value)" placeholder="$0.00">
+                        <button class="btn-quitar-pago" onclick="quitarLineaPago(${linea.id})">✖</button>
+                    </div>
+                `;
+            });
+        }
+
+        function calcularTotalesPago() {
+            // 1. Calcular Descuento
+            const tipoDesc = document.getElementById('mpTipoDesc').value;
+            const valorDesc = parseFloat(document.getElementById('mpValorDesc').value) || 0;
+            
+            descuentoTotal = 0;
+            if (tipoDesc === 'fijo') { descuentoTotal = valorDesc; } 
+            else if (tipoDesc === 'porcentaje') { descuentoTotal = subtotalCarrito * (valorDesc / 100); }
+            
+            if (descuentoTotal > subtotalCarrito) descuentoTotal = subtotalCarrito;
+
+            totalNetoPagar = subtotalCarrito - descuentoTotal;
+
+            // 2. Calcular Suma de Pagos Recibidos
+            let sumaPagos = lineasDePago.reduce((sum, p) => sum + p.monto, 0);
+            
+            // 3. Lógica de Saldo Pendiente o Cambio
+            let diferencia = sumaPagos - totalNetoPagar;
+            let esAbono = diferencia < 0;
+            
+            // Render UI
+            document.getElementById('mpSubtotal').innerText = `$${subtotalCarrito.toFixed(2)}`;
+            document.getElementById('mpTotalNeto').innerText = `$${totalNetoPagar.toFixed(2)}`;
+            document.getElementById('mpTotalRecibido').innerText = `$${sumaPagos.toFixed(2)}`;
+
+            const lblSaldo = document.getElementById('mpLabelSaldo');
+            const valSaldo = document.getElementById('mpValorSaldo');
+            const cajaSaldo = document.getElementById('mpCajaSaldo');
+            const btnConf = document.getElementById('btnConfirmarPagoFinal');
+
+            if (sumaPagos === 0) {
+                lblSaldo.innerText = "Falta (Saldo Pendiente):"; lblSaldo.style.color = "var(--text-muted)";
+                valSaldo.innerText = `$${totalNetoPagar.toFixed(2)}`; valSaldo.style.color = "var(--danger)";
+                btnConf.disabled = true; btnConf.innerText = "ESPERANDO PAGO...";
+            } 
+            else if (esAbono) {
+                // Dejó a cuenta (Abono)
+                lblSaldo.innerText = "ANTICIPO. Saldo Pendiente:"; lblSaldo.style.color = "var(--gold)";
+                valSaldo.innerText = `$${Math.abs(diferencia).toFixed(2)}`; valSaldo.style.color = "var(--gold)";
+                btnConf.disabled = false; btnConf.innerText = "COBRAR ANTICIPO";
+            } 
+            else {
+                // Pagó completo o hay cambio
+                if (diferencia > 0) {
+                    // Verifica si hay efectivo para dar cambio
+                    let hayEfectivo = lineasDePago.some(p => p.metodo === 'Efectivo');
+                    if (hayEfectivo) {
+                        lblSaldo.innerText = "DAR CAMBIO DE:"; lblSaldo.style.color = "var(--text-muted)";
+                        valSaldo.innerText = `$${diferencia.toFixed(2)}`; valSaldo.style.color = "var(--success)";
+                    } else {
+                        lblSaldo.innerText = "SOBREPAGO DE TARJETA:"; lblSaldo.style.color = "var(--danger)";
+                        valSaldo.innerText = `$${diferencia.toFixed(2)}`; valSaldo.style.color = "var(--danger)";
+                    }
+                } else {
+                    lblSaldo.innerText = "PAGO EXACTO"; lblSaldo.style.color = "var(--text-muted)";
+                    valSaldo.innerText = `$0.00`; valSaldo.style.color = "var(--success)";
+                }
+                btnConf.disabled = false; btnConf.innerText = "COBRAR TOTAL";
             }
+
+            renderizarLineasPago();
         }
 
-        function calcularCambioEnter(e) { if (e.key === 'Enter') confirmarEfectivo(); }
-
-        window.pagoExacto = function() {
-            const total = carrito.reduce((sum, p) => sum + (p.precio * p.cantidad), 0);
-            document.getElementById('efectivoRecibido').value = total;
-            confirmarEfectivo();
-        };
-
-        function confirmarEfectivo() {
-            const total = carrito.reduce((sum, p) => sum + (p.precio * p.cantidad), 0);
-            const recibido = parseFloat(document.getElementById('efectivoRecibido').value) || 0;
-
-            if (recibido < total) { document.getElementById('efectivoMensaje').innerText = "❌ El monto ingresado no cubre el total de la compra."; return; }
-
-            const cambio = recibido - total;
-            document.getElementById('efectivoCambioFijo').innerText = `$${cambio.toFixed(2)}`;
-            document.getElementById('cajaIngresoEfectivo').style.display = 'none';
-            document.getElementById('cajaMostrarCambio').style.display = 'block';
+        // =========================================================================
+        // CONFIRMACIÓN Y GUARDADO DE VENTA MULTIPAGO
+        // =========================================================================
+        function confirmarPagoAvanzado() {
+            let sumaPagos = lineasDePago.reduce((sum, p) => sum + p.monto, 0);
+            if (sumaPagos === 0) return;
 
             new Audio('https://actions.google.com/sounds/v1/cartoon/clink.ogg').play().catch(()=>{});
 
-            iniciarGeneracionFolio(true);
-        }
+            document.getElementById('btnConfirmarPagoFinal').disabled = true;
+            document.getElementById('btnConfirmarPagoFinal').innerText = "PROCESANDO...";
 
-        function cerrarModalEfectivo() { document.getElementById('modalEfectivo').style.display = 'none'; }
+            iniciarGeneracionFolio((folioNuevo) => {
+                if(!folioNuevo) { cerrarModalPagoAvanzado(); return; }
 
-        function iniciarGeneracionFolio(esEfectivo) {
-            const btnCobrar = document.getElementById('btnCobrar');
-            btnCobrar.disabled = true; btnCobrar.innerText = "GENERANDO FOLIO...";
+                let nom = document.getElementById('nombreCliente').value.trim();
+                if (!nom) nom = "General"; nom = nom.toUpperCase(); 
+                
+                const tel = document.getElementById('telefonoCliente').value.trim();
+                const f = new Date().toLocaleString('es-MX', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true });
 
-            if(esEfectivo) document.getElementById('textoProcesandoCobro').innerText = "Generando Folio en Servidor...";
+                // Calcular Saldo Pendiente real (solo si dio menos)
+                let saldoPendiente = 0;
+                if (sumaPagos < totalNetoPagar) { saldoPendiente = totalNetoPagar - sumaPagos; }
 
-            generarFolioConsecutivo(carrito, function(folioNuevo) {
-                if(!folioNuevo) {
-                    btnCobrar.disabled = false; btnCobrar.innerText = "COBRAR E IMPRIMIR";
-                    return; 
+                // Identificar Método Principal para el resumen rápido
+                let metodoPrincipal = lineasDePago.length > 1 ? "Múltiple" : lineasDePago[0].metodo;
+
+                // CRM
+                if(nom !== "GENERAL") {
+                    let clienteGuardado = baseClientes.find(c => c && c.nombre && String(c.nombre).toUpperCase() === nom);
+                    if(clienteGuardado) { if(tel && tel !== clienteGuardado.telefono) db.ref('clientes/' + clienteGuardado.id).update({ telefono: tel });
+                    } else { db.ref('clientes').push({ nombre: nom, telefono: tel || "" }).then(() => mostrarNotificacion(`👤 Cliente guardado.`)); }
                 }
 
-                if(esEfectivo) {
-                    document.getElementById('textoProcesandoCobro').innerText = "Imprimiendo...";
-                    setTimeout(() => { cerrarModalEfectivo(); completarVentaFinal(folioNuevo); }, 2500); 
-                } else {
-                    completarVentaFinal(folioNuevo);
-                }
+                // OBJETO DE VENTA COMPLETO
+                const dataVenta = { 
+                    ticket: folioNuevo, cliente: nom, telefono: tel, 
+                    totalSub: subtotalCarrito, descuento: descuentoTotal, total: totalNetoPagar, // Contabilidad estricta
+                    totalRecibido: sumaPagos, saldoPendiente: saldoPendiente,
+                    pago: metodoPrincipal, detallePagos: lineasDePago, // Guarda el array de con qué pagó
+                    fecha: f, timestamp: Date.now(), carrito: carrito 
+                };
+
+                db.ref('ventas').push(dataVenta);
+
+                let minsTotal = carrito.reduce((sum, p) => sum + ((p.tiempoMinutos || 0) * p.cantidad), 0);
+                let serviciosText = carrito.map(i => `${i.cantidad}x ${i.nombre}`).join(' + ');
+
+                db.ref('turnos').once('value', snap => {
+                    let tiempoBase = Date.now();
+                    if (snap.exists()) {
+                        snap.forEach(child => {
+                            let turno = child.val();
+                            if (turno.estado === 'pendiente' && turno.timestampEntrega > tiempoBase) tiempoBase = turno.timestampEntrega;
+                        });
+                    }
+                    let tiempoFinal = tiempoBase + (minsTotal * 60000);
+                    db.ref('turnos').push({
+                        nombre: nom, numeroTicket: folioNuevo, telefono: tel, estado: 'pendiente', servicio: serviciosText, 
+                        minutosServicio: minsTotal, timestampEntrega: tiempoFinal,
+                        horaFormateada: new Date(tiempoFinal).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true})
+                    });
+
+                    // IMPRESIÓN Y LIMPIEZA
+                    imprimirTicketAvanzado(dataVenta);
+                    if (tel.length >= 10) enviarWhatsApp(tel, nom, folioNuevo);
+
+                    carrito = []; document.getElementById('nombreCliente').value = ''; document.getElementById('telefonoCliente').value = ''; actualizarUI();
+                    cerrarModalPagoAvanzado();
+                    mostrarNotificacion("✅ Venta cobrada con éxito");
+                });
             });
         }
 
-        // --- SISTEMA INTELIGENTE DE TIEMPOS DE ESPERA ---
-        function completarVentaFinal(folioConsecutivo) {
-            let nom = document.getElementById('nombreCliente').value.trim();
-            if (!nom) nom = "General";
-            nom = nom.toUpperCase(); 
+        function imprimirTicketAvanzado(venta) {
+            document.getElementById('tkFecha').innerText = venta.fecha;
+            document.getElementById('tkCliente').innerText = venta.cliente; 
+            document.getElementById('tkCodigoRastreo').innerText = venta.ticket;
             
-            const tel = document.getElementById('telefonoCliente').value.trim();
-            const pago = document.getElementById('metodoPago').value;
-            const total = carrito.reduce((sum, p) => sum + (p.precio * p.cantidad), 0);
-            const f = new Date().toLocaleString('es-MX', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true });
+            const fT = document.getElementById('filaTelefono'); 
+            if (venta.telefono) { document.getElementById('tkTelefono').innerText = venta.telefono; fT.style.display = 'inline'; } 
+            else fT.style.display = 'none';
+            
+            // DETALLE CARRITO
+            const tb = document.getElementById('tkDetalle'); tb.innerHTML = ''; 
+            venta.carrito.forEach(i => { tb.innerHTML += `<tr><td class="td-cant">${i.cantidad}</td><td class="td-desc">${i.nombre}</td><td class="td-precio">$${(i.precio * i.cantidad).toFixed(2)}</td></tr>`; });
+            
+            // DESCUENTO
+            const uiDesc = document.getElementById('tkDescuentoUI');
+            if (venta.descuento > 0) {
+                uiDesc.style.display = 'block';
+                document.getElementById('tkDescuentoValor').innerText = `-$${venta.descuento.toFixed(2)}`;
+            } else { uiDesc.style.display = 'none'; }
 
-            if(nom !== "GENERAL") {
-                let clienteGuardado = baseClientes.find(c => c && c.nombre && String(c.nombre).toUpperCase() === nom);
-                if(clienteGuardado) {
-                    if(tel && tel !== clienteGuardado.telefono) db.ref('clientes/' + clienteGuardado.id).update({ telefono: tel });
-                } else {
-                    db.ref('clientes').push({ nombre: nom, telefono: tel || "" }).then(() => mostrarNotificacion(`👤 Cliente <b>${nom}</b> guardado.`, "info"));
-                }
+            // TOTAL NETO
+            document.getElementById('tkTotalF').innerText = '$' + venta.total.toFixed(2);
+
+            // PAGOS MULTIPLES Y SALDOS
+            const listPagos = document.getElementById('tkListaPagos');
+            listPagos.innerHTML = '';
+            venta.detallePagos.forEach(p => {
+                if (p.monto > 0) listPagos.innerHTML += `<div class="tk-pago-row">Pago en ${p.metodo}: $${p.monto.toFixed(2)}</div>`;
+            });
+
+            // SALDO PENDIENTE O CAMBIO
+            const uiSaldo = document.getElementById('tkSaldoUICaja');
+            if (venta.saldoPendiente > 0) {
+                uiSaldo.innerHTML = `ANTICIPO RECIBIDO<br>RESTA PAGAR: $${venta.saldoPendiente.toFixed(2)}`;
+                uiSaldo.style.display = 'block';
+            } else if (venta.totalRecibido > venta.total) {
+                let cambio = venta.totalRecibido - venta.total;
+                uiSaldo.innerHTML = `SU CAMBIO: $${cambio.toFixed(2)}`;
+                uiSaldo.style.display = 'block';
+            } else {
+                uiSaldo.style.display = 'none';
             }
 
-            db.ref('ventas').push({ ticket: folioConsecutivo, cliente: nom, telefono: tel, total: total, pago: pago, fecha: f, timestamp: Date.now(), carrito: carrito });
-
-            let minsTotal = carrito.reduce((sum, p) => sum + ((p.tiempoMinutos || 0) * p.cantidad), 0);
-            let serviciosText = carrito.map(i => `${i.cantidad}x ${i.nombre}`).join(' + ');
-
-            // Lógica de Acumulación de Tiempo
-            db.ref('turnos').once('value', snap => {
-                let tiempoBase = Date.now();
-                
-                if (snap.exists()) {
-                    snap.forEach(child => {
-                        let turno = child.val();
-                        if (turno.estado === 'pendiente' && turno.timestampEntrega > tiempoBase) {
-                            tiempoBase = turno.timestampEntrega;
-                        }
-                    });
-                }
-
-                let tiempoFinal = tiempoBase + (minsTotal * 60000);
-
-                db.ref('turnos').push({
-                    nombre: nom, 
-                    numeroTicket: folioConsecutivo, 
-                    telefono: tel, 
-                    estado: 'pendiente',
-                    servicio: serviciosText, 
-                    minutosServicio: minsTotal,
-                    timestampEntrega: tiempoFinal,
-                    horaFormateada: new Date(tiempoFinal).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true})
-                });
-
-                imprimirTicket(nom, folioConsecutivo, total, tel, pago);
-                if (tel.length >= 10) enviarWhatsApp(tel, nom, folioConsecutivo);
-
-                carrito = []; document.getElementById('nombreCliente').value = ''; document.getElementById('telefonoCliente').value = ''; document.getElementById('metodoPago').selectedIndex = 0; actualizarUI();
-                mostrarNotificacion("✅ Venta cobrada con éxito");
-            });
-        }
-
-        function imprimirTicket(nom, tic, total, tel, pago) {
-            document.getElementById('tkFecha').innerText = new Date().toLocaleString('es-MX', { year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', hour12:true });
-            document.getElementById('tkCliente').innerText = nom; document.getElementById('tkPago').innerText = pago; document.getElementById('tkTotalF').innerText = '$' + total.toFixed(2); document.getElementById('tkCodigoRastreo').innerText = tic;
-            const fT = document.getElementById('filaTelefono'); if (tel) { document.getElementById('tkTelefono').innerText = tel; fT.style.display = 'inline'; } else fT.style.display = 'none';
-            const tb = document.getElementById('tkDetalle'); tb.innerHTML = ''; carrito.forEach(i => { tb.innerHTML += `<tr><td class="td-cant">${i.cantidad}</td><td class="td-desc">${i.nombre}</td><td class="td-precio">$${(i.precio * i.cantidad).toFixed(2)}</td></tr>`; });
             window.print();
         }
 
-        function enviarWhatsApp(tel, nom, tic) {
-            let num = tel.replace(/\D/g, ''); if(num.length === 10) num = "52" + num;
-            const msj = `¡Hola ${nom}! 👋\nGracias por tu compra en *FOTO ESTUDIO DELUXE* 📸.\n\nTu folio de orden es: *#${tic}*\n\nRastrea tu pedido aquí:\n🔗 ${LINK_RASTREO}\n\n¡Te avisaremos cuando esté listo!`;
-            window.open(`https://wa.me/${num}?text=${encodeURIComponent(msj)}`, '_blank');
-        }
-
+        // --- HISTORIAL ADAPTADO ---
         function escucharVentasRecientes() {
             db.ref('ventas').limitToLast(20).on('value', snap => {
                 const cont = document.getElementById('listaVentasMain');
@@ -716,10 +704,20 @@
                         const btnReembolso = (!esAnulado && esJefe) ? `<button class="btn-h btn-h-del" onclick="reembolsar('${v.id}', false)">❌ Anular</button>` : '';
                         const btnWA = (!esAnulado && v.telefono && v.telefono.replace(/\D/g, '').length >= 10) ? `<button class="btn-h btn-h-wa" onclick="reenviarWA('${v.id}')">📱 WA</button>` : '';
                         const btnPrint = !esAnulado ? `<button class="btn-h btn-h-print" onclick="reimprimir('${v.id}')">🖨️ Imprimir</button>` : '';
-                        const colorBorde = esAnulado ? 'var(--danger)' : 'var(--gold)'; const opacidad = esAnulado ? '0.7' : '1';
-                        const displayTotal = esAnulado ? `<span style="text-decoration: line-through; color:var(--danger)">$${(v.totalAnterior || 0).toFixed(2)}</span> <strong style="color:var(--danger)">DEVOLUCIÓN</strong>` : `<strong style="color:var(--success)">$${v.total.toFixed(2)}</strong>`;
                         
-                        cont.innerHTML += `<div class="venta-item" style="border-left-color: ${colorBorde}; opacity: ${opacidad};"><div style="flex:1;"><strong>Folio #${v.ticket} - ${v.cliente}</strong><br><span style="font-size:12px; color:var(--text-muted);">${v.fecha} | ${displayTotal} (${v.pago})</span></div><div class="acciones-historial">${btnWA}${btnPrint}${btnReembolso}</div></div>`;
+                        let colorBorde = 'var(--gold)'; 
+                        let etiquetaAnticipo = '';
+                        if(v.saldoPendiente > 0 && !esAnulado) {
+                            colorBorde = 'var(--blue)'; // Venta pendiente de pago completo
+                            etiquetaAnticipo = ` <span style="background:var(--blue); color:white; padding:2px 5px; border-radius:3px; font-size:10px;">RESTA $${v.saldoPendiente}</span>`;
+                        }
+
+                        if(esAnulado) colorBorde = 'var(--danger)';
+                        const opacidad = esAnulado ? '0.7' : '1';
+                        
+                        const displayTotal = esAnulado ? `<span style="text-decoration: line-through; color:var(--danger)">$${(v.totalAnterior || 0).toFixed(2)}</span> <strong style="color:var(--danger)">DEVOLUCIÓN</strong>` : `<strong style="color:var(--success)">$${(v.total || 0).toFixed(2)}</strong>`;
+                        
+                        cont.innerHTML += `<div class="venta-item" style="border-left-color: ${colorBorde}; opacity: ${opacidad};"><div style="flex:1;"><strong>Folio #${v.ticket} - ${v.cliente}</strong>${etiquetaAnticipo}<br><span style="font-size:12px; color:var(--text-muted);">${v.fecha} | ${displayTotal} (${v.pago})</span></div><div class="acciones-historial">${btnWA}${btnPrint}${btnReembolso}</div></div>`;
                     }
                 });
             });
@@ -729,10 +727,16 @@
 
         window.reimprimir = id => {
             const v = window.ventasMemoria[id];
-            document.getElementById('tkFecha').innerText = v.fecha + " (Copia)"; document.getElementById('tkCliente').innerText = v.cliente; document.getElementById('tkCodigoRastreo').innerText = v.ticket; document.getElementById('tkPago').innerText = v.pago; document.getElementById('tkTotalF').innerText = '$' + v.total.toFixed(2);
-            const fT = document.getElementById('filaTelefono'); if (v.telefono) { document.getElementById('tkTelefono').innerText = v.telefono; fT.style.display = 'inline'; } else fT.style.display = 'none';
-            const tb = document.getElementById('tkDetalle'); tb.innerHTML = ''; if(v.carrito) { v.carrito.forEach(i => { tb.innerHTML += `<tr><td class="td-cant">${i.cantidad}</td><td class="td-desc">${i.nombre}</td><td class="td-precio">$${(i.precio * i.cantidad).toFixed(2)}</td></tr>`; }); }
-            window.print();
+            // Si la venta no trae formato nuevo (es viaje al pasado), la emulamos
+            if(!v.detallePagos) {
+                v.detallePagos = [{metodo: v.pago, monto: v.total}];
+                v.saldoPendiente = 0;
+                v.totalRecibido = v.total;
+                v.descuento = 0;
+            }
+            // Agregamos texto "(COPIA)" a la fecha
+            const ventaCopia = {...v, fecha: v.fecha + " (COPIA)"};
+            imprimirTicketAvanzado(ventaCopia);
         };
 
         window.reembolsar = (id, esMovimientoInterno) => { 
