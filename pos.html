@@ -247,8 +247,7 @@
                 <strong style="font-size:24px;">Total a Pagar: <span id="mpTotalNeto" style="color:var(--success);">$0.00</span></strong>
             </div>
 
-            <div id="mpLineasPago" style="margin-bottom:15px;">
-                </div>
+            <div id="mpLineasPago" style="margin-bottom:15px;"></div>
             
             <button class="btn-nav" onclick="agregarLineaPago()" style="width:100%; border-style:dashed; margin-bottom:20px; padding:12px; font-size:13px;">➕ Añadir forma de pago (Dividir Cuenta)</button>
 
@@ -296,53 +295,33 @@
         const LINK_RASTREO = "https://edgarsc97.github.io/sistema-deluxe/rastreo.html";
 
         let inventario = []; let carrito = []; let esJefe = false;
-        window.ventasMemoria = {};
-        let baseClientes = [];
-        window.productoEditandoId = null; 
+        window.ventasMemoria = {}; let baseClientes = []; window.productoEditandoId = null; 
         
-        // --- VARIABLES DEL MÓDULO DE PAGOS ---
-        let subtotalCarrito = 0;
-        let descuentoTotal = 0;
-        let totalNetoPagar = 0;
-        let lineasDePago = [];
+        let subtotalCarrito = 0; let descuentoTotal = 0; let totalNetoPagar = 0; let lineasDePago = [];
 
         function mostrarNotificacion(mensaje, tipo = 'success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
-            toast.className = `toast ${tipo}`;
-            toast.innerHTML = mensaje;
+            toast.className = `toast ${tipo}`; toast.innerHTML = mensaje;
             container.appendChild(toast);
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transform = 'translateX(100%)';
-                toast.style.transition = '0.3s';
-                setTimeout(() => toast.remove(), 300);
-            }, 4000);
+            setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(100%)'; setTimeout(() => toast.remove(), 300); }, 4000);
         }
 
         firebase.auth().onAuthStateChanged(user => {
             if (user) {
-                document.getElementById('loginPanel').style.display = 'none';
-                document.getElementById('posPanel').style.display = 'block';
+                document.getElementById('loginPanel').style.display = 'none'; document.getElementById('posPanel').style.display = 'block';
                 esJefe = (user.email.toLowerCase() === EMAIL_ADMIN.toLowerCase());
                 iniciarPOS(); escucharVentasRecientes(); escucharDirectorioClientes();
             } else {
-                document.getElementById('loginPanel').style.display = 'flex';
-                document.getElementById('posPanel').style.display = 'none';
+                document.getElementById('loginPanel').style.display = 'flex'; document.getElementById('posPanel').style.display = 'none';
             }
         });
 
-        document.getElementById('formLogin').addEventListener('submit', e => {
-            e.preventDefault();
-            firebase.auth().signInWithEmailAndPassword(document.getElementById('email').value, document.getElementById('password').value)
-                .catch(() => alert("Credenciales incorrectas"));
-        });
+        document.getElementById('formLogin').addEventListener('submit', e => { e.preventDefault(); firebase.auth().signInWithEmailAndPassword(document.getElementById('email').value, document.getElementById('password').value).catch(() => alert("Credenciales incorrectas")); });
 
-        // --- SISTEMA CRM DE CLIENTES ---
         function escucharDirectorioClientes() {
             db.ref('clientes').on('value', snap => {
-                baseClientes = []; const contUI = document.getElementById('listaDirectorioUI');
-                if(contUI) contUI.innerHTML = '';
+                baseClientes = []; const contUI = document.getElementById('listaDirectorioUI'); if(contUI) contUI.innerHTML = '';
                 if(snap.exists()) {
                     snap.forEach(child => {
                         const c = { id: child.key, ...child.val() };
@@ -381,27 +360,19 @@
 
         document.addEventListener('click', e => { if(e.target.id !== 'nombreCliente' && !e.target.closest('#sugerenciasClientes')) document.getElementById('sugerenciasClientes').style.display = 'none'; });
 
-        // --- SISTEMA DE FOLIOS ---
         function generarFolioConsecutivo(carrito, callback) {
             let textoCarrito = carrito.map(p => String(p.nombre || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()).join(" ");
             let categoriaDB = "general"; let numBase = 40000;
-            if (textoCarrito.includes("titul")) { categoriaDB = "titulacion"; numBase = 10000; } 
-            else if (textoCarrito.includes("servicio") || textoCarrito.includes("serv")) { categoriaDB = "servicio"; numBase = 20000; } 
-            else if (textoCarrito.includes("infantil") || textoCarrito.includes("infan")) { categoriaDB = "infantil"; numBase = 30000; }
-            
-            db.ref('configuracion/folios/' + categoriaDB).transaction(
-                function(val) { return (val || numBase) + 1; }, 
-                function(err, guardado, snap) { if (err) { callback(null); } else if (guardado) { callback(snap.val().toString()); } }
-            );
+            if (textoCarrito.includes("titul")) { categoriaDB = "titulacion"; numBase = 10000; } else if (textoCarrito.includes("servicio") || textoCarrito.includes("serv")) { categoriaDB = "servicio"; numBase = 20000; } else if (textoCarrito.includes("infantil") || textoCarrito.includes("infan")) { categoriaDB = "infantil"; numBase = 30000; }
+            db.ref('configuracion/folios/' + categoriaDB).transaction( function(val) { return (val || numBase) + 1; }, function(err, guardado, snap) { if (err) { callback(null); } else if (guardado) { callback(snap.val().toString()); } });
         }
 
-        // --- FLUJO CAJA Y CATALOGO ---
         document.getElementById('formCaja').addEventListener('submit', e => {
             e.preventDefault();
             const tipo = document.getElementById('tipoMovimiento').value; const concepto = document.getElementById('conceptoMovimiento').value.trim(); const monto = parseFloat(document.getElementById('montoMovimiento').value);
             const tic = "CAJA-" + Math.floor(1000 + Math.random() * 9000); const f = new Date().toLocaleString('es-MX', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true });
             const totalReal = tipo === 'retiro' ? -Math.abs(monto) : Math.abs(monto);
-            db.ref('ventas').push({ ticket: tic, cliente: concepto, total: totalReal, pago: "Efectivo", fecha: f, timestamp: Date.now(), esMovimiento: true, tipoMovimiento: tipo }).then(() => { mostrarNotificacion("✅ Movimiento registrado", "info"); e.target.reset(); cerrarModalCaja(); });
+            db.ref('ventas').push({ ticket: tic, cliente: concepto, total: totalReal, pago: "Efectivo", fecha: f, timestamp: Date.now(), esMovimiento: true, tipoMovimiento: tipo }).then(() => { mostrarNotificacion("✅ Movimiento registrado en caja", "info"); e.target.reset(); cerrarModalCaja(); });
         });
 
         function iniciarPOS() {
@@ -444,20 +415,17 @@
         }
 
         // =========================================================================
-        // MÓDULO DE PAGOS AVANZADOS (DIVISIÓN, ABONOS, DESCUENTOS)
+        // MÓDULO DE PAGOS AVANZADOS
         // =========================================================================
         function abrirModalPagoAvanzado() {
-            // Resetear valores por defecto
             document.getElementById('mpValorDesc').value = '0';
             lineasDePago = [{ id: Date.now(), metodo: 'Efectivo', monto: subtotalCarrito }];
-            
             document.getElementById('modalPagoAvanzado').style.display = 'flex';
+            renderizarLineasPago(); 
             calcularTotalesPago();
         }
 
-        function cerrarModalPagoAvanzado() {
-            document.getElementById('modalPagoAvanzado').style.display = 'none';
-        }
+        function cerrarModalPagoAvanzado() { document.getElementById('modalPagoAvanzado').style.display = 'none'; }
 
         function agregarLineaPago() {
             lineasDePago.push({ id: Date.now(), metodo: 'Tarjeta', monto: 0 });
@@ -467,21 +435,22 @@
 
         function quitarLineaPago(id) {
             lineasDePago = lineasDePago.filter(p => p.id !== id);
-            if(lineasDePago.length === 0) agregarLineaPago(); // Siempre debe haber mínimo 1
+            if(lineasDePago.length === 0) lineasDePago.push({ id: Date.now(), metodo: 'Efectivo', monto: 0 });
             renderizarLineasPago();
             calcularTotalesPago();
         }
 
+        // Ya NO llamamos a renderizarLineasPago() aquí, solo actualizamos datos de fondo y totales.
         function actualizarMontoLinea(id, valorStr) {
             let p = lineasDePago.find(l => l.id === id);
             if(p) p.monto = parseFloat(valorStr) || 0;
-            calcularTotalesPago();
+            calcularTotalesPago(); 
         }
 
         function actualizarMetodoLinea(id, metodo) {
             let p = lineasDePago.find(l => l.id === id);
             if(p) p.metodo = metodo;
-            calcularTotalesPago(); // Por si queremos cambiar logica por tarjeta despues
+            calcularTotalesPago();
         }
 
         function renderizarLineasPago() {
@@ -503,112 +472,91 @@
         }
 
         function calcularTotalesPago() {
-            // 1. Calcular Descuento
-            const tipoDesc = document.getElementById('mpTipoDesc').value;
-            const valorDesc = parseFloat(document.getElementById('mpValorDesc').value) || 0;
-            
+            const tipoDesc = document.getElementById('mpTipoDesc').value; const valorDesc = parseFloat(document.getElementById('mpValorDesc').value) || 0;
             descuentoTotal = 0;
-            if (tipoDesc === 'fijo') { descuentoTotal = valorDesc; } 
-            else if (tipoDesc === 'porcentaje') { descuentoTotal = subtotalCarrito * (valorDesc / 100); }
-            
+            if (tipoDesc === 'fijo') { descuentoTotal = valorDesc; } else if (tipoDesc === 'porcentaje') { descuentoTotal = subtotalCarrito * (valorDesc / 100); }
             if (descuentoTotal > subtotalCarrito) descuentoTotal = subtotalCarrito;
-
             totalNetoPagar = subtotalCarrito - descuentoTotal;
 
-            // 2. Calcular Suma de Pagos Recibidos
             let sumaPagos = lineasDePago.reduce((sum, p) => sum + p.monto, 0);
-            
-            // 3. Lógica de Saldo Pendiente o Cambio
             let diferencia = sumaPagos - totalNetoPagar;
             let esAbono = diferencia < 0;
             
-            // Render UI
             document.getElementById('mpSubtotal').innerText = `$${subtotalCarrito.toFixed(2)}`;
             document.getElementById('mpTotalNeto').innerText = `$${totalNetoPagar.toFixed(2)}`;
             document.getElementById('mpTotalRecibido').innerText = `$${sumaPagos.toFixed(2)}`;
 
-            const lblSaldo = document.getElementById('mpLabelSaldo');
-            const valSaldo = document.getElementById('mpValorSaldo');
-            const cajaSaldo = document.getElementById('mpCajaSaldo');
-            const btnConf = document.getElementById('btnConfirmarPagoFinal');
+            const lblSaldo = document.getElementById('mpLabelSaldo'); const valSaldo = document.getElementById('mpValorSaldo'); const btnConf = document.getElementById('btnConfirmarPagoFinal');
 
             if (sumaPagos === 0) {
                 lblSaldo.innerText = "Falta (Saldo Pendiente):"; lblSaldo.style.color = "var(--text-muted)";
                 valSaldo.innerText = `$${totalNetoPagar.toFixed(2)}`; valSaldo.style.color = "var(--danger)";
                 btnConf.disabled = true; btnConf.innerText = "ESPERANDO PAGO...";
-            } 
-            else if (esAbono) {
-                // Dejó a cuenta (Abono)
+            } else if (esAbono) {
                 lblSaldo.innerText = "ANTICIPO. Saldo Pendiente:"; lblSaldo.style.color = "var(--gold)";
                 valSaldo.innerText = `$${Math.abs(diferencia).toFixed(2)}`; valSaldo.style.color = "var(--gold)";
                 btnConf.disabled = false; btnConf.innerText = "COBRAR ANTICIPO";
-            } 
-            else {
-                // Pagó completo o hay cambio
+            } else {
                 if (diferencia > 0) {
-                    // Verifica si hay efectivo para dar cambio
                     let hayEfectivo = lineasDePago.some(p => p.metodo === 'Efectivo');
-                    if (hayEfectivo) {
-                        lblSaldo.innerText = "DAR CAMBIO DE:"; lblSaldo.style.color = "var(--text-muted)";
-                        valSaldo.innerText = `$${diferencia.toFixed(2)}`; valSaldo.style.color = "var(--success)";
-                    } else {
-                        lblSaldo.innerText = "SOBREPAGO DE TARJETA:"; lblSaldo.style.color = "var(--danger)";
-                        valSaldo.innerText = `$${diferencia.toFixed(2)}`; valSaldo.style.color = "var(--danger)";
-                    }
+                    if (hayEfectivo) { lblSaldo.innerText = "DAR CAMBIO DE:"; lblSaldo.style.color = "var(--text-muted)"; valSaldo.innerText = `$${diferencia.toFixed(2)}`; valSaldo.style.color = "var(--success)"; } 
+                    else { lblSaldo.innerText = "SOBREPAGO DE TARJETA:"; lblSaldo.style.color = "var(--danger)"; valSaldo.innerText = `$${diferencia.toFixed(2)}`; valSaldo.style.color = "var(--danger)"; }
                 } else {
-                    lblSaldo.innerText = "PAGO EXACTO"; lblSaldo.style.color = "var(--text-muted)";
-                    valSaldo.innerText = `$0.00`; valSaldo.style.color = "var(--success)";
+                    lblSaldo.innerText = "PAGO EXACTO"; lblSaldo.style.color = "var(--text-muted)"; valSaldo.innerText = `$0.00`; valSaldo.style.color = "var(--success)";
                 }
                 btnConf.disabled = false; btnConf.innerText = "COBRAR TOTAL";
             }
-
-            renderizarLineasPago();
         }
 
         // =========================================================================
-        // CONFIRMACIÓN Y GUARDADO DE VENTA MULTIPAGO
+        // CONFIRMAR VENTA GLOBAL CON NUEVA LÓGICA LIMPIA
         // =========================================================================
         function confirmarPagoAvanzado() {
             let sumaPagos = lineasDePago.reduce((sum, p) => sum + p.monto, 0);
-            if (sumaPagos === 0) return;
+            if (sumaPagos === 0 && totalNetoPagar > 0) return;
 
             new Audio('https://actions.google.com/sounds/v1/cartoon/clink.ogg').play().catch(()=>{});
+            
+            const btnConf = document.getElementById('btnConfirmarPagoFinal');
+            btnConf.disabled = true; 
+            btnConf.innerText = "GENERANDO FOLIO...";
 
-            document.getElementById('btnConfirmarPagoFinal').disabled = true;
-            document.getElementById('btnConfirmarPagoFinal').innerText = "PROCESANDO...";
+            // Inicia la generación del folio en Firebase
+            generarFolioConsecutivo(carrito, function(folioNuevo) {
+                if(!folioNuevo) { 
+                    btnConf.disabled = false; btnConf.innerText = "COBRAR TOTAL";
+                    mostrarNotificacion("Error al generar folio", "error");
+                    return; 
+                }
 
-            iniciarGeneracionFolio((folioNuevo) => {
-                if(!folioNuevo) { cerrarModalPagoAvanzado(); return; }
+                btnConf.innerText = "PROCESANDO...";
 
                 let nom = document.getElementById('nombreCliente').value.trim();
                 if (!nom) nom = "General"; nom = nom.toUpperCase(); 
-                
-                const tel = document.getElementById('telefonoCliente').value.trim();
+                const tel = document.getElementById('telefonoCliente').value.trim(); 
                 const f = new Date().toLocaleString('es-MX', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true });
 
-                // Calcular Saldo Pendiente real (solo si dio menos)
                 let saldoPendiente = 0;
                 if (sumaPagos < totalNetoPagar) { saldoPendiente = totalNetoPagar - sumaPagos; }
-
-                // Identificar Método Principal para el resumen rápido
                 let metodoPrincipal = lineasDePago.length > 1 ? "Múltiple" : lineasDePago[0].metodo;
 
-                // CRM
                 if(nom !== "GENERAL") {
                     let clienteGuardado = baseClientes.find(c => c && c.nombre && String(c.nombre).toUpperCase() === nom);
-                    if(clienteGuardado) { if(tel && tel !== clienteGuardado.telefono) db.ref('clientes/' + clienteGuardado.id).update({ telefono: tel });
-                    } else { db.ref('clientes').push({ nombre: nom, telefono: tel || "" }).then(() => mostrarNotificacion(`👤 Cliente guardado.`)); }
+                    if(clienteGuardado) { 
+                        if(tel && tel !== clienteGuardado.telefono) db.ref('clientes/' + clienteGuardado.id).update({ telefono: tel });
+                    } else { 
+                        db.ref('clientes').push({ nombre: nom, telefono: tel || "" }).then(() => mostrarNotificacion(`👤 Cliente guardado.`)); 
+                    }
                 }
 
-                // OBJETO DE VENTA COMPLETO
                 const dataVenta = { 
                     ticket: folioNuevo, cliente: nom, telefono: tel, 
-                    totalSub: subtotalCarrito, descuento: descuentoTotal, total: totalNetoPagar, // Contabilidad estricta
-                    totalRecibido: sumaPagos, saldoPendiente: saldoPendiente,
-                    pago: metodoPrincipal, detallePagos: lineasDePago, // Guarda el array de con qué pagó
+                    totalSub: subtotalCarrito, descuento: descuentoTotal, total: totalNetoPagar, 
+                    totalRecibido: sumaPagos, saldoPendiente: saldoPendiente, 
+                    pago: metodoPrincipal, detallePagos: lineasDePago, 
                     fecha: f, timestamp: Date.now(), carrito: carrito 
                 };
-
+                
                 db.ref('ventas').push(dataVenta);
 
                 let minsTotal = carrito.reduce((sum, p) => sum + ((p.tiempoMinutos || 0) * p.cantidad), 0);
@@ -616,83 +564,53 @@
 
                 db.ref('turnos').once('value', snap => {
                     let tiempoBase = Date.now();
-                    if (snap.exists()) {
-                        snap.forEach(child => {
-                            let turno = child.val();
-                            if (turno.estado === 'pendiente' && turno.timestampEntrega > tiempoBase) tiempoBase = turno.timestampEntrega;
-                        });
+                    if (snap.exists()) { 
+                        snap.forEach(child => { 
+                            let turno = child.val(); 
+                            if (turno.estado === 'pendiente' && turno.timestampEntrega > tiempoBase) tiempoBase = turno.timestampEntrega; 
+                        }); 
                     }
                     let tiempoFinal = tiempoBase + (minsTotal * 60000);
-                    db.ref('turnos').push({
-                        nombre: nom, numeroTicket: folioNuevo, telefono: tel, estado: 'pendiente', servicio: serviciosText, 
-                        minutosServicio: minsTotal, timestampEntrega: tiempoFinal,
-                        horaFormateada: new Date(tiempoFinal).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true})
+                    db.ref('turnos').push({ 
+                        nombre: nom, numeroTicket: folioNuevo, telefono: tel, estado: 'pendiente', 
+                        servicio: serviciosText, minutosServicio: minsTotal, timestampEntrega: tiempoFinal, 
+                        horaFormateada: new Date(tiempoFinal).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true}) 
                     });
 
-                    // IMPRESIÓN Y LIMPIEZA
                     imprimirTicketAvanzado(dataVenta);
                     if (tel.length >= 10) enviarWhatsApp(tel, nom, folioNuevo);
 
                     carrito = []; document.getElementById('nombreCliente').value = ''; document.getElementById('telefonoCliente').value = ''; actualizarUI();
-                    cerrarModalPagoAvanzado();
+                    cerrarModalPagoAvanzado(); 
                     mostrarNotificacion("✅ Venta cobrada con éxito");
+                    
+                    btnConf.disabled = false; btnConf.innerText = "COBRAR TOTAL";
                 });
             });
         }
 
         function imprimirTicketAvanzado(venta) {
-            document.getElementById('tkFecha').innerText = venta.fecha;
-            document.getElementById('tkCliente').innerText = venta.cliente; 
-            document.getElementById('tkCodigoRastreo').innerText = venta.ticket;
-            
-            const fT = document.getElementById('filaTelefono'); 
-            if (venta.telefono) { document.getElementById('tkTelefono').innerText = venta.telefono; fT.style.display = 'inline'; } 
-            else fT.style.display = 'none';
-            
-            // DETALLE CARRITO
-            const tb = document.getElementById('tkDetalle'); tb.innerHTML = ''; 
-            venta.carrito.forEach(i => { tb.innerHTML += `<tr><td class="td-cant">${i.cantidad}</td><td class="td-desc">${i.nombre}</td><td class="td-precio">$${(i.precio * i.cantidad).toFixed(2)}</td></tr>`; });
-            
-            // DESCUENTO
+            document.getElementById('tkFecha').innerText = venta.fecha; document.getElementById('tkCliente').innerText = venta.cliente; document.getElementById('tkCodigoRastreo').innerText = venta.ticket;
+            const fT = document.getElementById('filaTelefono'); if (venta.telefono) { document.getElementById('tkTelefono').innerText = venta.telefono; fT.style.display = 'inline'; } else fT.style.display = 'none';
+            const tb = document.getElementById('tkDetalle'); tb.innerHTML = ''; venta.carrito.forEach(i => { tb.innerHTML += `<tr><td class="td-cant">${i.cantidad}</td><td class="td-desc">${i.nombre}</td><td class="td-precio">$${(i.precio * i.cantidad).toFixed(2)}</td></tr>`; });
             const uiDesc = document.getElementById('tkDescuentoUI');
-            if (venta.descuento > 0) {
-                uiDesc.style.display = 'block';
-                document.getElementById('tkDescuentoValor').innerText = `-$${venta.descuento.toFixed(2)}`;
-            } else { uiDesc.style.display = 'none'; }
-
-            // TOTAL NETO
+            if (venta.descuento > 0) { uiDesc.style.display = 'block'; document.getElementById('tkDescuentoValor').innerText = `-$${venta.descuento.toFixed(2)}`; } else { uiDesc.style.display = 'none'; }
             document.getElementById('tkTotalF').innerText = '$' + venta.total.toFixed(2);
+            
+            const listPagos = document.getElementById('tkListaPagos'); listPagos.innerHTML = '';
+            venta.detallePagos.forEach(p => { if (p.monto > 0) listPagos.innerHTML += `<div class="tk-pago-row">Pago en ${p.metodo}: $${p.monto.toFixed(2)}</div>`; });
 
-            // PAGOS MULTIPLES Y SALDOS
-            const listPagos = document.getElementById('tkListaPagos');
-            listPagos.innerHTML = '';
-            venta.detallePagos.forEach(p => {
-                if (p.monto > 0) listPagos.innerHTML += `<div class="tk-pago-row">Pago en ${p.metodo}: $${p.monto.toFixed(2)}</div>`;
-            });
-
-            // SALDO PENDIENTE O CAMBIO
             const uiSaldo = document.getElementById('tkSaldoUICaja');
-            if (venta.saldoPendiente > 0) {
-                uiSaldo.innerHTML = `ANTICIPO RECIBIDO<br>RESTA PAGAR: $${venta.saldoPendiente.toFixed(2)}`;
-                uiSaldo.style.display = 'block';
-            } else if (venta.totalRecibido > venta.total) {
-                let cambio = venta.totalRecibido - venta.total;
-                uiSaldo.innerHTML = `SU CAMBIO: $${cambio.toFixed(2)}`;
-                uiSaldo.style.display = 'block';
-            } else {
-                uiSaldo.style.display = 'none';
-            }
-
+            if (venta.saldoPendiente > 0) { uiSaldo.innerHTML = `ANTICIPO RECIBIDO<br>RESTA PAGAR: $${venta.saldoPendiente.toFixed(2)}`; uiSaldo.style.display = 'block';
+            } else if (venta.totalRecibido > venta.total) { let cambio = venta.totalRecibido - venta.total; uiSaldo.innerHTML = `SU CAMBIO: $${cambio.toFixed(2)}`; uiSaldo.style.display = 'block';
+            } else { uiSaldo.style.display = 'none'; }
             window.print();
         }
 
-        // --- HISTORIAL ADAPTADO ---
         function escucharVentasRecientes() {
             db.ref('ventas').limitToLast(20).on('value', snap => {
-                const cont = document.getElementById('listaVentasMain');
-                cont.innerHTML = '';
+                const cont = document.getElementById('listaVentasMain'); cont.innerHTML = '';
                 if(!snap.exists()) { cont.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding: 20px;">Sin ventas aún</div>'; return; }
-
                 let vArr = []; snap.forEach(c => { vArr.push({ id: c.key, ...c.val() }); window.ventasMemoria[c.key] = c.val(); });
                 vArr.reverse().forEach(v => {
                     if (v.esMovimiento) {
@@ -700,23 +618,11 @@
                         const btnAnularMov = esJefe ? `<button class="btn-h btn-h-del" onclick="reembolsar('${v.id}', true)">❌ Anular</button>` : '';
                         cont.innerHTML += `<div class="venta-item" style="border-left-color: ${colorTxt}; background: rgba(255,255,255,0.02);"><div style="flex:1;"><strong style="color:${colorTxt};">${icono}</strong><br><span style="font-size:13px;">${v.cliente}</span><br><span style="font-size:12px; color:var(--text-muted);">${v.fecha} | <strong style="color:${colorTxt}">${signo}$${Math.abs(v.total).toFixed(2)}</strong></span></div><div class="acciones-historial">${btnAnularMov}</div></div>`;
                     } else {
-                        const esAnulado = v.estado === 'anulado';
-                        const btnReembolso = (!esAnulado && esJefe) ? `<button class="btn-h btn-h-del" onclick="reembolsar('${v.id}', false)">❌ Anular</button>` : '';
-                        const btnWA = (!esAnulado && v.telefono && v.telefono.replace(/\D/g, '').length >= 10) ? `<button class="btn-h btn-h-wa" onclick="reenviarWA('${v.id}')">📱 WA</button>` : '';
-                        const btnPrint = !esAnulado ? `<button class="btn-h btn-h-print" onclick="reimprimir('${v.id}')">🖨️ Imprimir</button>` : '';
-                        
-                        let colorBorde = 'var(--gold)'; 
-                        let etiquetaAnticipo = '';
-                        if(v.saldoPendiente > 0 && !esAnulado) {
-                            colorBorde = 'var(--blue)'; // Venta pendiente de pago completo
-                            etiquetaAnticipo = ` <span style="background:var(--blue); color:white; padding:2px 5px; border-radius:3px; font-size:10px;">RESTA $${v.saldoPendiente}</span>`;
-                        }
-
-                        if(esAnulado) colorBorde = 'var(--danger)';
-                        const opacidad = esAnulado ? '0.7' : '1';
-                        
+                        const esAnulado = v.estado === 'anulado'; const btnReembolso = (!esAnulado && esJefe) ? `<button class="btn-h btn-h-del" onclick="reembolsar('${v.id}', false)">❌ Anular</button>` : ''; const btnWA = (!esAnulado && v.telefono && v.telefono.replace(/\D/g, '').length >= 10) ? `<button class="btn-h btn-h-wa" onclick="reenviarWA('${v.id}')">📱 WA</button>` : ''; const btnPrint = !esAnulado ? `<button class="btn-h btn-h-print" onclick="reimprimir('${v.id}')">🖨️ Imprimir</button>` : '';
+                        let colorBorde = 'var(--gold)'; let etiquetaAnticipo = '';
+                        if(v.saldoPendiente > 0 && !esAnulado) { colorBorde = 'var(--blue)'; etiquetaAnticipo = ` <span style="background:var(--blue); color:white; padding:2px 5px; border-radius:3px; font-size:10px;">RESTA $${v.saldoPendiente.toFixed(2)}</span>`; }
+                        if(esAnulado) colorBorde = 'var(--danger)'; const opacidad = esAnulado ? '0.7' : '1';
                         const displayTotal = esAnulado ? `<span style="text-decoration: line-through; color:var(--danger)">$${(v.totalAnterior || 0).toFixed(2)}</span> <strong style="color:var(--danger)">DEVOLUCIÓN</strong>` : `<strong style="color:var(--success)">$${(v.total || 0).toFixed(2)}</strong>`;
-                        
                         cont.innerHTML += `<div class="venta-item" style="border-left-color: ${colorBorde}; opacity: ${opacidad};"><div style="flex:1;"><strong>Folio #${v.ticket} - ${v.cliente}</strong>${etiquetaAnticipo}<br><span style="font-size:12px; color:var(--text-muted);">${v.fecha} | ${displayTotal} (${v.pago})</span></div><div class="acciones-historial">${btnWA}${btnPrint}${btnReembolso}</div></div>`;
                     }
                 });
@@ -724,48 +630,16 @@
         }
 
         window.reenviarWA = id => { const v = window.ventasMemoria[id]; enviarWhatsApp(v.telefono, v.cliente, v.ticket); };
-
-        window.reimprimir = id => {
-            const v = window.ventasMemoria[id];
-            // Si la venta no trae formato nuevo (es viaje al pasado), la emulamos
-            if(!v.detallePagos) {
-                v.detallePagos = [{metodo: v.pago, monto: v.total}];
-                v.saldoPendiente = 0;
-                v.totalRecibido = v.total;
-                v.descuento = 0;
-            }
-            // Agregamos texto "(COPIA)" a la fecha
-            const ventaCopia = {...v, fecha: v.fecha + " (COPIA)"};
-            imprimirTicketAvanzado(ventaCopia);
-        };
+        window.reimprimir = id => { const v = window.ventasMemoria[id]; if(!v.detallePagos) { v.detallePagos = [{metodo: v.pago, monto: v.total}]; v.saldoPendiente = 0; v.totalRecibido = v.total; v.descuento = 0; } const ventaCopia = {...v, fecha: v.fecha + " (COPIA)"}; imprimirTicketAvanzado(ventaCopia); };
 
         window.reembolsar = (id, esMovimientoInterno) => { 
             const venta = window.ventasMemoria[id];
-            if (esMovimientoInterno) { 
-                if(confirm("¿Seguro que deseas eliminar este movimiento de caja?")) {
-                    db.ref('ventas/' + id).remove().then(() => mostrarNotificacion("✅ Movimiento eliminado", "info")); 
-                }
-                return; 
-            }
-
+            if (esMovimientoInterno) { if(confirm("¿Seguro que deseas eliminar este movimiento de caja?")) { db.ref('ventas/' + id).remove().then(() => mostrarNotificacion("✅ Movimiento eliminado", "info")); } return; }
             const pass = prompt(`Vas a ANULAR el folio #${venta.ticket} por $${venta.total.toFixed(2)}.\n\nEscribe CANCELAR para autorizar:`);
-            if (pass === "CANCELAR" || pass === "cancelar") {
-                db.ref('turnos').once('value', snap => { snap.forEach(child => { if(String(child.val().numeroTicket) === String(venta.ticket)) db.ref('turnos/' + child.key).remove(); }); });
-                db.ref('ventas/' + id).update({ estado: 'anulado', cliente: '❌ ' + venta.cliente, totalAnterior: venta.total, total: 0 }).then(() => { 
-                    mostrarNotificacion("✅ Devolución procesada correctamente", "info");
-                    cerrarModalHistorial(); 
-                });
-            }
+            if (pass === "CANCELAR" || pass === "cancelar") { db.ref('turnos').once('value', snap => { snap.forEach(child => { if(String(child.val().numeroTicket) === String(venta.ticket)) db.ref('turnos/' + child.key).remove(); }); }); db.ref('ventas/' + id).update({ estado: 'anulado', cliente: '❌ ' + venta.cliente, totalAnterior: venta.total, total: 0 }).then(() => { mostrarNotificacion("✅ Devolución procesada correctamente", "info"); cerrarModalHistorial(); }); }
         };
 
-        function abrirModalCaja() { document.getElementById('modalCaja').style.display = 'flex'; }
-        function cerrarModalCaja() { document.getElementById('modalCaja').style.display = 'none'; document.getElementById('formCaja').reset(); }
-        function abrirModalCatalogo() { document.getElementById('modalCatalogo').style.display = 'flex'; }
-        function cerrarModalCatalogo() { document.getElementById('modalCatalogo').style.display = 'none'; resetFormCatalogo(); }
-        function abrirModalHistorial() { document.getElementById('modalHistorial').style.display = 'flex'; document.getElementById('listaReimpresion').innerHTML = document.getElementById('listaVentasMain').innerHTML; }
-        function cerrarModalHistorial() { document.getElementById('modalHistorial').style.display = 'none'; }
-        function abrirModalDirectorio() { document.getElementById('modalDirectorio').style.display = 'flex'; }
-        function cerrarModalDirectorio() { document.getElementById('modalDirectorio').style.display = 'none'; }
+        function abrirModalCaja() { document.getElementById('modalCaja').style.display = 'flex'; } function cerrarModalCaja() { document.getElementById('modalCaja').style.display = 'none'; document.getElementById('formCaja').reset(); } function abrirModalCatalogo() { document.getElementById('modalCatalogo').style.display = 'flex'; } function cerrarModalCatalogo() { document.getElementById('modalCatalogo').style.display = 'none'; resetFormCatalogo(); } function abrirModalHistorial() { document.getElementById('modalHistorial').style.display = 'flex'; document.getElementById('listaReimpresion').innerHTML = document.getElementById('listaVentasMain').innerHTML; } function cerrarModalHistorial() { document.getElementById('modalHistorial').style.display = 'none'; } function abrirModalDirectorio() { document.getElementById('modalDirectorio').style.display = 'flex'; } function cerrarModalDirectorio() { document.getElementById('modalDirectorio').style.display = 'none'; }
     </script>
 </body>
 </html>
