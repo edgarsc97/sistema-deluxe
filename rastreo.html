@@ -3,86 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rastreo de Orden - Deluxe</title>
+    <title>Rastreo de Pedido - Deluxe</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-body: #0A0E17;
-            --bg-panel: #111827;
-            --bg-input: #1F2937;
-            --texto-principal: #F3F4F6;
-            --texto-secundario: #9CA3AF;
-            --borde: rgba(255, 255, 255, 0.08);
-            --oro: #D4AF37;
-            --verde-exito: #10B981;
-            --sombra: rgba(0,0,0,0.5);
-            --fb-color: #1877F2;
+            --bg-body: #0A0E17; --bg-panel: #111827; --text-main: #F3F4F6;
+            --text-muted: #9CA3AF; --gold: #D4AF37; --success: #059669;
+            --blue: #3b82f6; --border: rgba(255, 255, 255, 0.08);
+            --google: #ea4335; --facebook: #1877F2;
         }
-
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-body); color: var(--texto-principal); margin: 0; padding: 20px; text-align: center; display: flex; flex-direction: column; align-items: center; min-height: 100vh; box-sizing: border-box;}
+        body { font-family: 'Inter', sans-serif; background: var(--bg-body); color: var(--text-main); margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         
-        .header { margin-top: 5vh; margin-bottom: 30px; width: 100%; max-width: 400px;}
-        .logo-estudio { max-width: 180px; height: auto; margin-bottom: 20px; border-radius: 8px; }
-        .header h1 { color: var(--oro); margin: 0; font-size: 24px; text-transform: uppercase; letter-spacing: 4px; font-weight: 300;}
-        
-        .buscador { background: var(--bg-panel); padding: 30px 25px; border-radius: 16px; border: 1px solid var(--borde); box-shadow: 0 20px 40px var(--sombra); width: 100%; max-width: 400px; box-sizing: border-box; position: relative; overflow: hidden;}
-        .buscador::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: var(--oro); }
+        .header { width: 100%; background: var(--bg-panel); padding: 20px 0; text-align: center; border-bottom: 2px solid var(--gold); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+        .header h1 { margin: 0; font-size: 20px; font-weight: 300; letter-spacing: 4px; }
+        .header h1 span { color: var(--gold); font-weight: 800; }
 
-        input { width: 100%; padding: 16px; border-radius: 8px; border: 1px solid var(--borde); font-size: 15px; text-align: center; box-sizing: border-box; margin-bottom: 20px; background: var(--bg-input); color: white; letter-spacing: 1px; transition: 0.3s;}
-        input:focus { outline: none; border-color: var(--oro); }
-        
-        button.btn-buscar { width: 100%; padding: 16px; background: var(--oro); color: #000; border: none; border-radius: 8px; font-size: 15px; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s;}
+        .container { width: 90%; max-width: 400px; margin: 30px auto; display: flex; flex-direction: column; gap: 20px; }
 
-        .resultado { margin-top: 30px; display: none; background: var(--bg-panel); padding: 40px 25px; border-radius: 16px; border: 1px solid var(--borde); box-shadow: 0 20px 40px var(--sombra); width: 100%; max-width: 400px; box-sizing: border-box; animation: aparecer 0.5s ease-out;}
-        
-        @keyframes aparecer { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        /* Buscador */
+        .search-box { background: var(--bg-panel); padding: 20px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
+        .search-box input { width: 100%; padding: 15px; margin-bottom: 15px; background: #1F2937; border: 1px solid var(--border); color: white; border-radius: 8px; font-size: 16px; text-align: center; box-sizing: border-box; font-weight: bold; letter-spacing: 2px;}
+        .search-box button { width: 100%; padding: 15px; background: var(--gold); color: black; border: none; border-radius: 8px; font-weight: 800; font-size: 14px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;}
 
-        /* --- ESTILOS BARRA DE PROGRESO VIP --- */
-        .progreso-container { margin: 25px 0; text-align: left; }
-        .progreso-labels { display: flex; justify-content: space-between; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--texto-secundario); margin-bottom: 8px; font-weight: 600;}
-        .barra-fondo { background: var(--bg-input); height: 12px; border-radius: 10px; width: 100%; position: relative; overflow: hidden; border: 1px solid var(--borde); }
-        .barra-llena { height: 100%; background: linear-gradient(90deg, #B08D4A 0%, var(--oro) 100%); width: 0%; transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 15px rgba(212, 175, 55, 0.4); }
+        /* Tarjeta de Estado */
+        .status-card { background: var(--bg-panel); padding: 25px 20px; border-radius: 12px; border: 1px solid var(--border); text-align: center; display: none; }
+        .status-badge { display: inline-block; padding: 8px 16px; border-radius: 20px; font-weight: 800; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px;}
         
-        .estado-icono { font-size: 50px; margin-bottom: 15px; }
-        .estado-texto { font-size: 20px; font-weight: 800; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px;}
-        .detalle-texto { color: var(--texto-secundario); font-size: 14px; margin-bottom: 20px; line-height: 1.6;}
+        .estado-pendiente { background: rgba(59, 130, 246, 0.1); color: var(--blue); border: 1px solid var(--blue); }
+        .estado-listo { background: rgba(5, 150, 105, 0.1); color: var(--success); border: 1px solid var(--success); animation: parpadeo 2s infinite; }
+        .estado-archivado { background: rgba(156, 163, 175, 0.1); color: var(--text-muted); border: 1px solid var(--text-muted); }
         
-        /* ESTADOS ESPECIALES */
-        .proceso .estado-texto { color: var(--oro); }
-        .listo .estado-texto { color: var(--verde-exito); }
-        .listo .barra-llena { background: var(--verde-exito); box-shadow: 0 0 20px rgba(16, 185, 129, 0.5); }
+        @keyframes parpadeo { 0%, 100% { box-shadow: 0 0 10px rgba(5, 150, 105, 0.2); } 50% { box-shadow: 0 0 25px rgba(5, 150, 105, 0.6); } }
 
-        .btn-social { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 16px; border-radius: 8px; font-size: 13px; font-weight: 800; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; margin-bottom: 12px; text-decoration: none; box-sizing: border-box;}
-        .btn-google { background: #ffffff; color: #000000; }
-        .btn-fb { background: var(--fb-color); color: #ffffff; }
+        .cliente-name { font-size: 22px; font-weight: 800; margin: 10px 0 5px 0; }
+        .servicio-info { color: var(--gold); font-size: 14px; font-weight: 600; margin-bottom: 20px; }
+        .hora-entrega { font-size: 13px; color: var(--text-muted); background: #1F2937; padding: 10px; border-radius: 8px;}
 
-        .pie-pagina { margin-top: auto; padding: 40px 0; color: #4B5563; font-size: 11px; letter-spacing: 1px; }
+        /* SECCIÓN DE BONIFICACIÓN (VIP) */
+        .promo-card { background: linear-gradient(145deg, #1f1c0d, #2d2610); border: 1px solid var(--gold); padding: 25px 20px; border-radius: 12px; text-align: center; box-shadow: 0 10px 30px rgba(212, 175, 55, 0.15); }
+        .promo-title { color: var(--gold); font-weight: 800; font-size: 18px; margin: 0 0 10px 0; letter-spacing: 1px; }
+        .promo-text { font-size: 13px; color: #D1D5DB; margin-bottom: 20px; line-height: 1.5; }
+        
+        .btn-social { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 14px; border-radius: 8px; font-weight: 800; font-size: 13px; cursor: pointer; text-decoration: none; text-transform: uppercase; letter-spacing: 1px; box-sizing: border-box; margin-bottom: 12px; transition: transform 0.2s;}
+        .btn-social:active { transform: scale(0.97); }
+        
+        .btn-google { background: white; color: #000; border: 1px solid #ddd; }
+        .btn-facebook { background: var(--facebook); color: white; border: none; }
+        
+        .icon-gm { font-size: 18px; }
+
     </style>
 </head>
 <body>
 
     <div class="header">
-        <img src="logo.png" alt="Logo Estudio" class="logo-estudio" onerror="this.style.display='none'">
-        <h1>Portal VIP</h1>
-        <p>Seguimiento de Orden</p>
+        <h1>ESTUDIO <span>DELUXE</span></h1>
     </div>
 
-    <div class="buscador">
-        <input type="text" id="busqueda" placeholder="ID de Ticket o Nombre" required autocomplete="off">
-        <button class="btn-buscar" id="btnBuscar" onclick="buscarTurno()">Consultar Estado</button>
+    <div class="container">
+        
+        <div class="promo-card">
+            <h2 class="promo-title">⭐ ¡OBTÉN $10 DE BONIFICACIÓN!</h2>
+            <p class="promo-text">Califica nuestro servicio con 5 estrellas en Google Maps, tómale captura y <strong>te descontamos / reembolsamos $10 MXN</strong> en tu compra al instante.</p>
+            
+            <a href="https://g.page/r/CUBwuWzC-4A0EBI/review" target="_blank" class="btn-social btn-google">
+                <span class="icon-gm">📍</span> CALIFICAR EN GOOGLE MAPS
+            </a>
+
+            <a href="https://www.facebook.com/tu_pagina" target="_blank" class="btn-social btn-facebook">
+                👍 SEGUIR EN FACEBOOK
+            </a>
+        </div>
+
+        <div class="search-box" id="searchBox">
+            <p style="margin-top:0; font-size: 14px; color:var(--text-muted);">Ingresa tu número de Folio para revisar el estado de tu pedido.</p>
+            <input type="number" id="inputFolio" placeholder="Ej. 10001">
+            <button onclick="buscarPedido()">🔎 Rastrear Pedido</button>
+            <p id="errorMsg" style="color:var(--danger); font-size: 12px; display:none; margin-top:10px;">Folio no encontrado. Verifica tu ticket.</p>
+        </div>
+
+        <div class="status-card" id="statusCard">
+            <div id="badgeEstado" class="status-badge">Buscando...</div>
+            <div class="cliente-name" id="txtNombre">---</div>
+            <div class="servicio-info" id="txtServicio">---</div>
+            
+            <div class="hora-entrega" id="boxHora">
+                Hora programada aprox:<br>
+                <strong id="txtHora" style="font-size: 18px; color: white;">--:--</strong>
+            </div>
+            
+            <button onclick="nuevaBusqueda()" style="background:transparent; border:1px dashed var(--text-muted); color:var(--text-muted); padding:10px; width:100%; border-radius:6px; margin-top:20px; cursor:pointer;">Buscar otro folio</button>
+        </div>
+
     </div>
-
-    <div id="pantallaResultado" class="resultado"></div>
-
-    <div class="pie-pagina">© 2026 Foto Estudio Deluxe</div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <script>
-        const LINK_GOOGLE_MAPS = "https://g.page/r/CUBwuWzC-4A0EBI/review"; 
-        const LINK_FACEBOOK = "https://www.facebook.com/DeluxeFotoEstudio/"; 
-        
         const firebaseConfig = {
             apiKey: "AIzaSyAn0H-50sbh8sMcqn_k8IlVnJX6ko58ws4",
             authDomain: "sistemafotos-cf459.firebaseapp.com",
@@ -92,112 +110,100 @@
             messagingSenderId: "599045837547",
             appId: "1:599045837547:web:7bb72110d3cf36739ea4ae"
         };
-
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
-        let listenerActual = null; 
 
-        function buscarTurno() {
-            const busqueda = document.getElementById('busqueda').value.trim().toLowerCase();
-            if(busqueda === "") return;
+        // Autocompletar si el QR manda el folio por URL (Ej. rastreo.html?folio=10001)
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const folioUrl = urlParams.get('folio');
+            if(folioUrl) {
+                document.getElementById('inputFolio').value = folioUrl;
+                buscarPedido();
+            }
+        };
 
-            document.getElementById('btnBuscar').innerText = "CONECTANDO...";
-            const divResultado = document.getElementById('pantallaResultado');
-            divResultado.style.display = 'block';
-            divResultado.innerHTML = `<p style="color:var(--oro)">Localizando orden...</p>`;
+        function buscarPedido() {
+            const folio = document.getElementById('inputFolio').value.trim();
+            if(!folio) return;
 
-            if(listenerActual) db.ref('turnos').off('value', listenerActual);
+            document.getElementById('errorMsg').style.display = 'none';
+            document.getElementById('searchBox').style.display = 'none';
+            document.getElementById('statusCard').style.display = 'block';
+            document.getElementById('badgeEstado').innerText = "Cargando...";
 
-            listenerActual = db.ref('turnos').on('value', snapshot => {
-                document.getElementById('btnBuscar').innerText = "CONSULTAR ESTADO";
-                if (!snapshot.exists()) return;
-
-                let todosLosPendientes = [];
-                let miTurno = null;
-                
-                snapshot.forEach(child => {
-                    const t = child.val();
-                    if(t.estado === 'pendiente') {
-                        todosLosPendientes.push({id: child.key, timestamp: t.timestampEntrega});
-                    }
-                    if (t.nombre.toLowerCase() === busqueda || t.numeroTicket === busqueda || "#"+t.numeroTicket === busqueda) {
-                        miTurno = {id: child.key, ...t};
-                    }
-                });
-
-                if (!miTurno) {
-                    divResultado.innerHTML = `<div class="estado-icono">❌</div><div class="estado-texto">No Encontrada</div>`;
-                    return;
+            // Buscamos en la tabla de turnos en vivo
+            db.ref('turnos').orderByChild('numeroTicket').equalTo(folio).once('value', snap => {
+                if(snap.exists()) {
+                    let datos;
+                    snap.forEach(child => { datos = child.val(); });
+                    mostrarDatos(datos);
+                } else {
+                    // Si no está en turnos, verificamos si está en ventas (archivado/histórico)
+                    db.ref('ventas').orderByChild('ticket').equalTo(folio).once('value', snapVentas => {
+                        if(snapVentas.exists()) {
+                            let datosHist;
+                            snapVentas.forEach(child => { datosHist = child.val(); });
+                            
+                            // Reconstruimos un objeto parecido para mostrar
+                            let desc = "Servicio General";
+                            if(datosHist.carrito) { desc = datosHist.carrito.map(i => i.nombre).join(', '); }
+                            
+                            mostrarDatos({
+                                nombre: datosHist.cliente,
+                                servicio: desc,
+                                estado: 'archivado',
+                                horaFormateada: 'Ya entregado'
+                            });
+                        } else {
+                            // No existe en ningún lado
+                            document.getElementById('statusCard').style.display = 'none';
+                            document.getElementById('searchBox').style.display = 'block';
+                            document.getElementById('errorMsg').style.display = 'block';
+                        }
+                    });
                 }
-
-                // CALCULO DE POSICIÓN Y PROGRESO
-                todosLosPendientes.sort((a,b) => a.timestamp - b.timestamp);
-                const miPosicion = todosLosPendientes.findIndex(t => t.id === miTurno.id);
-                const totalEspera = todosLosPendientes.length;
-                
-                let porcentaje = 0;
-                let textoFila = "";
-
-                if (miTurno.estado === 'pendiente') {
-                    // Si hay 10 personas y soy el 1 (el primero), progreso alto.
-                    porcentaje = 20 + ( ( (totalEspera - (miPosicion + 1)) / totalEspera ) * 70 );
-                    if(miPosicion === 0) {
-                        textoFila = "Eres el próximo en la fila";
-                        porcentaje = 85;
-                    } else {
-                        textoFila = `Hay ${miPosicion} personas antes que tú`;
-                    }
-                } else if (miTurno.estado === 'listo') {
-                    porcentaje = 100;
-                }
-
-                renderizar(miTurno, porcentaje, textoFila);
             });
         }
 
-        function renderizar(t, porc, txtFila) {
-            const res = document.getElementById('pantallaResultado');
-            if (t.estado === 'pendiente') {
-                res.className = "resultado proceso";
-                res.innerHTML = `
-                    <div class="estado-icono">⏳</div>
-                    <div class="estado-texto">En Producción</div>
-                    <div class="detalle-texto">Hola <strong>${t.nombre}</strong>, estamos procesando tu pedido.</div>
-                    
-                    <div class="progreso-container">
-                        <div class="progreso-labels">
-                            <span>PROCESANDO</span>
-                            <span>${Math.round(porc)}%</span>
-                        </div>
-                        <div class="barra-fondo"><div class="barra-llena" style="width:${porc}%"></div></div>
-                        <p style="font-size:11px; color:var(--oro); margin-top:10px; font-weight:800;">${txtFila.toUpperCase()}</p>
-                    </div>
+        function mostrarDatos(datos) {
+            document.getElementById('txtNombre').innerText = datos.nombre || "Cliente";
+            document.getElementById('txtServicio').innerText = datos.servicio || "Fotografía";
+            
+            const badge = document.getElementById('badgeEstado');
+            const boxHora = document.getElementById('boxHora');
+            
+            // Limpiamos clases
+            badge.className = "status-badge";
 
-                    <div style="font-size:12px; color:var(--texto-secundario);">Entrega estimada: <strong>${t.horaFormateada}</strong></div>
-                `;
-            } else if (t.estado === 'listo') {
-                res.className = "resultado listo";
-                res.innerHTML = `
-                    <div class="estado-icono">✅</div>
-                    <div class="estado-texto">¡Listo!</div>
-                    <div class="detalle-texto">Tus fotos han pasado el control de calidad.</div>
-                    <div class="progreso-container">
-                        <div class="barra-fondo"><div class="barra-llena" style="width:100%"></div></div>
-                    </div>
-                    <div style="background:var(--oro); color:#000; padding:15px; border-radius:8px; font-weight:800; letter-spacing:1px;">DISPONIBLE EN MOSTRADOR</div>
-                `;
-            } else if (t.estado === 'archivado') {
-                res.className = "resultado archivado";
-                res.innerHTML = `
-                    <div class="estado-icono">📦</div>
-                    <div class="estado-texto">Entregada</div>
-                    <div class="detalle-texto">¡Gracias por tu confianza!</div>
-                    <div style="margin-top:20px; border-top:1px solid var(--borde); padding-top:20px;">
-                        <a href="${LINK_GOOGLE_MAPS}" target="_blank" class="btn-social btn-google">📍 Calificar en Maps</a>
-                        <a href="${LINK_FACEBOOK}" target="_blank" class="btn-social btn-fb">👍 Facebook</a>
-                    </div>
-                `;
+            if(datos.estado === 'pendiente') {
+                badge.innerText = "⏳ EN PROCESO";
+                badge.classList.add('estado-pendiente');
+                document.getElementById('txtHora').innerText = datos.horaFormateada;
+                boxHora.style.display = 'block';
+            } 
+            else if(datos.estado === 'pausado') {
+                badge.innerText = "⏸️ PAUSADO";
+                badge.classList.add('estado-archivado');
+                document.getElementById('txtHora').innerText = "Consulta en mostrador";
+                boxHora.style.display = 'block';
             }
+            else if(datos.estado === 'listo') {
+                badge.innerText = "✅ ¡LISTO PARA ENTREGAR!";
+                badge.classList.add('estado-listo');
+                boxHora.style.display = 'none';
+            } 
+            else {
+                badge.innerText = "📦 ENTREGADO";
+                badge.classList.add('estado-archivado');
+                boxHora.style.display = 'none';
+            }
+        }
+
+        function nuevaBusqueda() {
+            document.getElementById('inputFolio').value = '';
+            document.getElementById('statusCard').style.display = 'none';
+            document.getElementById('searchBox').style.display = 'block';
         }
     </script>
 </body>

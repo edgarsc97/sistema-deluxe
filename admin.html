@@ -59,9 +59,18 @@
         .btn-wa:hover { background: var(--whatsapp); color: #000; }
 
         .titulo-pausados { font-size: 13px; color: var(--purple); border-bottom: 1px solid var(--purple); padding-bottom: 8px; margin: 40px 0 20px 0; text-transform: uppercase; letter-spacing: 2px; font-weight: 800;}
+
+        /* NOTIFICACIONES FLOTANTES */
+        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+        .toast { background: var(--success); color: white; padding: 15px 25px; border-radius: 8px; font-weight: 600; font-size: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); animation: slideIn 0.3s ease-out; display: flex; align-items: center; gap: 10px; letter-spacing: 1px; border-left: 5px solid rgba(0,0,0,0.3);}
+        .toast.error { background: var(--danger); }
+        .toast.info { background: var(--blue); }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
     </style>
 </head>
 <body>
+
+    <div id="toast-container"></div>
 
     <div id="loginPanel">
         <div class="logo-banco">DELUXE</div>
@@ -105,9 +114,6 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <script>
-        // ==========================================
-        // CONFIGURACIÓN DE ENLACES
-        // ==========================================
         const USUARIO_GH = "edgarsc97";
         const REPO_GH = "sistema-deluxe";
         const LINK_RASTREO = `https://${USUARIO_GH}.github.io/${REPO_GH}/rastreo.html`;
@@ -125,21 +131,22 @@
         const auth = firebase.auth();
         const db = firebase.database();
 
+        function mostrarNotificacion(mensaje, tipo = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${tipo}`; toast.innerHTML = mensaje;
+            container.appendChild(toast);
+            setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(100%)'; setTimeout(() => toast.remove(), 300); }, 3500);
+        }
+
         auth.onAuthStateChanged(user => {
-            if (user) {
-                document.getElementById('loginPanel').style.display = 'none';
-                document.getElementById('adminPanel').style.display = 'block';
-                escucharPedidos();
-            } else {
-                document.getElementById('loginPanel').style.display = 'block';
-                document.getElementById('adminPanel').style.display = 'none';
-            }
+            if (user) { document.getElementById('loginPanel').style.display = 'none'; document.getElementById('adminPanel').style.display = 'block'; escucharPedidos(); } 
+            else { document.getElementById('loginPanel').style.display = 'block'; document.getElementById('adminPanel').style.display = 'none'; }
         });
 
         document.getElementById('formLogin').addEventListener('submit', e => {
             e.preventDefault();
-            auth.signInWithEmailAndPassword(document.getElementById('email').value, document.getElementById('password').value)
-                .catch(err => alert("Acceso Denegado"));
+            auth.signInWithEmailAndPassword(document.getElementById('email').value, document.getElementById('password').value).catch(err => alert("Acceso Denegado"));
         });
 
         function escucharPedidos() {
@@ -149,9 +156,8 @@
                 let hActivos = '', hPausados = '';
                 
                 if (!snap.exists()) {
-                    contActivos.innerHTML = '<div style="text-align:center; padding:20px; color:gray;">No hay ordenes</div>';
-                    contPausados.innerHTML = '<div style="text-align:center; padding:20px; color:gray;">Sin pausados</div>';
-                    return;
+                    contActivos.innerHTML = '<div style="text-align:center; padding:20px; color:gray;">No hay ordenes activas</div>';
+                    contPausados.innerHTML = '<div style="text-align:center; padding:20px; color:gray;">Sin pausados</div>'; return;
                 }
 
                 let turnos = [];
@@ -162,9 +168,9 @@
                     if (p.estado === 'archivado') return;
 
                     const btnWA = (p.telefono && p.telefono.length >= 10) 
-                        ? `<button onclick="notificarWA('${p.telefono}', '${p.nombre}', '${p.servicio}', '${p.numeroTicket}')" class="btn-wa">🟢 Avisar WhatsApp</button>` 
-                        : '';
+                        ? `<button onclick="notificarWA('${p.telefono}', '${p.nombre}', '${p.servicio}', '${p.numeroTicket}')" class="btn-wa">🟢 Avisar WhatsApp</button>` : '';
 
+                    // BOTONES AHORA CONECTADOS AL EFECTO DOMINÓ (recalcularFilaEntera)
                     const cardHTML = `
                         <div class="pedido-card ${p.estado}">
                             <div class="info-cliente">
@@ -175,12 +181,12 @@
                             </div>
                             <div class="acciones-btn">
                                 ${p.estado === 'pendiente' ? `
-                                    <button class="btn-accion btn-verde" onclick="cambiarEstado('${p.id}', 'listo')">✅ Finalizar</button>
+                                    <button class="btn-accion btn-verde" onclick="marcarListo('${p.id}')">✅ Finalizar</button>
                                     <button class="btn-accion btn-pausa" onclick="pausarPedido('${p.id}')">⏸️ Pausar</button>
                                 ` : p.estado === 'listo' ? `
-                                    <button class="btn-accion btn-gris" onclick="cambiarEstado('${p.id}', 'archivado')">📦 Archivar</button>
+                                    <button class="btn-accion btn-gris" onclick="archivarPedido('${p.id}')">📦 Archivar</button>
                                 ` : `
-                                    <button class="btn-accion btn-reanudar" onclick="reanudarPedido('${p.id}', ${p.minutosServicio || 0})">▶️ Reanudar</button>
+                                    <button class="btn-accion btn-reanudar" onclick="reanudarPedido('${p.id}', ${p.minutosServicio || 15})">▶️ Reanudar</button>
                                 `}
                             </div>
                         </div>`;
@@ -194,25 +200,64 @@
             });
         }
 
-        // --- CORRECCIÓN DE FUNCIÓN DE WHATSAPP ---
-        window.notificarWA = function(tel, nom, serv, ticket) {
-            let num = tel.replace(/\D/g, '');
-            if(num.length === 10) num = "52" + num;
-            
-            // Aquí usamos la variable global LINK_RASTREO corregida
-            const msj = `¡Hola ${nom}! 👋 Tu pedido *#${ticket}* de *${serv}* está LISTO ✅.\n\nPuedes pasar a recogerlo al estudio. Si quieres ver el detalle de tu orden, entra aquí:\n🔗 ${LINK_RASTREO}`;
-            
-            window.open(`https://wa.me/${num}?text=${encodeURIComponent(msj)}`, '_blank');
+        // =========================================================
+        // MOTOR ABSOLUTO: RECÁLCULO TOTAL DESDE CERO
+        // =========================================================
+        window.recalcularFilaEntera = function(turnoIdAModificar, nuevoEstado) {
+            db.ref('turnos').once('value', snap => {
+                if(!snap.exists()) return;
+
+                let turnosPendientes = [];
+                let actualizaciones = {};
+                
+                // 1. Aplicamos el cambio de estado al turno que detonó la acción (listo o pausado)
+                actualizaciones[`turnos/${turnoIdAModificar}/estado`] = nuevoEstado;
+                if(nuevoEstado === 'pausado') {
+                    actualizaciones[`turnos/${turnoIdAModificar}/horaFormateada`] = '--:--';
+                }
+
+                snap.forEach(c => { 
+                    let t = {id: c.key, ...c.val()};
+                    // 2. Extraemos únicamente a los que van a seguir esperando en la cola (y que no sean el actual)
+                    if(t.estado === 'pendiente' && t.id !== turnoIdAModificar) {
+                        turnosPendientes.push(t);
+                    }
+                });
+                
+                // 3. Los formamos por orden de llegada (su hora programada anterior)
+                turnosPendientes.sort((a, b) => a.timestampEntrega - b.timestampEntrega);
+
+                // 4. EL TRUCO MAGISTRAL: Iniciamos el tiempo desde "Este preciso segundo"
+                let tiempoAcumulado = Date.now();
+
+                // 5. Los volvemos a despachar uno por uno, comprimiendo la fila como un acordeón
+                turnosPendientes.forEach(t => {
+                    let mins = t.minutosServicio || 15; 
+                    tiempoAcumulado += (mins * 60000); // Se suma el tiempo al acumulador maestro
+                    
+                    actualizaciones[`turnos/${t.id}/timestampEntrega`] = tiempoAcumulado;
+                    actualizaciones[`turnos/${t.id}/horaFormateada`] = new Date(tiempoAcumulado).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true});
+                });
+
+                // 6. Impactamos la base de datos de golpe
+                db.ref().update(actualizaciones).then(() => {
+                    mostrarNotificacion(`✅ Operación exitosa. La TV se ha ajustado al tiempo real.`);
+                });
+            });
         };
 
-        window.cambiarEstado = (id, est) => db.ref('turnos/' + id).update({estado: est});
-
+        // ACCIONES DE BOTONES
+        window.marcarListo = function(id) { recalcularFilaEntera(id, 'listo'); };
+        
         window.pausarPedido = function(id) {
-            if(!confirm("¿Pausar este trabajo? Se quitará de la TV y se ajustará el tiempo de los demás.")) return;
-            db.ref('turnos/' + id).update({estado: 'pausado', horaFormateada: '--:--'});
+            if(!confirm("¿Pausar este trabajo? Se quitará de la TV y la fila de clientes avanzará.")) return;
+            recalcularFilaEntera(id, 'pausado');
         };
+
+        window.archivarPedido = function(id) { db.ref('turnos/' + id).update({estado: 'archivado'}); };
 
         window.reanudarPedido = function(id, mins) {
+            // Al reanudar a un pausado, se va al FINAL de la fila automáticamente para no ser injusto con los nuevos
             db.ref('turnos').once('value', snap => {
                 let max = Date.now();
                 snap.forEach(c => { if(c.val().estado === 'pendiente' && c.val().timestampEntrega > max) max = c.val().timestampEntrega; });
@@ -221,7 +266,7 @@
                     estado: 'pendiente',
                     timestampEntrega: nt,
                     horaFormateada: new Date(nt).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true})
-                });
+                }).then(() => mostrarNotificacion("▶️ Trabajo reanudado al final de la fila", "info"));
             });
         };
 
@@ -237,8 +282,14 @@
                         ups[`turnos/${c.key}/horaFormateada`] = new Date(nt).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true});
                     }
                 });
-                db.ref().update(ups);
+                db.ref().update(ups).then(() => mostrarNotificacion(`⏱️ Toda la fila se retrasó ${m} minutos`, "info"));
             });
+        };
+
+        window.notificarWA = function(tel, nom, serv, ticket) {
+            let num = tel.replace(/\D/g, ''); if(num.length === 10) num = "52" + num;
+            const msj = `¡Hola ${nom}! 👋 Tu pedido *#${ticket}* de *${serv}* está LISTO ✅.\n\nPuedes pasar a recogerlo al estudio. Si quieres ver el detalle de tu orden, entra aquí:\n🔗 ${LINK_RASTREO}`;
+            window.open(`https://wa.me/${num}?text=${encodeURIComponent(msj)}`, '_blank');
         };
 
         setInterval(() => { document.getElementById('reloj').innerText = new Date().toLocaleTimeString('es-MX', {hour12:false}) + ' HRS'; }, 1000);
