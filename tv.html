@@ -10,7 +10,7 @@
             --bg-body: #0A0E17; --bg-caja: #111827; --texto-principal: #F3F4F6;
             --texto-secundario: #9CA3AF;
             --acento-proceso: #D4AF37; --acento-listo: #10B981; 
-            --purple: #8B5CF6; /* Color para los pausados */
+            --purple: #8B5CF6;
         }
         body { font-family: 'Inter', sans-serif; background-color: var(--bg-body); color: var(--texto-principal); margin: 0; padding: 15px; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
         
@@ -25,10 +25,8 @@
         .columna { flex: 1; background: var(--bg-caja); border-radius: 12px; padding: 15px; display: flex; flex-direction: column; box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
         .columna h2 { font-size: 1.2em; margin-bottom: 10px; }
         
-        /* DISEÑO COMPACTO DE TARJETAS */
         .turno { background: #1F2937; margin-bottom: 8px; padding: 10px 15px; border-radius: 8px; border-left: 6px solid var(--acento-proceso); display: flex; justify-content: space-between; align-items: center; animation: entrada 0.5s ease-out; }
         .turno.listo { border-left-color: var(--acento-listo); background: rgba(16, 185, 129, 0.05); animation: parpadeo 2s infinite; }
-        
         .turno-info { display: flex; flex-direction: column; gap: 3px; }
         
         @keyframes entrada { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
@@ -36,30 +34,29 @@
         @keyframes pulso-naranja { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
         .nombre { font-size: 1.4em; font-weight: 800; color: white; line-height: 1.1; }
-        
         .descripcion-servicio { font-size: 0.85em; color: var(--acento-proceso); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; background: rgba(212, 175, 55, 0.1); padding: 3px 8px; border-radius: 4px; width: fit-content; }
         .turno.listo .descripcion-servicio { color: var(--acento-listo); background: rgba(16, 185, 129, 0.1); }
         
-        /* ESTILOS DEL CRONÓMETRO COMPACTO */
         .bloque-tiempo { text-align: right; min-width: 100px; display: flex; flex-direction: column; align-items: flex-end; justify-content: center;}
         .texto-estimado { font-size: 0.6em; color: var(--texto-secundario); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 2px;}
         .timer-regresivo { font-size: 1.6em; font-weight: 800; color: var(--acento-proceso); font-variant-numeric: tabular-nums; line-height: 1;}
         .hora-fija-tv { font-size: 0.75em; color: var(--texto-secundario); margin-top: 2px; font-weight: 600; letter-spacing: 1px;}
         .status-txt-listo { font-size: 1.4em; font-weight: 800; color: var(--acento-listo); text-transform: uppercase; }
 
-        /* BARRA PAUSADOS COMPACTA */
         .barra-pausados { background: #151A2B; border: 1px solid var(--purple); border-radius: 10px; padding: 10px 15px; display: flex; align-items: center; gap: 10px; box-shadow: 0 5px 15px rgba(139, 92, 246, 0.15); animation: entrada 0.5s ease-out; }
         .titulo-pausados-tv { color: var(--purple); font-weight: 800; font-size: 1em; text-transform: uppercase; white-space: nowrap; letter-spacing: 2px;}
         .contenedor-pausados { display: flex; flex: 1; overflow: hidden; align-items: center; }
         .badge-pausado { background: rgba(139, 92, 246, 0.15); color: #C4B5FD; padding: 5px 12px; border-radius: 6px; font-weight: 600; font-size: 0.9em; border: 1px solid rgba(139, 92, 246, 0.3); margin-right: 15px; display: inline-block;}
 
-        /* VISTA 2: ANUNCIOS */
+        /* VISTA 2: ANUNCIOS DINÁMICOS */
         #vistaPromos { position: absolute; top: 0; left: 0; width: 100%; height: 100%; transition: opacity 1s ease-in-out; opacity: 0; z-index: 1; display: flex; justify-content: center; align-items: center; background: #000; border-radius: 12px; overflow: hidden; }
-        .promo-imagen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 1.5s ease-in-out, transform 8s linear; transform: scale(1); filter: brightness(0.8); }
-        .promo-imagen.activa { opacity: 1; transform: scale(1.1); }
+        #contenedorMedios { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        
+        .promo-medio { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 1s ease-in-out; filter: brightness(0.8); }
+        .promo-medio.activa { opacity: 1; }
+        
         .aviso-retorno { position: absolute; bottom: 30px; background: rgba(0,0,0,0.8); padding: 12px 25px; border-radius: 25px; border: 1px solid var(--acento-proceso); color: white; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; font-size: 0.9em; z-index: 20; backdrop-filter: blur(5px); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
 
-        /* QR FLOTANTE VIP */
         .qr-flotante { position: fixed; bottom: 20px; right: 20px; background: var(--bg-caja); border: 1px solid var(--acento-proceso); border-radius: 12px; padding: 10px; box-shadow: 0 15px 30px rgba(0,0,0,0.6); display: flex; flex-direction: column; align-items: center; z-index: 50; animation: flotar 4s ease-in-out infinite; backdrop-filter: blur(10px);}
         .qr-texto { text-align: center; font-size: 10px; font-weight: 600; color: var(--texto-secundario); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
         .qr-texto span { color: var(--acento-proceso); font-size: 12px; display: block; margin-top: 3px; font-weight: 800;}
@@ -67,10 +64,8 @@
 
         @keyframes flotar { 0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); } }
 
-        /* INICIO */
         #pantallaInicio { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); display: flex; justify-content: center; align-items: center; z-index: 1000; flex-direction: column; }
         .btn-inicio { padding: 25px 50px; font-size: 24px; background: var(--acento-proceso); color: #000; border: none; border-radius: 12px; cursor: pointer; font-weight: 800; text-transform: uppercase; box-shadow: 0 0 25px rgba(212, 175, 55, 0.4); }
-        
         #noSleepVideo { position: absolute; width: 1px; height: 1px; opacity: 0.01; }
     </style>
 </head>
@@ -112,9 +107,7 @@
         </div>
 
         <div id="vistaPromos">
-            <img src="promo1.jpg" class="promo-imagen activa" onerror="this.src='https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=1600'">
-            <img src="promo2.jpg" class="promo-imagen" onerror="this.src='https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=1600'">
-            <img src="promo3.jpg" class="promo-imagen" onerror="this.src='https://images.unsplash.com/photo-1554046920-90dc20696352?w=1600'">
+            <div id="contenedorMedios"></div>
             <div class="aviso-retorno">Tu turno aparecerá en pantalla en breve...</div>
         </div>
     </div>
@@ -149,170 +142,144 @@
         let timerInactividad;
         let timerRetorno;
         window.ultimoCP = 0; 
+        
+        let listaMediosGlobal = [];
+        let indexMedio = 0;
+        let timerCarrusel;
+
+        // Oído de la TV para saber si debe hablar o no
+        let vozHabilitada = true; 
+        db.ref('configuracion/tvVoz').on('value', snap => {
+            if(snap.exists()) vozHabilitada = snap.val().activo;
+        });
 
         function iniciarSistema() {
             document.getElementById('noSleepVideo').play().catch(()=>{});
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.speak(new SpeechSynthesisUtterance(''));
-            }
+            if ('speechSynthesis' in window) window.speechSynthesis.speak(new SpeechSynthesisUtterance(''));
             document.getElementById('pantallaInicio').style.display = 'none';
-            iniciarCarrusel();
-            resetLogicaVista();
             
+            cargarConfiguracionTV();
+            resetLogicaVista();
             setInterval(actualizarCronometros, 1000);
         }
 
-        function resetLogicaVista() {
-            clearTimeout(timerInactividad);
-            clearTimeout(timerRetorno);
-            
-            document.getElementById('vistaColas').style.opacity = '1';
-            document.getElementById('vistaColas').style.zIndex = '5';
-            document.getElementById('vistaPromos').style.opacity = '0';
-            document.getElementById('vistaPromos').style.zIndex = '1';
+        function cargarConfiguracionTV() {
+            db.ref('configuracion/tv/medios').on('value', snap => {
+                const cont = document.getElementById('contenedorMedios');
+                cont.innerHTML = ''; listaMediosGlobal = [];
+                if(snap.exists()) {
+                    snap.forEach(child => {
+                        const m = { id: child.key, ...child.val() };
+                        listaMediosGlobal.push(m);
+                        if(m.tipo === 'video') cont.innerHTML += `<video id="med_${m.id}" class="promo-medio" src="${m.url}" muted playsinline></video>`;
+                        else cont.innerHTML += `<img id="med_${m.id}" class="promo-medio" src="${m.url}">`;
+                    });
+                } else {
+                    cont.innerHTML = `<img id="med_default" class="promo-medio activa" src="logo.png" style="object-fit: contain; filter: invert(1); padding: 50px;">`;
+                    listaMediosGlobal.push({ id: 'default', tipo: 'imagen', duracion: 15 });
+                }
+                clearTimeout(timerCarrusel); indexMedio = 0; reproducirSiguienteMedio();
+            });
+        }
 
+        function reproducirSiguienteMedio() {
+            if (listaMediosGlobal.length === 0) return;
+            document.querySelectorAll('.promo-medio').forEach(el => {
+                el.classList.remove('activa');
+                if (el.tagName === 'VIDEO') el.pause();
+            });
+            const actual = listaMediosGlobal[indexMedio];
+            const el = document.getElementById('med_' + actual.id);
+            if (el) {
+                el.classList.add('activa');
+                if (actual.tipo === 'video') { el.currentTime = 0; el.play().catch(e => console.log(e)); }
+            }
+            const duracionMs = (actual.duracion || 10) * 1000;
+            indexMedio = (indexMedio + 1) % listaMediosGlobal.length;
+            timerCarrusel = setTimeout(reproducirSiguienteMedio, duracionMs);
+        }
+
+        function resetLogicaVista() {
+            clearTimeout(timerInactividad); clearTimeout(timerRetorno);
+            document.getElementById('vistaColas').style.opacity = '1'; document.getElementById('vistaColas').style.zIndex = '5';
+            document.getElementById('vistaPromos').style.opacity = '0'; document.getElementById('vistaPromos').style.zIndex = '1';
             timerInactividad = setTimeout(mostrarAnuncios, 20000);
         }
 
         function mostrarAnuncios() {
-            document.getElementById('vistaPromos').style.opacity = '1';
-            document.getElementById('vistaPromos').style.zIndex = '5';
-            document.getElementById('vistaColas').style.opacity = '0';
-            document.getElementById('vistaColas').style.zIndex = '1';
-
-            if (totalFila > 0) {
-                timerRetorno = setTimeout(resetLogicaVista, 10000);
-            }
+            document.getElementById('vistaPromos').style.opacity = '1'; document.getElementById('vistaPromos').style.zIndex = '5';
+            document.getElementById('vistaColas').style.opacity = '0'; document.getElementById('vistaColas').style.zIndex = '1';
+            if (totalFila > 0) timerRetorno = setTimeout(resetLogicaVista, 10000);
         }
 
-        function iniciarCarrusel() {
-            const imgs = document.querySelectorAll('.promo-imagen');
-            let idx = 0;
-            setInterval(() => {
-                imgs[idx].classList.remove('activa');
-                idx = (idx + 1) % imgs.length;
-                imgs[idx].classList.add('activa');
-            }, 8000);
-        }
-
+        // --- SISTEMA INTELIGENTE DE VOCEO ---
         function vocearIA(nombre) {
             const audio = new Audio('listo.mp3');
             audio.play().then(() => {
-                setTimeout(() => {
-                    const msg = new SpeechSynthesisUtterance(`Atención. El pedido de ${nombre}, está listo.`);
-                    msg.lang = 'es-MX';
-                    msg.rate = 0.85;
-                    window.speechSynthesis.speak(msg);
-                }, 1200);
-            }).catch(e => console.log("Error reproduciendo audio:", e));
+                // Si el botón en el Panel DEV está encendido, HABLA. Si está apagado, solo toca la campana.
+                if(vozHabilitada) {
+                    setTimeout(() => {
+                        const msg = new SpeechSynthesisUtterance(`Atención. El pedido de ${nombre}, está listo.`);
+                        msg.lang = 'es-MX'; msg.rate = 0.85; window.speechSynthesis.speak(msg);
+                    }, 1200);
+                }
+            }).catch(e => console.log("Error audio:", e));
         }
 
         function actualizarCronometros() {
             document.querySelectorAll('.timer-regresivo').forEach(el => {
                 const entrega = parseInt(el.getAttribute('data-entrega'));
                 if(!entrega) return;
-                
                 const ahora = Date.now();
                 let diff = Math.floor((entrega - ahora) / 1000); 
-
-                if (diff <= 0) {
-                    el.innerHTML = '<span style="color: #F59E0B; animation: pulso-naranja 1s infinite; font-size: 0.7em;">¡POR SALIR!</span>';
+                if (diff <= 0) { el.innerHTML = '<span style="color: #F59E0B; animation: pulso-naranja 1s infinite; font-size: 0.7em;">¡POR SALIR!</span>';
                 } else {
-                    const min = Math.floor(diff / 60);
-                    const sec = diff % 60;
+                    const min = Math.floor(diff / 60); const sec = diff % 60;
                     el.innerText = `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
                 }
             });
         }
 
         db.ref('turnos').on('value', snapshot => {
-            const listaP = document.getElementById('listaProceso');
-            const listaL = document.getElementById('listaListos');
-            const listaPausadosTv = document.getElementById('listaPausadosTv');
-            const barraPausadosCont = document.getElementById('barraPausadosContainer');
+            const listaP = document.getElementById('listaProceso'); const listaL = document.getElementById('listaListos');
+            const listaPausadosTv = document.getElementById('listaPausadosTv'); const barraPausadosCont = document.getElementById('barraPausadosContainer');
             
-            listaP.innerHTML = ''; 
-            listaL.innerHTML = '';
-            let htmlPausados = '';
-            
-            let listosActuales = [];
-            let cP = 0, cL = 0, cPausados = 0;
+            listaP.innerHTML = ''; listaL.innerHTML = ''; let htmlPausados = '';
+            let listosActuales = []; let cP = 0, cL = 0, cPausados = 0;
 
             let turnosArr = [];
-            snapshot.forEach(child => {
-                turnosArr.push({id: child.key, ...child.val()});
-            });
-
+            snapshot.forEach(child => { turnosArr.push({id: child.key, ...child.val()}); });
             turnosArr.sort((a, b) => a.timestampEntrega - b.timestampEntrega);
 
             turnosArr.forEach(t => {
                 const descripcionHtml = t.servicio ? `<span class="descripcion-servicio">${t.servicio}</span>` : '';
-
                 if (t.estado === 'pendiente') {
                     cP++;
-                    listaP.innerHTML += `
-                        <div class="turno">
-                            <div class="turno-info">
-                                <span class="nombre">${t.nombre}</span>
-                                ${descripcionHtml}
-                            </div>
-                            <div class="bloque-tiempo">
-                                <span class="texto-estimado">ESTIMADO</span>
-                                <span class="timer-regresivo" data-entrega="${t.timestampEntrega}">--:--</span>
-                                <span class="hora-fija-tv">⏰ ${t.horaFormateada}</span>
-                            </div>
-                        </div>`;
+                    listaP.innerHTML += `<div class="turno"><div class="turno-info"><span class="nombre">${t.nombre}</span>${descripcionHtml}</div><div class="bloque-tiempo"><span class="texto-estimado">ESTIMADO</span><span class="timer-regresivo" data-entrega="${t.timestampEntrega}">--:--</span><span class="hora-fija-tv">⏰ ${t.horaFormateada}</span></div></div>`;
                 } else if (t.estado === 'listo') {
-                    cL++;
-                    listosActuales.push({id: t.id, nombre: t.nombre});
-                    listaL.innerHTML += `
-                        <div class="turno listo">
-                            <div class="turno-info">
-                                <span class="nombre">${t.nombre}</span>
-                                ${descripcionHtml}
-                            </div>
-                            <span class="status-txt-listo">RECOGER</span>
-                        </div>`;
+                    cL++; listosActuales.push({id: t.id, nombre: t.nombre});
+                    listaL.innerHTML += `<div class="turno listo"><div class="turno-info"><span class="nombre">${t.nombre}</span>${descripcionHtml}</div><span class="status-txt-listo">RECOGER</span></div>`;
                 } else if (t.estado === 'pausado') {
-                    cPausados++;
-                    htmlPausados += `<span class="badge-pausado">${t.nombre} - ${t.servicio}</span>`;
+                    cPausados++; htmlPausados += `<span class="badge-pausado">${t.nombre} - ${t.servicio}</span>`;
                 }
             });
 
             actualizarCronometros();
-
             totalFila = cP + cL;
 
-            if (cPausados > 0) {
-                listaPausadosTv.innerHTML = htmlPausados;
-                barraPausadosCont.style.display = 'flex';
-            } else {
-                barraPausadosCont.style.display = 'none';
-                listaPausadosTv.innerHTML = '';
-            }
+            if (cPausados > 0) { listaPausadosTv.innerHTML = htmlPausados; barraPausadosCont.style.display = 'flex'; } 
+            else { barraPausadosCont.style.display = 'none'; listaPausadosTv.innerHTML = ''; }
 
             if (!primeraCarga) {
-                listosActuales.forEach(nuevo => {
-                    if (!ultimosListos.find(v => v.id === nuevo.id)) {
-                        vocearIA(nuevo.nombre);
-                    }
-                });
-
-                if (cP > window.ultimoCP) {
-                    new Audio('nuevo.mp3').play().catch(e => console.log("Audio bloqueado:", e));
-                }
-
+                listosActuales.forEach(nuevo => { if (!ultimosListos.find(v => v.id === nuevo.id)) vocearIA(nuevo.nombre); });
+                if (cP > window.ultimoCP) new Audio('nuevo.mp3').play().catch(e => console.log(e));
                 resetLogicaVista();
             }
 
-            ultimosListos = listosActuales;
-            window.ultimoCP = cP;
-            primeraCarga = false;
+            ultimosListos = listosActuales; window.ultimoCP = cP; primeraCarga = false;
         });
 
-        setInterval(() => {
-            document.getElementById('reloj').innerText = new Date().toLocaleTimeString('es-MX', {hour12: false});
-        }, 1000);
+        setInterval(() => { document.getElementById('reloj').innerText = new Date().toLocaleTimeString('es-MX', {hour12: false}); }, 1000);
     </script>
 </body>
 </html>

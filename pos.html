@@ -163,11 +163,11 @@
         <div class="tk-footer">
             <strong>¿QUIERES VER TU ORDEN?</strong><br>
             <div class="tk-rastreo-caja">Folio: <span id="tkCodigoRastreo" class="tk-rastreo-codigo"></span></div>
-            <img src="qr-code.png" class="tk-qr" alt="QR">
+            <img id="tkQR" src="qr-code.png" class="tk-qr" alt="QR">
             
-            <div style="border: 2px dashed #000; padding: 6px; margin: 10px 0; font-size: 11px;">
-                <strong>⭐ ¡GANA $10 DE BONIFICACIÓN! ⭐</strong><br>
-                Escanea el QR, déjanos una reseña en Google Maps, muestra tu captura al recoger y te regresamos $10.
+            <div id="tkPromoContainer" style="border: 2px dashed #000; padding: 6px; margin: 10px 0; font-size: 11px; display: none;">
+                <strong id="tkPromoTitulo"></strong><br>
+                <span id="tkPromoTexto"></span>
             </div>
 
             ¡Gracias por tu preferencia!
@@ -191,7 +191,8 @@
             <h1>TERMINAL <span>POS</span></h1>
             <div class="nav-botones">
                 <a href="admin.html" class="btn-nav btn-gold-nav">🛠️ PRODUCCIÓN</a>
-                <button class="btn-nav" onclick="abrirModalCaja()" style="border-color: var(--blue); color: var(--blue);">💰 CAJA</button>
+                <a href="dev.html" class="btn-nav" style="border-color: var(--blue); color: var(--blue);">⚙️ PANEL DEV</a>
+                <button class="btn-nav" onclick="abrirModalCaja()">💰 CAJA</button>
                 <button class="btn-nav" onclick="abrirModalHistorial()">🖨️ Ticket</button>
                 <button class="btn-nav" onclick="abrirModalDirectorio()">👥 CLIENTES</button>
                 <a href="index.html" class="btn-nav">🏠 Inicio</a>
@@ -304,6 +305,16 @@
         window.ventasMemoria = {}; let baseClientes = []; window.productoEditandoId = null; 
         
         let subtotalCarrito = 0; let descuentoTotal = 0; let totalNetoPagar = 0; let lineasDePago = [];
+        
+        // --- ESCUCHADOR DE CONFIGURACIÓN DEL TICKET ---
+        let configTicketPromo = { activo: false, titulo: '', texto: '', link: '' };
+        db.ref('configuracion/ticketPromo').on('value', snap => {
+            if(snap.exists()) {
+                configTicketPromo = snap.val();
+            } else {
+                configTicketPromo = { activo: false, titulo: '', texto: '', link: '' };
+            }
+        });
 
         function mostrarNotificacion(mensaje, tipo = 'success') {
             const container = document.getElementById('toast-container');
@@ -446,7 +457,6 @@
             calcularTotalesPago();
         }
 
-        // Ya NO llamamos a renderizarLineasPago() aquí, solo actualizamos datos de fondo y totales.
         function actualizarMontoLinea(id, valorStr) {
             let p = lineasDePago.find(l => l.id === id);
             if(p) p.monto = parseFloat(valorStr) || 0;
@@ -514,9 +524,6 @@
             }
         }
 
-        // =========================================================================
-        // CONFIRMAR VENTA GLOBAL CON NUEVA LÓGICA LIMPIA
-        // =========================================================================
         function confirmarPagoAvanzado() {
             let sumaPagos = lineasDePago.reduce((sum, p) => sum + p.monto, 0);
             if (sumaPagos === 0 && totalNetoPagar > 0) return;
@@ -524,10 +531,8 @@
             new Audio('https://actions.google.com/sounds/v1/cartoon/clink.ogg').play().catch(()=>{});
             
             const btnConf = document.getElementById('btnConfirmarPagoFinal');
-            btnConf.disabled = true; 
-            btnConf.innerText = "GENERANDO FOLIO...";
+            btnConf.disabled = true; btnConf.innerText = "GENERANDO FOLIO...";
 
-            // Inicia la generación del folio en Firebase
             generarFolioConsecutivo(carrito, function(folioNuevo) {
                 if(!folioNuevo) { 
                     btnConf.disabled = false; btnConf.innerText = "COBRAR TOTAL";
@@ -596,6 +601,7 @@
         }
 
         function imprimirTicketAvanzado(venta) {
+            document.getElementById('tkQR').src = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" + encodeURIComponent(LINK_RASTREO + "?folio=" + venta.ticket);
             document.getElementById('tkFecha').innerText = venta.fecha; document.getElementById('tkCliente').innerText = venta.cliente; document.getElementById('tkCodigoRastreo').innerText = venta.ticket;
             const fT = document.getElementById('filaTelefono'); if (venta.telefono) { document.getElementById('tkTelefono').innerText = venta.telefono; fT.style.display = 'inline'; } else fT.style.display = 'none';
             const tb = document.getElementById('tkDetalle'); tb.innerHTML = ''; venta.carrito.forEach(i => { tb.innerHTML += `<tr><td class="td-cant">${i.cantidad}</td><td class="td-desc">${i.nombre}</td><td class="td-precio">$${(i.precio * i.cantidad).toFixed(2)}</td></tr>`; });
@@ -610,6 +616,17 @@
             if (venta.saldoPendiente > 0) { uiSaldo.innerHTML = `ANTICIPO RECIBIDO<br>RESTA PAGAR: $${venta.saldoPendiente.toFixed(2)}`; uiSaldo.style.display = 'block';
             } else if (venta.totalRecibido > venta.total) { let cambio = venta.totalRecibido - venta.total; uiSaldo.innerHTML = `SU CAMBIO: $${cambio.toFixed(2)}`; uiSaldo.style.display = 'block';
             } else { uiSaldo.style.display = 'none'; }
+
+            // INYECCIÓN DINÁMICA DE LA PROMOCIÓN DESDE PANEL DEV
+            const promoUI = document.getElementById('tkPromoContainer');
+            if(configTicketPromo.activo) {
+                document.getElementById('tkPromoTitulo').innerText = configTicketPromo.titulo;
+                document.getElementById('tkPromoTexto').innerText = configTicketPromo.texto;
+                promoUI.style.display = 'block';
+            } else {
+                promoUI.style.display = 'none';
+            }
+
             window.print();
         }
 

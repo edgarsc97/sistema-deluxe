@@ -170,7 +170,6 @@
                     const btnWA = (p.telefono && p.telefono.length >= 10) 
                         ? `<button onclick="notificarWA('${p.telefono}', '${p.nombre}', '${p.servicio}', '${p.numeroTicket}')" class="btn-wa">🟢 Avisar WhatsApp</button>` : '';
 
-                    // BOTONES AHORA CONECTADOS AL EFECTO DOMINÓ (recalcularFilaEntera)
                     const cardHTML = `
                         <div class="pedido-card ${p.estado}">
                             <div class="info-cliente">
@@ -210,38 +209,40 @@
                 let turnosPendientes = [];
                 let actualizaciones = {};
                 
-                // 1. Aplicamos el cambio de estado al turno que detonó la acción (listo o pausado)
-                actualizaciones[`turnos/${turnoIdAModificar}/estado`] = nuevoEstado;
+                // 1. Actualizamos el estado del cliente que finalizamos/pausamos
+                actualizaciones[`${turnoIdAModificar}/estado`] = nuevoEstado;
                 if(nuevoEstado === 'pausado') {
-                    actualizaciones[`turnos/${turnoIdAModificar}/horaFormateada`] = '--:--';
+                    actualizaciones[`${turnoIdAModificar}/horaFormateada`] = '--:--';
                 }
 
+                // 2. Separamos a los que siguen formados en la fila
                 snap.forEach(c => { 
                     let t = {id: c.key, ...c.val()};
-                    // 2. Extraemos únicamente a los que van a seguir esperando en la cola (y que no sean el actual)
                     if(t.estado === 'pendiente' && t.id !== turnoIdAModificar) {
                         turnosPendientes.push(t);
                     }
                 });
                 
-                // 3. Los formamos por orden de llegada (su hora programada anterior)
+                // 3. Los formamos por orden de llegada original
                 turnosPendientes.sort((a, b) => a.timestampEntrega - b.timestampEntrega);
 
-                // 4. EL TRUCO MAGISTRAL: Iniciamos el tiempo desde "Este preciso segundo"
+                // 4. Arrancamos el reloj DESDE ESTE MOMENTO EXACTO
                 let tiempoAcumulado = Date.now();
 
-                // 5. Los volvemos a despachar uno por uno, comprimiendo la fila como un acordeón
+                // 5. Re-calculamos a todos hacia adelante (Efecto Acordeón)
                 turnosPendientes.forEach(t => {
-                    let mins = t.minutosServicio || 15; 
-                    tiempoAcumulado += (mins * 60000); // Se suma el tiempo al acumulador maestro
+                    let mins = parseInt(t.minutosServicio) || 15; 
+                    tiempoAcumulado += (mins * 60000); 
                     
-                    actualizaciones[`turnos/${t.id}/timestampEntrega`] = tiempoAcumulado;
-                    actualizaciones[`turnos/${t.id}/horaFormateada`] = new Date(tiempoAcumulado).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true});
+                    actualizaciones[`${t.id}/timestampEntrega`] = tiempoAcumulado;
+                    actualizaciones[`${t.id}/horaFormateada`] = new Date(tiempoAcumulado).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true});
                 });
 
-                // 6. Impactamos la base de datos de golpe
-                db.ref().update(actualizaciones).then(() => {
-                    mostrarNotificacion(`✅ Operación exitosa. La TV se ha ajustado al tiempo real.`);
+                // 6. Mandamos la actualización a la carpeta específica de "turnos" (Aquí estaba el bug antes)
+                db.ref('turnos').update(actualizaciones).then(() => {
+                    mostrarNotificacion(`✅ Tiempos recalculados con éxito.`);
+                }).catch(err => {
+                    alert("Error crítico en Firebase: " + err.message);
                 });
             });
         };
@@ -257,7 +258,6 @@
         window.archivarPedido = function(id) { db.ref('turnos/' + id).update({estado: 'archivado'}); };
 
         window.reanudarPedido = function(id, mins) {
-            // Al reanudar a un pausado, se va al FINAL de la fila automáticamente para no ser injusto con los nuevos
             db.ref('turnos').once('value', snap => {
                 let max = Date.now();
                 snap.forEach(c => { if(c.val().estado === 'pendiente' && c.val().timestampEntrega > max) max = c.val().timestampEntrega; });
@@ -270,6 +270,7 @@
             });
         };
 
+        // También corregí el botón de "Retrasar todo" para que apunte bien a la base de datos
         window.retrasarTodo = function(m) {
             if(!confirm(`¿Retrasar toda la producción ${m} minutos?`)) return;
             db.ref('turnos').once('value', snap => {
@@ -278,11 +279,13 @@
                     const v = c.val();
                     if(v.estado === 'pendiente') {
                         const nt = v.timestampEntrega + (m * 60000);
-                        ups[`turnos/${c.key}/timestampEntrega`] = nt;
-                        ups[`turnos/${c.key}/horaFormateada`] = new Date(nt).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true});
+                        ups[`${c.key}/timestampEntrega`] = nt;
+                        ups[`${c.key}/horaFormateada`] = new Date(nt).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true});
                     }
                 });
-                db.ref().update(ups).then(() => mostrarNotificacion(`⏱️ Toda la fila se retrasó ${m} minutos`, "info"));
+                db.ref('turnos').update(ups)
+                    .then(() => mostrarNotificacion(`⏱️ Toda la fila se retrasó ${m} minutos`, "info"))
+                    .catch(err => alert("Error al retrasar: " + err.message));
             });
         };
 

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DEV - CONFIGURACIÓN DELUXE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --bg-body: #0A0E17; --bg-panel: #111827; --bg-input: #1F2937;
+            --text-main: #F3F4F6; --text-muted: #9CA3AF;
+            --gold: #D4AF37; --gold-hover: #B08D4A;
+            --success: #059669; --danger: #991B1B; --blue: #3b82f6; 
+            --border: rgba(255, 255, 255, 0.08);
+        }
+        body { font-family: 'Inter', sans-serif; background: var(--bg-body); color: var(--text-main); margin: 0; padding: 20px; }
+        
+        .header { background: var(--bg-panel); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); border-radius: 12px; margin-bottom: 20px; border-top: 3px solid var(--gold);}
+        .header h1 { margin: 0; font-size: 18px; font-weight: 300; letter-spacing: 3px; }
+        .header h1 span { color: var(--gold); font-weight: 800; }
+        .nav-botones { display: flex; gap: 10px; }
+        .btn-nav { background: transparent; color: var(--text-main); border: 1px solid var(--border); padding: 8px 14px; border-radius: 6px; cursor: pointer; text-decoration: none; font-weight: 600; font-size: 11px; transition: 0.3s; letter-spacing: 1px; text-transform: uppercase;}
+        .btn-nav:hover { background: var(--bg-input); border-color: var(--gold); color: var(--gold); }
+
+        .grid-config { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; align-items: start; }
+        .panel-box { background: var(--bg-panel); border: 1px solid var(--border); padding: 25px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .panel-box h2 { margin-top: 0; color: var(--gold); font-size: 15px; border-bottom: 1px dashed var(--border); padding-bottom: 10px; margin-bottom: 20px; letter-spacing: 1px; text-transform: uppercase;}
+        
+        input, select, textarea { width: 100%; padding: 12px; margin-bottom: 15px; background: var(--bg-input); border: 1px solid var(--border); color: white; border-radius: 8px; font-size: 14px; box-sizing: border-box; font-family: 'Inter', sans-serif;}
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--gold); }
+        textarea { resize: vertical; min-height: 80px; }
+
+        .btn-guardar { background: var(--success); color: white; border: none; width: 100%; padding: 15px; font-size: 14px; font-weight: 800; border-radius: 8px; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s; }
+        .btn-guardar:hover { background: var(--success-hover); }
+
+        .lista-medios { margin-top: 20px; border-top: 1px solid var(--border); padding-top: 20px; max-height: 300px; overflow-y: auto;}
+        .medio-item { background: var(--bg-input); padding: 12px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--blue); }
+        .btn-eliminar { background: transparent; color: var(--danger); border: 1px solid var(--danger); padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+        .btn-eliminar:hover { background: var(--danger); color: white; }
+
+        /* TOASTS */
+        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+        .toast { background: var(--success); color: white; padding: 15px 25px; border-radius: 8px; font-weight: 600; font-size: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); animation: slideIn 0.3s ease-out;}
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <div id="toast-container"></div>
+
+    <header class="header">
+        <h1>PANEL <span>DEV</span></h1>
+        <div class="nav-botones">
+            <a href="admin.html" class="btn-nav">🛠️ PRODUCCIÓN</a>
+            <a href="pos.html" class="btn-nav">🛒 CAJA</a>
+            <button class="btn-nav" style="color:var(--danger); border-color:var(--danger);" onclick="firebase.auth().signOut()">SALIR</button>
+        </div>
+    </header>
+
+    <div class="grid-config">
+        
+        <div class="panel-box">
+            <h2>📢 Locutor de TV (Voz)</h2>
+            <form id="formVoz">
+                <label style="display:flex; align-items:center; gap:10px; margin-bottom:15px; cursor:pointer;">
+                    <input type="checkbox" id="tvVozActiva" style="width:20px; height:20px; margin:0;">
+                    <strong>Activar Voz ("Pedido Listo")</strong>
+                </label>
+                <p style="color:var(--text-muted); font-size:12px; margin-top:0; line-height: 1.5;">Si lo apagas, la TV solo hará un sonido corto (campana) y mostrará el letrero verde, pero la asistente dejará de hablar.</p>
+                <button type="button" class="btn-guardar" onclick="guardarConfigVoz()" style="background:var(--purple);">💾 Guardar Ajustes</button>
+            </form>
+        </div>
+
+        <div class="panel-box">
+            <h2>📺 Multimedia en TV</h2>
+            <form id="formTV">
+                <select id="tvTipo" required>
+                    <option value="imagen">🖼️ Imagen (JPG, PNG)</option>
+                    <option value="video">🎥 Video (MP4)</option>
+                </select>
+                <input type="url" id="tvUrl" placeholder="URL pública" required>
+                <input type="number" id="tvDuracion" placeholder="Segundos en pantalla" required min="3" value="10">
+                <button type="submit" class="btn-guardar" style="background: var(--blue);">➕ Agregar a TV</button>
+            </form>
+            <div class="lista-medios" id="listaMediosUI"></div>
+        </div>
+
+        <div class="panel-box">
+            <h2>🧾 Promoción de Ticket</h2>
+            <form id="formTicket">
+                <label style="display:flex; align-items:center; gap:10px; margin-bottom:15px; cursor:pointer;">
+                    <input type="checkbox" id="tkActivo" style="width:20px; height:20px; margin:0;">
+                    <strong>Activar Promoción en Ticket</strong>
+                </label>
+                <input type="text" id="tkTitulo" placeholder="Ej. ⭐ ¡GANA $10!">
+                <textarea id="tkTexto" placeholder="Texto descriptivo..."></textarea>
+                <button type="button" class="btn-guardar" onclick="guardarConfigTicket()">💾 Guardar Ticket</button>
+            </form>
+        </div>
+
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAn0H-50sbh8sMcqn_k8IlVnJX6ko58ws4",
+            authDomain: "sistemafotos-cf459.firebaseapp.com",
+            databaseURL: "https://sistemafotos-cf459-default-rtdb.firebaseio.com",
+            projectId: "sistemafotos-cf459",
+            storageBucket: "sistemafotos-cf459.firebasestorage.app",
+            messagingSenderId: "599045837547",
+            appId: "1:599045837547:web:7bb72110d3cf36739ea4ae"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        const EMAIL_ADMIN = "edgaruriel.deluxe@outlook.com";
+
+        function mostrarNotificacion(mensaje) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast`; toast.innerHTML = mensaje;
+            container.appendChild(toast);
+            setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3500);
+        }
+
+        firebase.auth().onAuthStateChanged(user => {
+            if (!user || user.email.toLowerCase() !== EMAIL_ADMIN.toLowerCase()) {
+                window.location.href = "admin.html";
+            } else {
+                cargarConfiguraciones();
+                escucharMediosTV();
+            }
+        });
+
+        function cargarConfiguraciones() {
+            // Cargar Ticket
+            db.ref('configuracion/ticketPromo').once('value', snap => {
+                if(snap.exists()) {
+                    const data = snap.val();
+                    document.getElementById('tkActivo').checked = data.activo;
+                    document.getElementById('tkTitulo').value = data.titulo || "";
+                    document.getElementById('tkTexto').value = data.texto || "";
+                }
+            });
+            // Cargar Voz
+            db.ref('configuracion/tvVoz').once('value', snap => {
+                if(snap.exists()) { document.getElementById('tvVozActiva').checked = snap.val().activo; }
+                else { document.getElementById('tvVozActiva').checked = true; } // Encendido por defecto
+            });
+        }
+
+        window.guardarConfigVoz = function() {
+            const activo = document.getElementById('tvVozActiva').checked;
+            db.ref('configuracion/tvVoz').set({ activo }).then(() => mostrarNotificacion("📢 Voz de TV actualizada"));
+        };
+
+        window.guardarConfigTicket = function() {
+            const activo = document.getElementById('tkActivo').checked;
+            const titulo = document.getElementById('tkTitulo').value.trim();
+            const texto = document.getElementById('tkTexto').value.trim();
+            db.ref('configuracion/ticketPromo').set({ activo, titulo, texto }).then(() => mostrarNotificacion("🧾 Ticket actualizado"));
+        };
+
+        document.getElementById('formTV').addEventListener('submit', e => {
+            e.preventDefault();
+            const tipo = document.getElementById('tvTipo').value;
+            const url = document.getElementById('tvUrl').value;
+            const duracion = parseInt(document.getElementById('tvDuracion').value);
+            db.ref('configuracion/tv/medios').push({ tipo, url, duracion }).then(() => {
+                mostrarNotificacion("✅ Elemento enviado a la TV");
+                e.target.reset(); document.getElementById('tvDuracion').value = 10;
+            });
+        });
+
+        function escucharMediosTV() {
+            db.ref('configuracion/tv/medios').on('value', snap => {
+                const cont = document.getElementById('listaMediosUI'); cont.innerHTML = '';
+                if(snap.exists()) {
+                    snap.forEach(child => {
+                        const m = { id: child.key, ...child.val() };
+                        const icono = m.tipo === 'video' ? '🎥' : '🖼️';
+                        cont.innerHTML += `<div class="medio-item"><div style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:70%;"><strong>${icono} ${m.duracion}s</strong><br><a href="${m.url}" target="_blank" style="color:var(--text-muted); font-size:11px; text-decoration:none;">${m.url}</a></div><button class="btn-eliminar" onclick="borrarMedio('${m.id}')">Borrar</button></div>`;
+                    });
+                } else {
+                    cont.innerHTML = '<p style="text-align:center; color:var(--text-muted); font-size:13px;">No hay contenido multimedia activo.</p>';
+                }
+            });
+        }
+
+        window.borrarMedio = function(id) { if(confirm("¿Quitar este elemento?")) db.ref('configuracion/tv/medios/' + id).remove(); };
+    </script>
+</body>
+</html>
