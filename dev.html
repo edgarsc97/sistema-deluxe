@@ -11,7 +11,7 @@
             --text-main: #F3F4F6; --text-muted: #9CA3AF;
             --gold: #D4AF37; --gold-hover: #B08D4A;
             --success: #059669; --danger: #991B1B; --blue: #3b82f6; 
-            --border: rgba(255, 255, 255, 0.08);
+            --purple: #8B5CF6; --border: rgba(255, 255, 255, 0.08);
         }
         body { font-family: 'Inter', sans-serif; background: var(--bg-body); color: var(--text-main); margin: 0; padding: 20px; }
         
@@ -29,16 +29,16 @@
         input, select, textarea { width: 100%; padding: 12px; margin-bottom: 15px; background: var(--bg-input); border: 1px solid var(--border); color: white; border-radius: 8px; font-size: 14px; box-sizing: border-box; font-family: 'Inter', sans-serif;}
         input:focus, select:focus, textarea:focus { outline: none; border-color: var(--gold); }
         textarea { resize: vertical; min-height: 80px; }
+        ::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
 
         .btn-guardar { background: var(--success); color: white; border: none; width: 100%; padding: 15px; font-size: 14px; font-weight: 800; border-radius: 8px; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; transition: 0.3s; }
         .btn-guardar:hover { background: var(--success-hover); }
 
-        .lista-medios { margin-top: 20px; border-top: 1px solid var(--border); padding-top: 20px; max-height: 300px; overflow-y: auto;}
+        .lista-medios { margin-top: 10px; border-top: 1px solid var(--border); padding-top: 15px; max-height: 200px; overflow-y: auto;}
         .medio-item { background: var(--bg-input); padding: 12px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--blue); }
         .btn-eliminar { background: transparent; color: var(--danger); border: 1px solid var(--danger); padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; text-transform: uppercase; }
         .btn-eliminar:hover { background: var(--danger); color: white; }
 
-        /* TOASTS */
         #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
         .toast { background: var(--success); color: white; padding: 15px 25px; border-radius: 8px; font-weight: 600; font-size: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); animation: slideIn 0.3s ease-out;}
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
@@ -66,9 +66,36 @@
                     <input type="checkbox" id="tvVozActiva" style="width:20px; height:20px; margin:0;">
                     <strong>Activar Voz ("Pedido Listo")</strong>
                 </label>
-                <p style="color:var(--text-muted); font-size:12px; margin-top:0; line-height: 1.5;">Si lo apagas, la TV solo hará un sonido corto (campana) y mostrará el letrero verde, pero la asistente dejará de hablar.</p>
+                <p style="color:var(--text-muted); font-size:12px; margin-top:0; line-height: 1.5;">Si lo apagas, la TV solo hará un sonido corto (campana) y mostrará el letrero verde.</p>
                 <button type="button" class="btn-guardar" onclick="guardarConfigVoz()" style="background:var(--purple);">💾 Guardar Ajustes</button>
             </form>
+        </div>
+
+        <div class="panel-box">
+            <h2>📅 PORTAL DE CITAS WEB</h2>
+            
+            <form id="formHorarioCitas">
+                <div style="display:flex; gap:10px; margin-bottom:10px;">
+                    <div style="flex:1;">
+                        <label style="font-size:11px; color:var(--gold);">Hora de Apertura</label>
+                        <input type="time" id="cwApertura" required>
+                    </div>
+                    <div style="flex:1;">
+                        <label style="font-size:11px; color:var(--gold);">Hora de Cierre</label>
+                        <input type="time" id="cwCierre" required>
+                    </div>
+                </div>
+                <button type="button" class="btn-guardar" onclick="guardarHorarioCitas()" style="padding:10px; font-size:12px; margin-bottom:20px;">💾 Guardar Horario</button>
+            </form>
+
+            <form id="formServicioCita">
+                <label style="font-size:11px; color:var(--gold);">Agregar Servicio Público</label>
+                <div style="display:flex; gap:10px; margin-bottom:0;">
+                    <input type="text" id="cwNuevoServicio" placeholder="Ej. Paquete Boda" required style="margin-bottom:0;">
+                    <button type="submit" class="btn-guardar" style="background:var(--success); width:auto; padding:0 20px;">➕</button>
+                </div>
+            </form>
+            <div class="lista-medios" id="listaServiciosWebUI"></div>
         </div>
 
         <div class="panel-box">
@@ -132,7 +159,7 @@
                 window.location.href = "admin.html";
             } else {
                 cargarConfiguraciones();
-                escucharMediosTV();
+                escucharDatosDinamicos();
             }
         });
 
@@ -140,16 +167,25 @@
             // Cargar Ticket
             db.ref('configuracion/ticketPromo').once('value', snap => {
                 if(snap.exists()) {
-                    const data = snap.val();
-                    document.getElementById('tkActivo').checked = data.activo;
-                    document.getElementById('tkTitulo').value = data.titulo || "";
-                    document.getElementById('tkTexto').value = data.texto || "";
+                    document.getElementById('tkActivo').checked = snap.val().activo;
+                    document.getElementById('tkTitulo').value = snap.val().titulo || "";
+                    document.getElementById('tkTexto').value = snap.val().texto || "";
                 }
             });
             // Cargar Voz
             db.ref('configuracion/tvVoz').once('value', snap => {
-                if(snap.exists()) { document.getElementById('tvVozActiva').checked = snap.val().activo; }
-                else { document.getElementById('tvVozActiva').checked = true; } // Encendido por defecto
+                if(snap.exists()) document.getElementById('tvVozActiva').checked = snap.val().activo;
+                else document.getElementById('tvVozActiva').checked = true; 
+            });
+            // Cargar Horario Web
+            db.ref('configuracion/citasWeb/horario').once('value', snap => {
+                if(snap.exists()) {
+                    document.getElementById('cwApertura').value = snap.val().apertura;
+                    document.getElementById('cwCierre').value = snap.val().cierre;
+                } else {
+                    document.getElementById('cwApertura').value = "10:00";
+                    document.getElementById('cwCierre').value = "20:00";
+                }
             });
         }
 
@@ -165,33 +201,55 @@
             db.ref('configuracion/ticketPromo').set({ activo, titulo, texto }).then(() => mostrarNotificacion("🧾 Ticket actualizado"));
         };
 
+        window.guardarHorarioCitas = function() {
+            const apertura = document.getElementById('cwApertura').value;
+            const cierre = document.getElementById('cwCierre').value;
+            db.ref('configuracion/citasWeb/horario').set({ apertura, cierre }).then(() => mostrarNotificacion("📅 Horario de web público actualizado"));
+        };
+
+        // --- SISTEMA DE MEDIOS TV ---
         document.getElementById('formTV').addEventListener('submit', e => {
             e.preventDefault();
-            const tipo = document.getElementById('tvTipo').value;
-            const url = document.getElementById('tvUrl').value;
-            const duracion = parseInt(document.getElementById('tvDuracion').value);
-            db.ref('configuracion/tv/medios').push({ tipo, url, duracion }).then(() => {
-                mostrarNotificacion("✅ Elemento enviado a la TV");
-                e.target.reset(); document.getElementById('tvDuracion').value = 10;
+            const tipo = document.getElementById('tvTipo').value; const url = document.getElementById('tvUrl').value; const duracion = parseInt(document.getElementById('tvDuracion').value);
+            db.ref('configuracion/tv/medios').push({ tipo, url, duracion }).then(() => { mostrarNotificacion("✅ Elemento enviado a la TV"); e.target.reset(); document.getElementById('tvDuracion').value = 10; });
+        });
+
+        // --- SISTEMA DE SERVICIOS WEB ---
+        document.getElementById('formServicioCita').addEventListener('submit', e => {
+            e.preventDefault();
+            const nombre = document.getElementById('cwNuevoServicio').value.trim();
+            db.ref('configuracion/citasWeb/servicios').push({ nombre }).then(() => {
+                mostrarNotificacion("✅ Servicio agregado a la web");
+                document.getElementById('cwNuevoServicio').value = '';
             });
         });
 
-        function escucharMediosTV() {
+        function escucharDatosDinamicos() {
+            // Escuchar TV
             db.ref('configuracion/tv/medios').on('value', snap => {
                 const cont = document.getElementById('listaMediosUI'); cont.innerHTML = '';
                 if(snap.exists()) {
                     snap.forEach(child => {
                         const m = { id: child.key, ...child.val() };
                         const icono = m.tipo === 'video' ? '🎥' : '🖼️';
-                        cont.innerHTML += `<div class="medio-item"><div style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:70%;"><strong>${icono} ${m.duracion}s</strong><br><a href="${m.url}" target="_blank" style="color:var(--text-muted); font-size:11px; text-decoration:none;">${m.url}</a></div><button class="btn-eliminar" onclick="borrarMedio('${m.id}')">Borrar</button></div>`;
+                        cont.innerHTML += `<div class="medio-item"><div style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:70%;"><strong>${icono} ${m.duracion}s</strong><br><a href="${m.url}" target="_blank" style="color:var(--text-muted); font-size:11px; text-decoration:none;">${m.url}</a></div><button class="btn-eliminar" onclick="borrarElemento('configuracion/tv/medios/${m.id}')">Borrar</button></div>`;
                     });
-                } else {
-                    cont.innerHTML = '<p style="text-align:center; color:var(--text-muted); font-size:13px;">No hay contenido multimedia activo.</p>';
-                }
+                } else { cont.innerHTML = '<p style="text-align:center; color:var(--text-muted); font-size:12px;">No hay contenido multimedia activo.</p>'; }
+            });
+
+            // Escuchar Servicios Web
+            db.ref('configuracion/citasWeb/servicios').on('value', snap => {
+                const cont = document.getElementById('listaServiciosWebUI'); cont.innerHTML = '';
+                if(snap.exists()) {
+                    snap.forEach(child => {
+                        const s = { id: child.key, ...child.val() };
+                        cont.innerHTML += `<div class="medio-item" style="border-left-color:var(--success); padding:8px 12px;"><div style="font-size:13px; font-weight:bold;">${s.nombre}</div><button class="btn-eliminar" onclick="borrarElemento('configuracion/citasWeb/servicios/${s.id}')">Borrar</button></div>`;
+                    });
+                } else { cont.innerHTML = '<p style="text-align:center; color:var(--text-muted); font-size:12px;">Agrega servicios para que los clientes puedan elegir.</p>'; }
             });
         }
 
-        window.borrarMedio = function(id) { if(confirm("¿Quitar este elemento?")) db.ref('configuracion/tv/medios/' + id).remove(); };
+        window.borrarElemento = function(ruta) { if(confirm("¿Seguro que deseas eliminar este elemento?")) db.ref(ruta).remove(); };
     </script>
 </body>
 </html>

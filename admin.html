@@ -7,17 +7,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root { 
-            --bg-body: #0A0E17;
-            --bg-panel: #111827;
-            --text-main: #F3F4F6;
-            --text-muted: #9CA3AF;
-            --gold: #D4AF37;
-            --gold-hover: #B08D4A;
-            --success: #059669;
-            --danger: #991B1B;
-            --purple: #8B5CF6; 
-            --border: rgba(255, 255, 255, 0.08);
-            --whatsapp: #25D366;
+            --bg-body: #0A0E17; --bg-panel: #111827; --text-main: #F3F4F6;
+            --text-muted: #9CA3AF; --gold: #D4AF37; --success: #059669;
+            --danger: #991B1B; --purple: #8B5CF6; --border: rgba(255, 255, 255, 0.08);
+            --whatsapp: #25D366; --blue: #3b82f6;
         }
 
         body { font-family: 'Inter', sans-serif; background: var(--bg-body); color: var(--text-main); margin: 0; padding: 20px; }
@@ -25,22 +18,29 @@
         #loginPanel { max-width: 380px; margin: 12vh auto; background: var(--bg-panel); padding: 40px; border-radius: 16px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); text-align: center; border: 1px solid var(--border); border-top: 4px solid var(--gold); }
         .logo-banco { font-size: 32px; letter-spacing: 4px; font-weight: 300; color: var(--gold); text-transform: uppercase; margin-bottom: 5px; }
         input { width: 100%; padding: 14px; margin: 10px 0; background: #1F2937; border: 1px solid var(--border); color: white; border-radius: 8px; box-sizing: border-box; font-size: 14px; transition: 0.3s; }
+        input:focus { outline: none; border-color: var(--gold); }
         .btn-login { width: 100%; padding: 14px; background: var(--gold); color: #000; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 15px; margin-top: 15px; transition: 0.3s; letter-spacing: 1px;}
 
         .panel { max-width: 850px; margin: 0 auto; background: var(--bg-panel); padding: 35px; border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); border: 1px solid var(--border); }
         .header-flex { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 25px; }
         
-        .nav-botones { display: flex; gap: 10px; }
+        .nav-botones { display: flex; gap: 10px; flex-wrap: wrap;}
         .btn-nav { background: transparent; color: var(--gold); border: 1px solid var(--gold); text-decoration: none; padding: 10px 20px; border-radius: 6px; font-weight: 600; font-size: 11px; transition: 0.3s; letter-spacing: 1px; text-transform: uppercase;}
         .btn-nav:hover { background: var(--gold); color: #000; }
         
         .btn-cascada { background: transparent; color: var(--text-muted); border: 1px dashed var(--text-muted); padding: 15px; border-radius: 8px; width: 100%; font-size: 13px; font-weight: 600; cursor: pointer; margin-bottom: 25px; transition: 0.3s; letter-spacing: 1px; }
 
+        .titulo-seccion { font-size: 13px; color: var(--gold); border-bottom: 1px solid var(--gold); padding-bottom: 8px; margin: 30px 0 15px 0; text-transform: uppercase; letter-spacing: 2px; font-weight: 800;}
+
         .pedido-card { background: #1F2937; border: 1px solid var(--border); padding: 20px; margin-bottom: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid var(--gold); transition: 0.3s; }
         .pedido-card.listo { border-left-color: var(--success); background: rgba(5, 150, 105, 0.05); }
         .pedido-card.pausado { border-left-color: var(--purple); opacity: 0.85; background: #151A2B; }
+        .pedido-card.vip { border-left: 5px solid var(--gold); background: linear-gradient(90deg, rgba(212,175,55,0.1) 0%, rgba(31,41,55,1) 30%);}
         
-        .info-cliente strong { font-size: 18px; color: white; }
+        /* ESTILO ESPECIAL PARA CITAS WEB */
+        .cita-card { border-left: 5px solid var(--blue); background: rgba(59, 130, 246, 0.05); }
+
+        .info-cliente strong { font-size: 18px; color: white; display: block; margin-bottom: 4px;}
         .info-servicio { color: var(--gold); font-size: 12px; text-transform: uppercase; font-weight: 700; display: block; margin: 5px 0;}
         .info-entrega { color: var(--text-muted); font-size: 13px; }
 
@@ -54,18 +54,26 @@
         .btn-pausa { color: var(--purple); border-color: var(--purple); }
         .btn-pausa:hover { background: var(--purple); color: white; }
         .btn-reanudar { color: var(--gold); border-color: var(--gold); }
-
+        .btn-ingresar { background: rgba(59, 130, 246, 0.1); color: var(--blue); border-color: var(--blue); }
+        .btn-ingresar:hover { background: var(--blue); color: white; }
+        
         .btn-wa { background: transparent; color: var(--whatsapp); border: 1px solid var(--whatsapp); padding: 8px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; margin-top: 10px; width: 100%; transition: 0.3s; text-transform: uppercase;}
         .btn-wa:hover { background: var(--whatsapp); color: #000; }
 
-        .titulo-pausados { font-size: 13px; color: var(--purple); border-bottom: 1px solid var(--purple); padding-bottom: 8px; margin: 40px 0 20px 0; text-transform: uppercase; letter-spacing: 2px; font-weight: 800;}
-
-        /* NOTIFICACIONES FLOTANTES */
+        /* MODALES */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 500; backdrop-filter: blur(5px);}
+        .modal-content { background: var(--bg-panel); padding: 30px; border-radius: 15px; width: 90%; max-width: 450px; border: 1px solid var(--border); text-align: center;}
+        
+        /* TOASTS */
         #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
         .toast { background: var(--success); color: white; padding: 15px 25px; border-radius: 8px; font-weight: 600; font-size: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); animation: slideIn 0.3s ease-out; display: flex; align-items: center; gap: 10px; letter-spacing: 1px; border-left: 5px solid rgba(0,0,0,0.3);}
-        .toast.error { background: var(--danger); }
-        .toast.info { background: var(--blue); }
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        @media (max-width: 600px) {
+            .pedido-card { flex-direction: column; align-items: flex-start; gap: 15px;}
+            .acciones-btn { width: 100%; }
+            .btn-accion { width: 100%; }
+        }
     </style>
 </head>
 <body>
@@ -86,7 +94,7 @@
         <div class="panel">
             <div class="header-flex">
                 <div>
-                    <h1 style="margin:0; font-size:22px; font-weight: 300;">ORDENES ACTIVAS</h1>
+                    <h1 style="margin:0; font-size:22px; font-weight: 300;">ORDENES EN VIVO</h1>
                     <div id="reloj" style="color:var(--gold); font-size: 13px; font-weight: 700;"></div>
                 </div>
                 <div class="nav-botones">
@@ -96,16 +104,32 @@
                 </div>
             </div>
 
+            <div class="titulo-seccion" style="color:var(--blue); border-color:var(--blue); margin-top:0;">📅 AGENDA WEB (CITAS POR ATENDER)</div>
+            <div id="listaCitasWeb"></div>
+
             <button class="btn-cascada" onclick="retrasarTodo(5)">➕ RETRASAR TODA LA FILA (+5 MINUTOS)</button>
 
+            <div class="titulo-seccion" style="color:var(--success); border-color:var(--success);">▶️ EN PRODUCCIÓN (PANTALLA TV)</div>
             <div id="listaPedidos"></div>
             
-            <div class="titulo-pausados">⏸️ TRABAJOS PAUSADOS (NO SE BORRAN EN CIERRE)</div>
+            <div class="titulo-seccion" style="color:var(--purple); border-color:var(--purple);">⏸️ TRABAJOS PAUSADOS</div>
             <div id="listaPausados"></div>
 
             <div style="text-align: right; margin-top: 40px; border-top: 1px solid var(--border); padding-top: 20px;">
                 <button onclick="firebase.auth().signOut()" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-size: 11px; text-transform: uppercase;">Cerrar Sesión</button>
             </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalNube">
+        <div class="modal-content">
+            <h2 style="color:var(--blue); margin-top:0; letter-spacing:2px;">☁️ ENTREGA DIGITAL</h2>
+            <p style="color:var(--text-muted); font-size:13px; margin-bottom:20px;">Si el trabajo incluye fotos digitales, pega el enlace aquí. El cliente lo verá al escanear su ticket.</p>
+            <input type="url" id="linkDescargaNube" placeholder="Enlace de Google Drive / WeTransfer (Opcional)">
+            <input type="hidden" id="idTurnoActivo">
+            
+            <button class="btn-login" style="background:var(--success); color:white; margin-top:10px;" onclick="confirmarFinalizar()">✅ MARCAR COMO LISTO</button>
+            <button onclick="cerrarModalNube()" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-weight: bold; margin-top:15px;">Cancelar</button>
         </div>
     </div>
 
@@ -131,6 +155,8 @@
         const auth = firebase.auth();
         const db = firebase.database();
 
+        let memoriaCitas = {}; // Para guardar temporalmente las citas web
+
         function mostrarNotificacion(mensaje, tipo = 'success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
@@ -140,8 +166,15 @@
         }
 
         auth.onAuthStateChanged(user => {
-            if (user) { document.getElementById('loginPanel').style.display = 'none'; document.getElementById('adminPanel').style.display = 'block'; escucharPedidos(); } 
-            else { document.getElementById('loginPanel').style.display = 'block'; document.getElementById('adminPanel').style.display = 'none'; }
+            if (user) { 
+                document.getElementById('loginPanel').style.display = 'none'; 
+                document.getElementById('adminPanel').style.display = 'block'; 
+                escucharPedidos(); 
+                escucharCitasWeb(); // Inicializa el listener de las Citas
+            } else { 
+                document.getElementById('loginPanel').style.display = 'block'; 
+                document.getElementById('adminPanel').style.display = 'none'; 
+            }
         });
 
         document.getElementById('formLogin').addEventListener('submit', e => {
@@ -149,6 +182,104 @@
             auth.signInWithEmailAndPassword(document.getElementById('email').value, document.getElementById('password').value).catch(err => alert("Acceso Denegado"));
         });
 
+        // ==========================================
+        // 1. GESTIÓN DE CITAS WEB (NUEVO)
+        // ==========================================
+        function escucharCitasWeb() {
+            db.ref('citasWeb').on('value', snap => {
+                const cont = document.getElementById('listaCitasWeb');
+                let html = '';
+                memoriaCitas = {};
+
+                if (!snap.exists()) {
+                    cont.innerHTML = '<div style="text-align:center; padding:15px; color:gray; font-size:13px; background:rgba(255,255,255,0.02); border-radius:8px;">No hay citas agendadas por internet</div>';
+                    return;
+                }
+
+                let citasArr = [];
+                snap.forEach(c => { 
+                    citasArr.push({id: c.key, ...c.val()}); 
+                    memoriaCitas[c.key] = c.val();
+                });
+                
+                // Ordenar por fecha y hora
+                citasArr.sort((a,b) => new Date(`${a.fechaFormato}T${a.horaFormato}`) - new Date(`${b.fechaFormato}T${b.horaFormato}`));
+
+                citasArr.forEach(c => {
+                    const btnWA = (c.telefono && c.telefono.length >= 10) 
+                        ? `<button onclick="window.open('https://wa.me/52${c.telefono}', '_blank')" class="btn-wa">🟢 Escribir WA</button>` : '';
+
+                    html += `
+                        <div class="pedido-card cita-card">
+                            <div class="info-cliente">
+                                <strong>👤 ${c.nombre}</strong>
+                                <span class="info-servicio">🌐 WEB: ${c.servicio}</span>
+                                <span class="info-entrega" style="color:white; font-weight:bold;">📅 ${c.fechaFormato} | ⏰ ${c.horaFormato}</span>
+                                ${btnWA}
+                            </div>
+                            <div class="acciones-btn">
+                                <button class="btn-accion btn-ingresar" onclick="ingresarCitaVIP('${c.id}')">🚀 Ingresar a Fila (VIP)</button>
+                                <button class="btn-accion btn-gris" onclick="db.ref('citasWeb/${c.id}').remove()">❌ Cancelar Cita</button>
+                            </div>
+                        </div>`;
+                });
+
+                cont.innerHTML = html;
+            });
+        }
+
+        // EL BOTÓN MÁGICO: Saca la cita de la web y la inyecta a la Fila en Vivo con Efecto Dominó
+        window.ingresarCitaVIP = function(idCita) {
+            if(!confirm("¿El cliente ya está en el estudio? Se ingresará a la TV con prioridad máxima.")) return;
+
+            const cita = memoriaCitas[idCita];
+            if(!cita) return;
+
+            // Le asignamos un folio virtual "WEB-XXXX" (Ya que no pasó por la caja física para cobrar aún)
+            const folioWeb = "WEB-" + Math.floor(1000 + Math.random() * 9000);
+            const minsTotal = 15; // Asumimos 15 min por defecto
+
+            db.ref('turnos').once('value', snap => {
+                let tiempoBaseActual = Date.now();
+                let actualizaciones = {};
+                
+                let nuevoTurno = {
+                    nombre: cita.nombre, numeroTicket: folioWeb, telefono: cita.telefono, 
+                    estado: 'pendiente', servicio: cita.servicio, minutosServicio: minsTotal, esVIP: true
+                };
+
+                // Lógica de Efecto Dominó Inverso (VIP)
+                let tiempoFinalVIP = tiempoBaseActual + (minsTotal * 60000);
+                nuevoTurno.timestampEntrega = tiempoFinalVIP;
+                nuevoTurno.horaFormateada = new Date(tiempoFinalVIP).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true});
+                
+                if (snap.exists()) {
+                    snap.forEach(child => {
+                        let t = child.val();
+                        if (t.estado === 'pendiente') {
+                            let nuevoTiempo = Math.max(t.timestampEntrega, tiempoBaseActual) + (minsTotal * 60000);
+                            actualizaciones[`turnos/${child.key}/timestampEntrega`] = nuevoTiempo;
+                            actualizaciones[`turnos/${child.key}/horaFormateada`] = new Date(nuevoTiempo).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true});
+                        }
+                    });
+                }
+
+                // Generamos el turno
+                let nuevoRef = db.ref('turnos').push();
+                actualizaciones[`turnos/${nuevoRef.key}`] = nuevoTurno;
+                
+                // Borramos la cita original de la bandeja de espera
+                actualizaciones[`citasWeb/${idCita}`] = null;
+
+                db.ref().update(actualizaciones).then(() => {
+                    mostrarNotificacion("⭐ CITA INGRESADA A LA TV (FAST-PASS)");
+                });
+            });
+        };
+
+        // ==========================================
+        // 2. GESTIÓN DE PRODUCCIÓN NORMAL
+        // ==========================================
         function escucharPedidos() {
             db.ref('turnos').on('value', snap => {
                 const contActivos = document.getElementById('listaPedidos');
@@ -156,7 +287,7 @@
                 let hActivos = '', hPausados = '';
                 
                 if (!snap.exists()) {
-                    contActivos.innerHTML = '<div style="text-align:center; padding:20px; color:gray;">No hay ordenes activas</div>';
+                    contActivos.innerHTML = '<div style="text-align:center; padding:20px; color:gray;">Fila vacía</div>';
                     contPausados.innerHTML = '<div style="text-align:center; padding:20px; color:gray;">Sin pausados</div>'; return;
                 }
 
@@ -170,17 +301,21 @@
                     const btnWA = (p.telefono && p.telefono.length >= 10) 
                         ? `<button onclick="notificarWA('${p.telefono}', '${p.nombre}', '${p.servicio}', '${p.numeroTicket}')" class="btn-wa">🟢 Avisar WhatsApp</button>` : '';
 
+                    const claseVIP = p.esVIP ? 'vip' : '';
+                    const etiquetaVIP = p.esVIP ? '<span style="background:var(--gold); color:black; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:800; margin-left:10px;">⭐ VIP</span>' : '';
+
                     const cardHTML = `
-                        <div class="pedido-card ${p.estado}">
+                        <div class="pedido-card ${p.estado} ${claseVIP}">
                             <div class="info-cliente">
-                                <strong>#${p.numeroTicket} - ${p.nombre}</strong>
+                                <strong>#${p.numeroTicket} - ${p.nombre}</strong> ${etiquetaVIP}
                                 <span class="info-servicio">${p.servicio}</span>
                                 <span class="info-entrega">${p.estado === 'pausado' ? '⏸️ PAUSADO' : '🕒 ' + p.horaFormateada}</span>
+                                ${p.enlaceDescarga ? `<a href="${p.enlaceDescarga}" target="_blank" style="color:var(--blue); font-size:11px; text-decoration:none; display:block; margin-top:5px;">☁️ Ver Archivos Nube</a>` : ''}
                                 ${btnWA}
                             </div>
                             <div class="acciones-btn">
                                 ${p.estado === 'pendiente' ? `
-                                    <button class="btn-accion btn-verde" onclick="marcarListo('${p.id}')">✅ Finalizar</button>
+                                    <button class="btn-accion btn-verde" onclick="abrirModalNube('${p.id}')">✅ Finalizar</button>
                                     <button class="btn-accion btn-pausa" onclick="pausarPedido('${p.id}')">⏸️ Pausar</button>
                                 ` : p.estado === 'listo' ? `
                                     <button class="btn-accion btn-gris" onclick="archivarPedido('${p.id}')">📦 Archivar</button>
@@ -199,62 +334,52 @@
             });
         }
 
-        // =========================================================
-        // MOTOR ABSOLUTO: RECÁLCULO TOTAL DESDE CERO
-        // =========================================================
-        window.recalcularFilaEntera = function(turnoIdAModificar, nuevoEstado) {
+        // --- SISTEMA NUBE ---
+        function abrirModalNube(idTurno) {
+            document.getElementById('idTurnoActivo').value = idTurno;
+            document.getElementById('linkDescargaNube').value = '';
+            document.getElementById('modalNube').style.display = 'flex';
+        }
+        function cerrarModalNube() { document.getElementById('modalNube').style.display = 'none'; }
+
+        window.confirmarFinalizar = function() {
+            const id = document.getElementById('idTurnoActivo').value;
+            const link = document.getElementById('linkDescargaNube').value.trim();
+            cerrarModalNube();
+            recalcularFilaEntera(id, 'listo', link);
+        };
+
+        // --- EFECTO DOMINÓ ---
+        window.recalcularFilaEntera = function(turnoIdAModificar, nuevoEstado, linkNube = "") {
             db.ref('turnos').once('value', snap => {
                 if(!snap.exists()) return;
-
-                let turnosPendientes = [];
-                let actualizaciones = {};
+                let turnosPendientes = []; let actualizaciones = {};
                 
-                // 1. Actualizamos el estado del cliente que finalizamos/pausamos
                 actualizaciones[`${turnoIdAModificar}/estado`] = nuevoEstado;
-                if(nuevoEstado === 'pausado') {
-                    actualizaciones[`${turnoIdAModificar}/horaFormateada`] = '--:--';
-                }
+                if(nuevoEstado === 'pausado') actualizaciones[`${turnoIdAModificar}/horaFormateada`] = '--:--';
+                if(linkNube) actualizaciones[`${turnoIdAModificar}/enlaceDescarga`] = linkNube;
 
-                // 2. Separamos a los que siguen formados en la fila
                 snap.forEach(c => { 
                     let t = {id: c.key, ...c.val()};
-                    if(t.estado === 'pendiente' && t.id !== turnoIdAModificar) {
-                        turnosPendientes.push(t);
-                    }
+                    if(t.estado === 'pendiente' && t.id !== turnoIdAModificar) { turnosPendientes.push(t); }
                 });
                 
-                // 3. Los formamos por orden de llegada original
                 turnosPendientes.sort((a, b) => a.timestampEntrega - b.timestampEntrega);
-
-                // 4. Arrancamos el reloj DESDE ESTE MOMENTO EXACTO
                 let tiempoAcumulado = Date.now();
 
-                // 5. Re-calculamos a todos hacia adelante (Efecto Acordeón)
                 turnosPendientes.forEach(t => {
                     let mins = parseInt(t.minutosServicio) || 15; 
                     tiempoAcumulado += (mins * 60000); 
-                    
                     actualizaciones[`${t.id}/timestampEntrega`] = tiempoAcumulado;
                     actualizaciones[`${t.id}/horaFormateada`] = new Date(tiempoAcumulado).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true});
                 });
 
-                // 6. Mandamos la actualización a la carpeta específica de "turnos" (Aquí estaba el bug antes)
-                db.ref('turnos').update(actualizaciones).then(() => {
-                    mostrarNotificacion(`✅ Tiempos recalculados con éxito.`);
-                }).catch(err => {
-                    alert("Error crítico en Firebase: " + err.message);
-                });
+                db.ref('turnos').update(actualizaciones).then(() => mostrarNotificacion(`✅ Orden Actualizada`));
             });
         };
 
         // ACCIONES DE BOTONES
-        window.marcarListo = function(id) { recalcularFilaEntera(id, 'listo'); };
-        
-        window.pausarPedido = function(id) {
-            if(!confirm("¿Pausar este trabajo? Se quitará de la TV y la fila de clientes avanzará.")) return;
-            recalcularFilaEntera(id, 'pausado');
-        };
-
+        window.pausarPedido = function(id) { if(confirm("¿Pausar este trabajo?")) recalcularFilaEntera(id, 'pausado'); };
         window.archivarPedido = function(id) { db.ref('turnos/' + id).update({estado: 'archivado'}); };
 
         window.reanudarPedido = function(id, mins) {
@@ -262,15 +387,10 @@
                 let max = Date.now();
                 snap.forEach(c => { if(c.val().estado === 'pendiente' && c.val().timestampEntrega > max) max = c.val().timestampEntrega; });
                 const nt = max + (mins * 60000);
-                db.ref('turnos/' + id).update({
-                    estado: 'pendiente',
-                    timestampEntrega: nt,
-                    horaFormateada: new Date(nt).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true})
-                }).then(() => mostrarNotificacion("▶️ Trabajo reanudado al final de la fila", "info"));
+                db.ref('turnos/' + id).update({ estado: 'pendiente', timestampEntrega: nt, horaFormateada: new Date(nt).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true}) }).then(() => mostrarNotificacion("▶️ Trabajo reanudado al final de la fila", "info"));
             });
         };
 
-        // También corregí el botón de "Retrasar todo" para que apunte bien a la base de datos
         window.retrasarTodo = function(m) {
             if(!confirm(`¿Retrasar toda la producción ${m} minutos?`)) return;
             db.ref('turnos').once('value', snap => {
@@ -283,15 +403,13 @@
                         ups[`${c.key}/horaFormateada`] = new Date(nt).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true});
                     }
                 });
-                db.ref('turnos').update(ups)
-                    .then(() => mostrarNotificacion(`⏱️ Toda la fila se retrasó ${m} minutos`, "info"))
-                    .catch(err => alert("Error al retrasar: " + err.message));
+                db.ref('turnos').update(ups).then(() => mostrarNotificacion(`⏱️ Fila retrasada ${m} minutos`, "info"));
             });
         };
 
         window.notificarWA = function(tel, nom, serv, ticket) {
             let num = tel.replace(/\D/g, ''); if(num.length === 10) num = "52" + num;
-            const msj = `¡Hola ${nom}! 👋 Tu pedido *#${ticket}* de *${serv}* está LISTO ✅.\n\nPuedes pasar a recogerlo al estudio. Si quieres ver el detalle de tu orden, entra aquí:\n🔗 ${LINK_RASTREO}`;
+            const msj = `¡Hola ${nom}! 👋 Tu pedido *#${ticket}* de *${serv}* está LISTO ✅.\n\nPuedes pasar a recogerlo al estudio. Si quieres ver el detalle de tu orden, entra aquí:\n🔗 ${LINK_RASTREO}?folio=${ticket}`;
             window.open(`https://wa.me/${num}?text=${encodeURIComponent(msj)}`, '_blank');
         };
 

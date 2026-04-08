@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reserva tu Cita - Foto Estudio Deluxe</title>
+    
+    <meta name="theme-color" content="#0A0E17">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #0A0E17; --bg-panel: #111827; --bg-input: #1F2937;
+            --text-main: #F3F4F6; --text-muted: #9CA3AF;
+            --gold: #D4AF37; --success: #059669; --blue: #3b82f6; 
+            --border: rgba(255, 255, 255, 0.08);
+        }
+        
+        body { font-family: 'Inter', sans-serif; background: var(--bg-body); color: var(--text-main); margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        
+        .header { width: 100%; background: var(--bg-panel); padding: 25px 0; text-align: center; border-bottom: 2px solid var(--gold); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+        .header h1 { margin: 0; font-size: 22px; font-weight: 300; letter-spacing: 4px; }
+        .header h1 span { color: var(--gold); font-weight: 800; }
+
+        .container { width: 90%; max-width: 400px; margin: 40px auto; background: var(--bg-panel); padding: 30px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 15px 35px rgba(0,0,0,0.5); position: relative; overflow: hidden;}
+        
+        .title-box { text-align: center; margin-bottom: 25px; }
+        .title-box h2 { margin: 0 0 10px 0; color: white; font-size: 20px; letter-spacing: 1px;}
+        .title-box p { margin: 0; color: var(--text-muted); font-size: 13px; line-height: 1.5;}
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 8px; font-size: 12px; color: var(--gold); font-weight: 600; text-transform: uppercase; letter-spacing: 1px;}
+        
+        input, select { width: 100%; padding: 15px; background: var(--bg-input); border: 1px solid var(--border); color: white; border-radius: 8px; font-size: 15px; box-sizing: border-box; font-family: 'Inter', sans-serif; transition: 0.3s;}
+        input:focus, select:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);}
+        
+        ::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
+
+        .btn-submit { width: 100%; padding: 18px; background: var(--gold); color: black; border: none; border-radius: 8px; font-weight: 800; font-size: 16px; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; margin-top: 15px; transition: 0.3s; box-shadow: 0 5px 20px rgba(212, 175, 55, 0.3);}
+        .btn-submit:active { transform: scale(0.97); }
+
+        /* Pantalla de Éxito */
+        #pantallaExito { position: absolute; top:0; left:0; width:100%; height:100%; background: var(--bg-panel); display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; z-index: 10; padding: 30px; box-sizing: border-box;}
+        .icon-check { font-size: 60px; margin-bottom: 20px; animation: popIn 0.5s ease-out; }
+        @keyframes popIn { 0% { transform: scale(0); } 80% { transform: scale(1.2); } 100% { transform: scale(1); } }
+
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>ESTUDIO <span>DELUXE</span></h1>
+    </div>
+
+    <div class="container">
+        
+        <div id="pantallaExito">
+            <div class="icon-check">✅</div>
+            <h2 style="color:var(--gold); margin:0 0 15px 0;">¡CITA CONFIRMADA!</h2>
+            <p style="color:var(--text-muted); font-size:14px; line-height:1.6; margin-bottom:25px;">Hemos registrado tu Fast-Pass. Preséntate en el estudio en la fecha y hora acordada.<br><br>Al llegar, indícanos tu nombre para darte <strong>prioridad VIP</strong> en la fila.</p>
+            <button class="btn-submit" style="background:var(--bg-input); color:white; box-shadow:none; border:1px solid var(--border);" onclick="window.location.reload()">Cerrar</button>
+        </div>
+
+        <div class="title-box">
+            <h2>Agenda tu Fast-Pass ⭐</h2>
+            <p>Reserva tu lugar, sáltate la fila normal y recibe trato VIP el día de tu evento o sesión fotográfica.</p>
+        </div>
+
+        <form id="formReserva">
+            <div class="form-group">
+                <label>Nombre Completo</label>
+                <input type="text" id="rNombre" placeholder="Ej. Ana Martínez" required autocomplete="off">
+            </div>
+
+            <div class="form-group">
+                <label>Teléfono (WhatsApp)</label>
+                <input type="tel" id="rTelefono" placeholder="10 dígitos" required pattern="[0-9]{10}">
+            </div>
+
+            <div class="form-group">
+                <label>Servicio de Interés</label>
+                <select id="rServicio" required>
+                    <option value="" disabled selected>Cargando servicios disponibles...</option>
+                </select>
+            </div>
+
+            <div style="display:flex; gap:15px;">
+                <div class="form-group" style="flex:1;">
+                    <label>Fecha</label>
+                    <input type="date" id="rFecha" required>
+                </div>
+                <div class="form-group" style="flex:1;">
+                    <label>Hora <span id="rangoHorasInfo" style="color:var(--text-muted); font-size:9px; text-transform:none;"></span></label>
+                    <input type="time" id="rHora" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit" id="btnGuardar">AGENDAR CITA</button>
+        </form>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAn0H-50sbh8sMcqn_k8IlVnJX6ko58ws4",
+            authDomain: "sistemafotos-cf459.firebaseapp.com",
+            databaseURL: "https://sistemafotos-cf459-default-rtdb.firebaseio.com",
+            projectId: "sistemafotos-cf459",
+            storageBucket: "sistemafotos-cf459.firebasestorage.app",
+            messagingSenderId: "599045837547",
+            appId: "1:599045837547:web:7bb72110d3cf36739ea4ae"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        let horaApertura = "10:00";
+        let horaCierre = "20:00";
+
+        // 1. Bloquear fechas anteriores a hoy
+        const inputFecha = document.getElementById('rFecha');
+        const hoy = new Date();
+        const yyyy = hoy.getFullYear();
+        const mm = String(hoy.getMonth() + 1).padStart(2, '0');
+        const dd = String(hoy.getDate()).padStart(2, '0');
+        inputFecha.min = `${yyyy}-${mm}-${dd}`;
+
+        // 2. Extraer el horario configurado en el Panel DEV
+        db.ref('configuracion/citasWeb/horario').once('value', snap => {
+            if(snap.exists()) {
+                horaApertura = snap.val().apertura;
+                horaCierre = snap.val().cierre;
+                
+                document.getElementById('rHora').min = horaApertura;
+                document.getElementById('rHora').max = horaCierre;
+                document.getElementById('rangoHorasInfo').innerText = `(${horaApertura} a ${horaCierre})`;
+            }
+        });
+
+        // 3. Extraer los Servicios configurados en el Panel DEV
+        db.ref('configuracion/citasWeb/servicios').once('value', snap => {
+            const select = document.getElementById('rServicio');
+            if(snap.exists()) {
+                let html = '<option value="" disabled selected>Selecciona una opción...</option>';
+                snap.forEach(child => {
+                    const nombreServicio = child.val().nombre;
+                    html += `<option value="${nombreServicio}">${nombreServicio}</option>`;
+                });
+                select.innerHTML = html;
+            } else {
+                select.innerHTML = '<option value="" disabled selected>Por favor, contacta al estudio</option>';
+            }
+        });
+
+        // 4. Validación estricta y guardado
+        document.getElementById('formReserva').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const horaSeleccionada = document.getElementById('rHora').value;
+            
+            // Validamos que el cliente no se pase de vivo y seleccione a las 3 de la mañana
+            if (horaSeleccionada < horaApertura || horaSeleccionada > horaCierre) {
+                alert(`⚠️ Fuera de Horario.\nPor favor selecciona una hora de atención entre las ${horaApertura} y las ${horaCierre} hrs.`);
+                return;
+            }
+
+            const btn = document.getElementById('btnGuardar');
+            btn.disabled = true;
+            btn.innerText = "PROCESANDO...";
+
+            const datosCita = {
+                nombre: document.getElementById('rNombre').value.trim().toUpperCase(),
+                telefono: document.getElementById('rTelefono').value.trim(),
+                servicio: document.getElementById('rServicio').value,
+                fechaFormato: document.getElementById('rFecha').value,
+                horaFormato: document.getElementById('rHora').value,
+                timestampRegistro: Date.now()
+            };
+
+            db.ref('citasWeb').push(datosCita).then(() => {
+                document.getElementById('pantallaExito').style.display = 'flex';
+            }).catch(err => {
+                alert("Error de conexión. Intenta de nuevo.");
+                btn.disabled = false;
+                btn.innerText = "AGENDAR CITA";
+            });
+        });
+    </script>
+</body>
+</html>

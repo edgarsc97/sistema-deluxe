@@ -20,12 +20,10 @@
 
         .container { width: 90%; max-width: 400px; margin: 30px auto; display: flex; flex-direction: column; gap: 20px; }
 
-        /* Buscador */
         .search-box { background: var(--bg-panel); padding: 20px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
         .search-box input { width: 100%; padding: 15px; margin-bottom: 15px; background: #1F2937; border: 1px solid var(--border); color: white; border-radius: 8px; font-size: 16px; text-align: center; box-sizing: border-box; font-weight: bold; letter-spacing: 2px;}
         .search-box button { width: 100%; padding: 15px; background: var(--gold); color: black; border: none; border-radius: 8px; font-weight: 800; font-size: 14px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;}
 
-        /* Tarjeta de Estado */
         .status-card { background: var(--bg-panel); padding: 25px 20px; border-radius: 12px; border: 1px solid var(--border); text-align: center; display: none; }
         .status-badge { display: inline-block; padding: 8px 16px; border-radius: 20px; font-weight: 800; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px;}
         
@@ -39,17 +37,18 @@
         .servicio-info { color: var(--gold); font-size: 14px; font-weight: 600; margin-bottom: 20px; }
         .hora-entrega { font-size: 13px; color: var(--text-muted); background: #1F2937; padding: 10px; border-radius: 8px;}
 
-        /* SECCIÓN DE BONIFICACIÓN (VIP) */
+        /* BOTÓN DE DESCARGA NUBE */
+        .btn-descarga { background: var(--blue); color: white; padding: 15px; border-radius: 8px; font-weight: 800; font-size: 14px; text-decoration: none; display: block; margin-top: 20px; transition: 0.3s; box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4); text-transform: uppercase; letter-spacing: 1px;}
+        .btn-descarga:active { transform: scale(0.95); }
+
         .promo-card { background: linear-gradient(145deg, #1f1c0d, #2d2610); border: 1px solid var(--gold); padding: 25px 20px; border-radius: 12px; text-align: center; box-shadow: 0 10px 30px rgba(212, 175, 55, 0.15); }
         .promo-title { color: var(--gold); font-weight: 800; font-size: 18px; margin: 0 0 10px 0; letter-spacing: 1px; }
         .promo-text { font-size: 13px; color: #D1D5DB; margin-bottom: 20px; line-height: 1.5; }
         
         .btn-social { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 14px; border-radius: 8px; font-weight: 800; font-size: 13px; cursor: pointer; text-decoration: none; text-transform: uppercase; letter-spacing: 1px; box-sizing: border-box; margin-bottom: 12px; transition: transform 0.2s;}
         .btn-social:active { transform: scale(0.97); }
-        
         .btn-google { background: white; color: #000; border: 1px solid #ddd; }
         .btn-facebook { background: var(--facebook); color: white; border: none; }
-        
         .icon-gm { font-size: 18px; }
 
     </style>
@@ -65,7 +64,6 @@
         <div class="promo-card">
             <h2 class="promo-title">⭐ ¡OBTÉN $10 DE BONIFICACIÓN!</h2>
             <p class="promo-text">Califica nuestro servicio con 5 estrellas en Google Maps, tómale captura y <strong>te descontamos / reembolsamos $10 MXN</strong> en tu compra al instante.</p>
-            
             <a href="https://g.page/r/CUBwuWzC-4A0EBI/review" target="_blank" class="btn-social btn-google">
                 <span class="icon-gm">📍</span> CALIFICAR EN GOOGLE MAPS
             </a>
@@ -91,6 +89,10 @@
                 Hora programada aprox:<br>
                 <strong id="txtHora" style="font-size: 18px; color: white;">--:--</strong>
             </div>
+
+            <a id="btnDescarga" href="#" target="_blank" style="display:none;" class="btn-descarga">
+                📥 DESCARGAR MIS FOTOS
+            </a>
             
             <button onclick="nuevaBusqueda()" style="background:transparent; border:1px dashed var(--text-muted); color:var(--text-muted); padding:10px; width:100%; border-radius:6px; margin-top:20px; cursor:pointer;">Buscar otro folio</button>
         </div>
@@ -113,7 +115,6 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // Autocompletar si el QR manda el folio por URL (Ej. rastreo.html?folio=10001)
         window.onload = function() {
             const urlParams = new URLSearchParams(window.location.search);
             const folioUrl = urlParams.get('folio');
@@ -132,31 +133,24 @@
             document.getElementById('statusCard').style.display = 'block';
             document.getElementById('badgeEstado').innerText = "Cargando...";
 
-            // Buscamos en la tabla de turnos en vivo
             db.ref('turnos').orderByChild('numeroTicket').equalTo(folio).once('value', snap => {
                 if(snap.exists()) {
                     let datos;
                     snap.forEach(child => { datos = child.val(); });
                     mostrarDatos(datos);
                 } else {
-                    // Si no está en turnos, verificamos si está en ventas (archivado/histórico)
                     db.ref('ventas').orderByChild('ticket').equalTo(folio).once('value', snapVentas => {
                         if(snapVentas.exists()) {
                             let datosHist;
                             snapVentas.forEach(child => { datosHist = child.val(); });
                             
-                            // Reconstruimos un objeto parecido para mostrar
                             let desc = "Servicio General";
                             if(datosHist.carrito) { desc = datosHist.carrito.map(i => i.nombre).join(', '); }
                             
-                            mostrarDatos({
-                                nombre: datosHist.cliente,
-                                servicio: desc,
-                                estado: 'archivado',
-                                horaFormateada: 'Ya entregado'
-                            });
+                            // Si el cliente fue archivado pero guardaste su link en ventas, lo mostramos
+                            // (En este caso asumimos que lo descargó cuando estaba "listo")
+                            mostrarDatos({ nombre: datosHist.cliente, servicio: desc, estado: 'archivado', horaFormateada: 'Ya entregado' });
                         } else {
-                            // No existe en ningún lado
                             document.getElementById('statusCard').style.display = 'none';
                             document.getElementById('searchBox').style.display = 'block';
                             document.getElementById('errorMsg').style.display = 'block';
@@ -172,8 +166,8 @@
             
             const badge = document.getElementById('badgeEstado');
             const boxHora = document.getElementById('boxHora');
+            const btnDescarga = document.getElementById('btnDescarga');
             
-            // Limpiamos clases
             badge.className = "status-badge";
 
             if(datos.estado === 'pendiente') {
@@ -181,22 +175,33 @@
                 badge.classList.add('estado-pendiente');
                 document.getElementById('txtHora').innerText = datos.horaFormateada;
                 boxHora.style.display = 'block';
+                btnDescarga.style.display = 'none';
             } 
             else if(datos.estado === 'pausado') {
                 badge.innerText = "⏸️ PAUSADO";
                 badge.classList.add('estado-archivado');
                 document.getElementById('txtHora').innerText = "Consulta en mostrador";
                 boxHora.style.display = 'block';
+                btnDescarga.style.display = 'none';
             }
             else if(datos.estado === 'listo') {
                 badge.innerText = "✅ ¡LISTO PARA ENTREGAR!";
                 badge.classList.add('estado-listo');
                 boxHora.style.display = 'none';
+                
+                // MAGIA: Si subiste un enlace en Producción, se activa el botón
+                if(datos.enlaceDescarga && datos.enlaceDescarga.length > 5) {
+                    btnDescarga.href = datos.enlaceDescarga;
+                    btnDescarga.style.display = 'block';
+                } else {
+                    btnDescarga.style.display = 'none';
+                }
             } 
             else {
                 badge.innerText = "📦 ENTREGADO";
                 badge.classList.add('estado-archivado');
                 boxHora.style.display = 'none';
+                btnDescarga.style.display = 'none';
             }
         }
 
