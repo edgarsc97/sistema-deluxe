@@ -13,6 +13,7 @@
             --text-muted: #9CA3AF; /* Gris sutil */
             --gold: #D4AF37; /* Oro champagne */
             --gold-hover: #B08D4A;
+            --blue: #3b82f6;
             --border: rgba(255, 255, 255, 0.08);
             --danger: #991B1B;
         }
@@ -35,28 +36,28 @@
         .header { background: var(--bg-panel); padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.3);}
         .header h1 { margin: 0; font-size: 20px; font-weight: 300; letter-spacing: 3px; color: var(--text-main); display: flex; align-items: center; gap: 10px;}
         .header h1 span { color: var(--gold); font-weight: 600; }
-        .user-info { display: flex; align-items: center; gap: 20px; }
+        .user-info { display: flex; align-items: center; gap: 20px; flex-wrap: wrap;}
         .user-email { font-size: 13px; color: var(--text-muted); letter-spacing: 0.5px; }
         .btn-logout { background: transparent; color: var(--text-muted); border: 1px solid var(--border); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;}
         .btn-logout:hover { background: rgba(153, 27, 27, 0.1); color: var(--danger); border-color: var(--danger); }
 
         /* CONTENEDOR DASHBOARD */
-        .dashboard-container { max-width: 1100px; margin: 50px auto 0 auto; padding: 0 20px; }
-        .dashboard-title { font-size: 14px; margin-bottom: 30px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; font-weight: 600; border-bottom: 1px solid var(--border); padding-bottom: 10px;}
+        .dashboard-container { max-width: 1100px; margin: 40px auto 0 auto; padding: 0 20px; }
+        .dashboard-title { font-size: 14px; margin-bottom: 25px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; font-weight: 600; border-bottom: 1px solid var(--border); padding-bottom: 10px;}
 
         /* GRID DE MÓDULOS */
-        .modulos-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; }
+        .modulos-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
 
         /* TARJETAS DE MÓDULO ESTILO FINTECH */
         .modulo-card { 
             background: var(--bg-panel); 
             border: 1px solid var(--border);
             border-radius: 16px; 
-            padding: 35px 25px; 
+            padding: 30px 20px; 
             text-align: center; 
             text-decoration: none; 
             box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -71,24 +72,26 @@
             top: 0; left: 0; width: 100%; height: 3px;
             background: var(--gold);
             opacity: 0;
-            transition: 0.4s ease;
+            transition: 0.3s ease;
         }
 
         .modulo-card:hover { 
-            transform: translateY(-8px); 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4); 
+            transform: translateY(-5px); 
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4); 
             border-color: rgba(212, 175, 55, 0.3);
-            background: #151e32; /* Ligeramente más claro al hacer hover */
+            background: #151e32; 
         }
 
         .modulo-card:hover::before { opacity: 1; }
 
-        .modulo-icono { font-size: 45px; margin-bottom: 20px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
-        .modulo-titulo { font-size: 16px; font-weight: 600; margin-bottom: 12px; color: var(--text-main); letter-spacing: 1px; text-transform: uppercase;}
-        .modulo-desc { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+        .modulo-icono { font-size: 40px; margin-bottom: 15px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3)); }
+        .modulo-titulo { font-size: 15px; font-weight: 600; margin-bottom: 10px; color: var(--text-main); letter-spacing: 1px; text-transform: uppercase;}
+        .modulo-desc { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
 
         /* ETIQUETA DORADA PARA MÓDULOS CLAVE */
         .badge-premium { background: rgba(212, 175, 55, 0.1); color: var(--gold); border: 1px solid rgba(212, 175, 55, 0.3); font-size: 10px; padding: 4px 8px; border-radius: 4px; font-weight: 600; text-transform: uppercase; margin-top: 15px; letter-spacing: 1px;}
+        .badge-dev { background: rgba(59, 130, 246, 0.1); color: var(--blue); border: 1px solid rgba(59, 130, 246, 0.3); font-size: 10px; padding: 4px 8px; border-radius: 4px; font-weight: 600; text-transform: uppercase; margin-top: 15px; letter-spacing: 1px;}
+        
     </style>
 </head>
 <body>
@@ -116,6 +119,21 @@
         </header>
 
         <div class="dashboard-container">
+
+            <div style="background: var(--bg-panel); border: 1px solid var(--gold); padding: 25px; border-radius: 16px; margin-bottom: 35px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+                <h3 style="color: var(--gold); font-size: 15px; margin-top: 0; letter-spacing: 2px;">🔗 ENLACE PÚBLICO PARA CITAS (FAST-PASS)</h3>
+                <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 20px;">Copia este enlace y envíaselo a tus clientes por WhatsApp o ponlo en tu perfil de Instagram.</p>
+                
+                <input type="text" value="https://edgarsc97.github.io/sistema-deluxe/reservas.html" readonly style="width: 100%; max-width: 450px; padding: 14px; background: #1F2937; color: white; border: 1px dashed var(--gold); border-radius: 8px; text-align: center; margin-bottom: 20px; font-size: 14px; font-weight: 600;">
+                
+                <br>
+                <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                    <button onclick="navigator.clipboard.writeText('https://edgarsc97.github.io/sistema-deluxe/reservas.html'); alert('¡Enlace copiado al portapapeles!');" style="background: var(--gold); color: black; border: none; padding: 12px 25px; border-radius: 8px; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 12px; transition: 0.3s; box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);">📋 Copiar Enlace</button>
+                    
+                    <a href="reservas.html" target="_blank" style="background: rgba(59, 130, 246, 0.1); color: var(--blue); border: 1px solid var(--blue); padding: 12px 25px; border-radius: 8px; font-weight: 800; cursor: pointer; text-transform: uppercase; font-size: 12px; text-decoration: none; transition: 0.3s;">👁️ Abrir Portal</a>
+                </div>
+            </div>
+
             <div class="dashboard-title">Módulos del Sistema</div>
             
             <div class="modulos-grid">
@@ -128,27 +146,34 @@
 
                 <a href="admin.html" class="modulo-card">
                     <div class="modulo-icono">⚙️</div>
-                    <div class="modulo-titulo">Operaciones</div>
-                    <div class="modulo-desc">Gestión de tiempos, alteración de fila en cascada y notificaciones directas por WhatsApp.</div>
-                </a>
-
-                <a href="tv.html" target="_blank" class="modulo-card">
-                    <div class="modulo-icono">📺</div>
-                    <div class="modulo-titulo">Monitor de Turnos</div>
-                    <div class="modulo-desc">Interfaz visual para clientes. Proyección de progreso en tiempo real para mostrador o sala de espera.</div>
+                    <div class="modulo-titulo">Producción en Vivo</div>
+                    <div class="modulo-desc">Gestión de tiempos, alteración de fila en cascada, citas web y entregas por nube.</div>
                 </a>
 
                 <a href="estadisticas.html" class="modulo-card">
                     <div class="modulo-icono">📊</div>
                     <div class="modulo-titulo">Inteligencia Financiera</div>
-                    <div class="modulo-desc">Análisis de flujo de caja, desglose por métodos de pago y métricas de rendimiento por servicio.</div>
+                    <div class="modulo-desc">Análisis de flujo de caja, desglose por métodos de pago y métricas de rendimiento (Corte Z).</div>
                     <div class="badge-premium">Módulo Analítico</div>
+                </a>
+
+                <a href="tv.html" target="_blank" class="modulo-card">
+                    <div class="modulo-icono">📺</div>
+                    <div class="modulo-titulo">Monitor TV</div>
+                    <div class="modulo-desc">Interfaz visual para sala de espera. Proyección de progreso en tiempo real y publicidad.</div>
+                </a>
+
+                <a href="dev.html" class="modulo-card">
+                    <div class="modulo-icono">🛠️</div>
+                    <div class="modulo-titulo">Panel DEV</div>
+                    <div class="modulo-desc">Configuración maestra, horarios web, gestión de publicidad de la TV y promociones de ticket.</div>
+                    <div class="badge-dev">Administrador</div>
                 </a>
 
                 <a href="rastreo.html" target="_blank" class="modulo-card">
                     <div class="modulo-icono">📱</div>
-                    <div class="modulo-titulo">Cliente Móvil</div>
-                    <div class="modulo-desc">Simulador del portal web donde el usuario final rastrea su orden desde su dispositivo personal.</div>
+                    <div class="modulo-titulo">Rastreo Móvil</div>
+                    <div class="modulo-desc">Visor de prueba del portal donde el cliente rastrea su orden y descarga sus archivos en la nube.</div>
                 </a>
 
             </div>
@@ -159,7 +184,6 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 
     <script>
-        // CONFIGURACIÓN FIREBASE INTACTA
         const firebaseConfig = {
             apiKey: "AIzaSyAn0H-50sbh8sMcqn_k8IlVnJX6ko58ws4",
             authDomain: "sistemafotos-cf459.firebaseapp.com",
