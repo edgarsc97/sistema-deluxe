@@ -12,7 +12,7 @@
             --bg-body: #0A0E17; --bg-panel: #111827; --bg-input: #1F2937;
             --text-main: #F3F4F6; --text-muted: #9CA3AF;
             --gold: #D4AF37; --success: #059669; --blue: #3b82f6; 
-            --border: rgba(255, 255, 255, 0.08);
+            --danger: #DC2626; --border: rgba(255, 255, 255, 0.08);
         }
         
         body { font-family: 'Inter', sans-serif; background: var(--bg-body); color: var(--text-main); margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
@@ -23,9 +23,12 @@
 
         .container { width: 90%; max-width: 400px; margin: 40px auto; background: var(--bg-panel); padding: 30px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 15px 35px rgba(0,0,0,0.5); position: relative; overflow: hidden;}
         
-        .title-box { text-align: center; margin-bottom: 25px; }
+        .title-box { text-align: center; margin-bottom: 20px; }
         .title-box h2 { margin: 0 0 10px 0; color: white; font-size: 20px; letter-spacing: 1px;}
         .title-box p { margin: 0; color: var(--text-muted); font-size: 13px; line-height: 1.5;}
+
+        .politicas-box { background: rgba(212, 175, 55, 0.1); border: 1px dashed var(--gold); padding: 15px; border-radius: 8px; margin-bottom: 25px; font-size: 12px; color: #D1D5DB; line-height: 1.5;}
+        .politicas-box strong { color: var(--gold); }
 
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 8px; font-size: 12px; color: var(--gold); font-weight: 600; text-transform: uppercase; letter-spacing: 1px;}
@@ -37,6 +40,7 @@
 
         .btn-submit { width: 100%; padding: 18px; background: var(--gold); color: black; border: none; border-radius: 8px; font-weight: 800; font-size: 16px; cursor: pointer; text-transform: uppercase; letter-spacing: 2px; margin-top: 15px; transition: 0.3s; box-shadow: 0 5px 20px rgba(212, 175, 55, 0.3);}
         .btn-submit:active { transform: scale(0.97); }
+        .btn-submit:disabled { background: var(--bg-input); color: var(--text-muted); box-shadow: none; cursor: not-allowed;}
 
         /* Pantalla de Éxito */
         #pantallaExito { position: absolute; top:0; left:0; width:100%; height:100%; background: var(--bg-panel); display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; z-index: 10; padding: 30px; box-sizing: border-box;}
@@ -55,14 +59,25 @@
         
         <div id="pantallaExito">
             <div class="icon-check">✅</div>
-            <h2 style="color:var(--gold); margin:0 0 15px 0;">¡CITA CONFIRMADA!</h2>
-            <p style="color:var(--text-muted); font-size:14px; line-height:1.6; margin-bottom:25px;">Hemos registrado tu Fast-Pass. Preséntate en el estudio en la fecha y hora acordada.<br><br>Al llegar, indícanos tu nombre para darte <strong>prioridad VIP</strong> en la fila.</p>
+            <h2 style="color:var(--gold); margin:0 0 15px 0;">PRE-RESERVA EXITOSA</h2>
+            <p style="color:var(--text-muted); font-size:14px; line-height:1.6; margin-bottom:25px;">
+                Tu horario ha sido apartado temporalmente.<br><br>
+                <strong>IMPORTANTE:</strong> Para hacer válido tu pase VIP y asegurar tu lugar, debes enviar el comprobante de tu pago/anticipo por WhatsApp.<br><br>
+                Sin el pago, la cita podría ser cancelada.
+            </p>
+            <button class="btn-submit" style="background:#25D366; color:white; margin-bottom:10px;" onclick="window.open('https://wa.me/525573633051?text=Hola,%20acabo%20de%20agendar%20una%20cita%20en%20su%20página%20web.%20Me%20gustaría%20confirmar%20los%20datos%20de%20pago.', '_blank')">🟢 ENVIAR WHATSAPP</button>
             <button class="btn-submit" style="background:var(--bg-input); color:white; box-shadow:none; border:1px solid var(--border);" onclick="window.location.reload()">Cerrar</button>
         </div>
 
         <div class="title-box">
             <h2>Agenda tu Fast-Pass ⭐</h2>
-            <p>Reserva tu lugar, sáltate la fila normal y recibe trato VIP el día de tu evento o sesión fotográfica.</p>
+            <p>Reserva tu lugar y sáltate la fila normal.</p>
+        </div>
+
+        <div class="politicas-box">
+            <strong>⚠️ POLÍTICAS DE CITA:</strong><br>
+            • Las citas están sujetas a disponibilidad del estudio.<br>
+            • Se requiere un <strong>anticipo vía transferencia</strong> para asegurar que se respete el turno VIP al llegar.
         </div>
 
         <form id="formReserva">
@@ -79,7 +94,7 @@
             <div class="form-group">
                 <label>Servicio de Interés</label>
                 <select id="rServicio" required>
-                    <option value="" disabled selected>Cargando servicios disponibles...</option>
+                    <option value="" disabled selected>Cargando servicios...</option>
                 </select>
             </div>
 
@@ -94,7 +109,7 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn-submit" id="btnGuardar">AGENDAR CITA</button>
+            <button type="submit" class="btn-submit" id="btnGuardar">VERIFICAR Y AGENDAR</button>
         </form>
     </div>
 
@@ -117,7 +132,6 @@
         let horaApertura = "10:00";
         let horaCierre = "20:00";
 
-        // 1. Bloquear fechas anteriores a hoy
         const inputFecha = document.getElementById('rFecha');
         const hoy = new Date();
         const yyyy = hoy.getFullYear();
@@ -125,19 +139,16 @@
         const dd = String(hoy.getDate()).padStart(2, '0');
         inputFecha.min = `${yyyy}-${mm}-${dd}`;
 
-        // 2. Extraer el horario configurado en el Panel DEV
         db.ref('configuracion/citasWeb/horario').once('value', snap => {
             if(snap.exists()) {
                 horaApertura = snap.val().apertura;
                 horaCierre = snap.val().cierre;
-                
                 document.getElementById('rHora').min = horaApertura;
                 document.getElementById('rHora').max = horaCierre;
                 document.getElementById('rangoHorasInfo').innerText = `(${horaApertura} a ${horaCierre})`;
             }
         });
 
-        // 3. Extraer los Servicios configurados en el Panel DEV
         db.ref('configuracion/citasWeb/servicios').once('value', snap => {
             const select = document.getElementById('rServicio');
             if(snap.exists()) {
@@ -152,37 +163,80 @@
             }
         });
 
-        // 4. Validación estricta y guardado
         document.getElementById('formReserva').addEventListener('submit', function(e) {
             e.preventDefault();
             
+            const fechaSeleccionada = document.getElementById('rFecha').value;
             const horaSeleccionada = document.getElementById('rHora').value;
             
-            // Validamos que el cliente no se pase de vivo y seleccione a las 3 de la mañana
             if (horaSeleccionada < horaApertura || horaSeleccionada > horaCierre) {
-                alert(`⚠️ Fuera de Horario.\nPor favor selecciona una hora de atención entre las ${horaApertura} y las ${horaCierre} hrs.`);
+                alert(`⚠️ Fuera de Horario.\nPor favor selecciona una hora entre las ${horaApertura} y las ${horaCierre} hrs.`);
                 return;
             }
 
             const btn = document.getElementById('btnGuardar');
             btn.disabled = true;
-            btn.innerText = "PROCESANDO...";
+            btn.innerText = "VERIFICANDO DISPONIBILIDAD...";
 
-            const datosCita = {
-                nombre: document.getElementById('rNombre').value.trim().toUpperCase(),
-                telefono: document.getElementById('rTelefono').value.trim(),
-                servicio: document.getElementById('rServicio').value,
-                fechaFormato: document.getElementById('rFecha').value,
-                horaFormato: document.getElementById('rHora').value,
-                timestampRegistro: Date.now()
-            };
+            // LÓGICA INTELIGENTE: REVISAR CITAS EXISTENTES PARA ESE DÍA
+            db.ref('citasWeb').once('value').then(snap => {
+                let citasMismoDia = [];
+                if (snap.exists()) {
+                    snap.forEach(c => {
+                        let val = c.val();
+                        if (val.fechaFormato === fechaSeleccionada) {
+                            citasMismoDia.push(val);
+                        }
+                    });
+                }
 
-            db.ref('citasWeb').push(datosCita).then(() => {
-                document.getElementById('pantallaExito').style.display = 'flex';
+                // Transformar hora seleccionada a minutos (Ej. 10:30 = 630 minutos)
+                let [hSel, mSel] = horaSeleccionada.split(':').map(Number);
+                let minsSel = (hSel * 60) + mSel;
+                let citasEnEsaHora = 0;
+
+                for (let cita of citasMismoDia) {
+                    let [hC, mC] = cita.horaFormato.split(':').map(Number);
+                    let minsC = (hC * 60) + mC;
+
+                    // REGLA 1 y 2: Minimo 20 minutos de separación
+                    let diferencia = Math.abs(minsSel - minsC);
+                    if (diferencia < 20) {
+                        alert("⚠️ Horario Ocupado.\nDebe haber al menos 20 minutos de diferencia entre cada cita. Por favor elige otro horario.");
+                        btn.disabled = false; btn.innerText = "VERIFICAR Y AGENDAR";
+                        return; // Detiene el proceso
+                    }
+
+                    // REGLA 3: Máximo 2 citas en la misma hora
+                    if (hSel === hC) {
+                        citasEnEsaHora++;
+                    }
+                }
+
+                if (citasEnEsaHora >= 2) {
+                    alert("⚠️ Límite alcanzado.\nYa tenemos 2 citas agendadas para esta hora. Por favor elige una hora diferente para no saturar el estudio.");
+                    btn.disabled = false; btn.innerText = "VERIFICAR Y AGENDAR";
+                    return; // Detiene el proceso
+                }
+
+                // SI PASA TODAS LAS PRUEBAS, SE GUARDA LA CITA
+                const datosCita = {
+                    nombre: document.getElementById('rNombre').value.trim().toUpperCase(),
+                    telefono: document.getElementById('rTelefono').value.trim(),
+                    servicio: document.getElementById('rServicio').value,
+                    fechaFormato: fechaSeleccionada,
+                    horaFormato: horaSeleccionada,
+                    timestampRegistro: Date.now()
+                };
+
+                return db.ref('citasWeb').push(datosCita).then(() => {
+                    document.getElementById('pantallaExito').style.display = 'flex';
+                });
+
             }).catch(err => {
                 alert("Error de conexión. Intenta de nuevo.");
                 btn.disabled = false;
-                btn.innerText = "AGENDAR CITA";
+                btn.innerText = "VERIFICAR Y AGENDAR";
             });
         });
     </script>

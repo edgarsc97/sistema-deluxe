@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kiosco Deluxe - Auto-Servicio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #0A0E17; --bg-panel: #111827; --bg-input: #1F2937;
+            --text-main: #F3F4F6; --text-muted: #9CA3AF;
+            --gold: #D4AF37; --success: #059669; --blue: #3b82f6; 
+            --border: rgba(255, 255, 255, 0.08);
+        }
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg-body); 
+            color: var(--text-main); 
+            margin: 0; padding: 0; 
+            overflow-x: hidden; height: 100vh; display: flex; flex-direction: column; 
+        }
+
+        .kiosco-header { 
+            background: var(--bg-panel); padding: 20px; text-align: center; 
+            border-bottom: 2px solid var(--gold); box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 10; flex-shrink: 0;
+        }
+        .kiosco-header h1 { margin: 0; font-size: 24px; letter-spacing: 5px; font-weight: 300; }
+        .kiosco-header h1 span { color: var(--gold); font-weight: 800; }
+
+        .container { 
+            max-width: 1200px; width: 95%; margin: 20px auto; 
+            display: grid; grid-template-columns: 1.8fr 1fr; gap: 25px; flex: 1; overflow: hidden; padding-bottom: 20px;
+        }
+
+        .seccion-catalogo { 
+            background: var(--bg-panel); border: 1px solid var(--border); border-radius: 16px; 
+            padding: 20px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+        
+        .buscador-input { 
+            width: 100%; padding: 15px 20px; margin-bottom: 20px; background: var(--bg-body); border: 1px solid var(--gold); 
+            color: white; border-radius: 30px; font-size: 16px; box-sizing: border-box; transition: 0.3s; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);
+        }
+        .buscador-input:focus { outline: none; box-shadow: 0 0 15px rgba(212, 175, 55, 0.3), inset 0 2px 10px rgba(0,0,0,0.5); }
+
+        .catalogo-kiosco { 
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; 
+            overflow-y: auto; padding-right: 10px; flex: 1; align-content: start; padding-top: 10px;
+        }
+        
+        /* DISEÑO DE TARJETA CON DESCRIPCIÓN */
+        .servicio-card { 
+            background: linear-gradient(145deg, #1c2538, #111827); border: 1px solid var(--border); border-radius: 12px; padding: 20px 15px; 
+            text-align: center; cursor: pointer; transition: 0.2s; border-top: 3px solid var(--gold);
+            display: flex; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 120px; position: relative;
+        }
+        .servicio-card:active { transform: scale(0.95); border-color: var(--success); }
+        
+        .servicio-card strong { 
+            font-size: 15px; margin-bottom: 4px; line-height: 1.2; 
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; 
+        }
+        
+        .servicio-desc {
+            font-size: 11px; color: var(--text-muted); margin-bottom: auto; line-height: 1.3;
+            display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+            font-weight: 300;
+        }
+
+        .servicio-card span { 
+            color: var(--success); font-weight: 800; font-size: 18px; margin-top: 10px; 
+            background: rgba(5, 150, 105, 0.1); padding: 5px 12px; border-radius: 6px; 
+        }
+
+        /* 🔥 EFECTOS PARA LOS TOP 3 🔥 */
+        .servicio-card.top-item {
+            border-color: var(--gold);
+            animation: pulse-gold 2s infinite;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+        }
+        .badge-top {
+            position: absolute;
+            top: -12px;
+            right: -10px;
+            background: var(--gold);
+            color: black;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 12px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 10px rgba(212, 175, 55, 0.4);
+            animation: bounce-top 2s infinite;
+            z-index: 5;
+        }
+
+        @keyframes pulse-gold {
+            0%, 100% { box-shadow: 0 0 0 rgba(212, 175, 55, 0); }
+            50% { box-shadow: 0 0 20px rgba(212, 175, 55, 0.5); }
+        }
+        @keyframes bounce-top {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+
+        /* PANEL DE RESUMEN */
+        .orden-panel { 
+            background: var(--bg-panel); padding: 25px; border-radius: 16px; border: 1px solid var(--border); 
+            display: flex; flex-direction: column; box-shadow: 0 10px 20px rgba(0,0,0,0.3); overflow: hidden;
+        }
+        .orden-panel h2 { 
+            margin-top: 0; font-size: 16px; color: var(--gold); text-transform: uppercase; 
+            letter-spacing: 2px; border-bottom: 1px dashed var(--border); padding-bottom: 15px; flex-shrink: 0;
+        }
+        
+        #carritoUI { flex: 1; overflow-y: auto; padding-right: 5px; margin-bottom: 15px;}
+        .item-carrito { 
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; 
+            font-size: 13px; background: rgba(255,255,255,0.03); padding: 12px; border-radius: 8px; 
+            border-left: 3px solid var(--gold); animation: slideIn 0.3s ease-out;
+        }
+        .btn-borrar { 
+            color: #991B1B; background: rgba(153, 27, 27, 0.1); border: 1px solid rgba(153, 27, 27, 0.3); 
+            padding: 5px 10px; border-radius: 6px; font-weight: 800; cursor: pointer; font-size: 12px; transition: 0.2s;
+        }
+        .btn-borrar:active { background: #991B1B; color: white; }
+
+        .form-datos { flex-shrink: 0; border-top: 1px solid var(--border); padding-top: 15px;}
+        .form-datos input { 
+            width: 100%; padding: 15px; margin-bottom: 10px; background: var(--bg-input); 
+            border: 1px solid var(--border); color: white; border-radius: 8px; font-size: 14px; 
+            box-sizing: border-box; text-align: center; font-weight: bold; letter-spacing: 1px;
+        }
+        .form-datos input:focus { outline: none; border-color: var(--gold); }
+
+        .total-fila { 
+            display:flex; justify-content:space-between; margin-top: 10px; margin-bottom: 15px; 
+            font-size: 22px; font-weight: 800; background: #0A0E17; padding: 15px; border-radius: 8px;
+        }
+        
+        .btn-enviar { 
+            width: 100%; padding: 20px; background: var(--gold); color: black; border: none; 
+            border-radius: 10px; font-weight: 800; font-size: 16px; cursor: pointer; 
+            text-transform: uppercase; letter-spacing: 2px; transition: 0.3s; box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+        }
+        .btn-enviar:active { transform: scale(0.98); }
+        .btn-enviar:disabled { background: var(--bg-input); color: var(--text-muted); cursor: not-allowed; box-shadow: none;}
+
+        /* PANTALLA ÉXITO */
+        #pantallaExito { 
+            position: fixed; top:0; left:0; width:100%; height:100%; background: var(--bg-body); 
+            display: none; flex-direction: column; justify-content: center; align-items: center; 
+            text-align: center; z-index: 100; padding: 20px; box-sizing: border-box;
+        }
+        .check-anim { font-size: 80px; margin-bottom: 20px; animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        
+        @keyframes pop { from { transform: scale(0); } to { transform: scale(1); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: translateX(0); } }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-body); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: var(--bg-input); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+
+        @media (max-width: 800px) {
+            body { height: auto; overflow-y: auto; }
+            .container { grid-template-columns: 1fr; overflow: visible; display: flex; flex-direction: column;}
+            .seccion-catalogo { max-height: 60vh; }
+            .orden-panel { min-height: 50vh; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="pantallaExito">
+        <div class="check-anim">✅</div>
+        <h1 style="color:var(--gold); letter-spacing:3px;">¡PEDIDO ENVIADO!</h1>
+        <p style="font-size: 16px; color:var(--text-muted); max-width: 400px; line-height: 1.6;">
+            Tu orden ya está en la pantalla del mostrador.<br>
+            <strong>Por favor, pasa a la caja para confirmar tu pedido y tomar tu foto.</strong>
+        </p>
+        <button class="btn-enviar" style="max-width: 300px; background: var(--bg-input); color: white;" onclick="location.reload()">NUEVO PEDIDO</button>
+    </div>
+
+    <header class="kiosco-header">
+        <h1>SISTEMA <span>DELUXE</span></h1>
+    </header>
+
+    <div class="container">
+        <div class="seccion-catalogo">
+            <input type="text" id="buscador" class="buscador-input" placeholder="🔍 Buscar servicio (Ej. Titulación, Marco...)" oninput="filtrarCatalogo(this.value)">
+            <div id="listaServicios" class="catalogo-kiosco">
+                <p style="color:gray; grid-column: 1 / -1; text-align: center; padding: 40px;">Cargando catálogo del estudio...</p>
+            </div>
+        </div>
+
+        <div class="orden-panel">
+            <h2>🛒 Tu Selección</h2>
+            <div id="carritoUI">
+                <div style="text-align:center; padding: 40px 20px; color:var(--text-muted); opacity: 0.5;">
+                    <div style="font-size: 40px; margin-bottom: 10px;">👈</div>
+                    Toca un producto de la lista para agregarlo a tu orden.
+                </div>
+            </div>
+
+            <div id="formDatos" class="form-datos" style="display:none;">
+                <input type="text" id="kNombre" placeholder="TU NOMBRE (Requerido)" autocomplete="off">
+                <input type="tel" id="kTel" placeholder="TU WHATSAPP (Opcional)" autocomplete="off" maxlength="10">
+                <div class="total-fila">
+                    <span style="color:var(--text-muted);">TOTAL:</span>
+                    <span id="kTotal" style="color:var(--success);">$0.00</span>
+                </div>
+                <button class="btn-enviar" id="btnFinalizar" onclick="enviarPedido()">ENVIAR ORDEN</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAn0H-50sbh8sMcqn_k8IlVnJX6ko58ws4",
+            authDomain: "sistemafotos-cf459.firebaseapp.com",
+            databaseURL: "https://sistemafotos-cf459-default-rtdb.firebaseio.com",
+            projectId: "sistemafotos-cf459",
+            storageBucket: "sistemafotos-cf459.firebasestorage.app",
+            messagingSenderId: "599045837547",
+            appId: "1:599045837547:web:7bb72110d3cf36739ea4ae"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        let catalogo = [];
+        let carrito = [];
+
+        db.ref('productos').on('value', snap => {
+            const cont = document.getElementById('listaServicios');
+            cont.innerHTML = '';
+            catalogo = [];
+            
+            if(snap.exists()){
+                snap.forEach(child => { 
+                    catalogo.push({ id: child.key, ...child.val() }); 
+                });
+                
+                // ORDENAMIENTO (Respeta cómo lo dejaste en el POS)
+                catalogo.sort((a, b) => (a.orden || 0) - (b.orden || 0));
+
+                catalogo.forEach((p, index) => {
+                    let claseTop = "";
+                    let badgeTop = "";
+                    
+                    // LOS 3 PRIMEROS PRODUCTOS RECIBEN LA CORONA DE "TOP"
+                    if(index < 3) {
+                        claseTop = "top-item";
+                        badgeTop = `<div class="badge-top">🔥 TOP</div>`;
+                    }
+
+                    const descHTML = p.descripcion ? `<div class="servicio-desc">${p.descripcion}</div>` : '';
+
+                    cont.innerHTML += `
+                        <div class="servicio-card ${claseTop}" data-nombre="${p.nombre}" onclick="agregarItem('${p.id}')">
+                            ${badgeTop}
+                            <strong>${p.nombre}</strong>
+                            ${descHTML}
+                            <span>$${parseFloat(p.precio).toFixed(2)}</span>
+                        </div>`;
+                });
+            }
+        });
+
+        function filtrarCatalogo(texto) {
+            const query = texto.toLowerCase(); 
+            const tarjetas = document.querySelectorAll('.servicio-card');
+            
+            tarjetas.forEach(t => { 
+                const nombre = t.getAttribute('data-nombre').toLowerCase(); 
+                if (nombre.includes(query)) {
+                    t.style.display = 'flex'; 
+                } else {
+                    t.style.display = 'none'; 
+                }
+            });
+        }
+
+        function agregarItem(id) {
+            const p = catalogo.find(i => i.id === id); 
+            const existe = carrito.find(i => i.id === id);
+            
+            if(existe) { 
+                existe.cant++; 
+            } else { 
+                carrito.push({...p, cant: 1}); 
+            }
+            
+            new Audio('https://actions.google.com/sounds/v1/ui/beep_short.ogg').play().catch(()=>{}); 
+            renderCarrito();
+        }
+
+        function quitarItem(id) { 
+            carrito = carrito.filter(i => i.id !== id); 
+            renderCarrito(); 
+        }
+
+        function renderCarrito() {
+            const cont = document.getElementById('carritoUI'); 
+            const totalUI = document.getElementById('kTotal'); 
+            const form = document.getElementById('formDatos');
+            
+            if(carrito.length === 0) { 
+                cont.innerHTML = `
+                    <div style="text-align:center; padding: 40px 20px; color:var(--text-muted); opacity: 0.5;">
+                        <div style="font-size: 40px; margin-bottom: 10px;">👈</div>
+                        Toca un producto de la lista para agregarlo a tu orden.
+                    </div>`; 
+                form.style.display = 'none'; 
+                return; 
+            }
+            
+            form.style.display = 'block'; 
+            let html = ''; 
+            let total = 0;
+            
+            carrito.forEach(i => {
+                total += (i.precio * i.cant);
+                html += `
+                    <div class="item-carrito">
+                        <div style="flex:1; padding-right:10px;">
+                            <strong style="color:var(--gold); font-size:15px;">${i.cant}x</strong> 
+                            ${i.nombre}
+                        </div>
+                        <div style="display:flex; gap:15px; align-items:center;">
+                            <strong style="font-size:15px; color:var(--success);">$${(i.precio * i.cant).toFixed(2)}</strong>
+                            <button class="btn-borrar" onclick="quitarItem('${i.id}')">✕</button>
+                        </div>
+                    </div>`;
+            });
+            
+            cont.innerHTML = html; 
+            totalUI.innerText = `$${total.toFixed(2)}`; 
+            cont.scrollTop = cont.scrollHeight;
+        }
+
+        function enviarPedido() {
+            const nom = document.getElementById('kNombre').value.trim();
+            if(!nom) { 
+                alert("⚠️ Por favor escribe tu nombre para poder llamarte."); 
+                document.getElementById('kNombre').focus(); 
+                return; 
+            }
+            
+            const btn = document.getElementById('btnFinalizar'); 
+            btn.disabled = true; 
+            btn.innerText = "ENVIANDO A CAJA...";
+
+            const pedido = { 
+                cliente: nom.toUpperCase(), 
+                telefono: document.getElementById('kTel').value.trim(), 
+                carrito: carrito, 
+                total: carrito.reduce((s, i) => s + (i.precio * i.cant), 0), 
+                fecha: new Date().toLocaleString('es-MX', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true }), 
+                timestamp: Date.now() 
+            };
+
+            db.ref('pedidosKiosco').push(pedido).then(() => {
+                document.getElementById('pantallaExito').style.display = 'flex'; 
+                new Audio('https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg').play().catch(()=>{});
+            }).catch(err => { 
+                alert("Error de conexión."); 
+                btn.disabled = false; 
+                btn.innerText = "ENVIAR ORDEN"; 
+            });
+        }
+    </script>
+</body>
+</html>
