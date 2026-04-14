@@ -6,46 +6,208 @@
     <title>Rastreo de Pedido - Deluxe</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
+        /* ==========================================
+           VARIABLES Y ESTILOS GLOBALES
+        ========================================== */
         :root {
-            --bg-body: #0A0E17; --bg-panel: #111827; --text-main: #F3F4F6;
-            --text-muted: #9CA3AF; --gold: #D4AF37; --success: #059669;
-            --blue: #3b82f6; --border: rgba(255, 255, 255, 0.08);
-            --google: #ea4335; --facebook: #1877F2;
+            --bg-body: #0A0E17; 
+            --bg-panel: #111827; 
+            --text-main: #F3F4F6;
+            --text-muted: #9CA3AF; 
+            --gold: #D4AF37; 
+            --success: #059669;
+            --blue: #3b82f6; 
+            --border: rgba(255, 255, 255, 0.08);
+            --google: #ea4335; 
+            --facebook: #1877F2;
         }
-        body { font-family: 'Inter', sans-serif; background: var(--bg-body); color: var(--text-main); margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
         
-        .header { width: 100%; background: var(--bg-panel); padding: 20px 0; text-align: center; border-bottom: 2px solid var(--gold); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
-        .header h1 { margin: 0; font-size: 20px; font-weight: 300; letter-spacing: 4px; }
-        .header h1 span { color: var(--gold); font-weight: 800; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg-body); 
+            color: var(--text-main); 
+            margin: 0; 
+            padding: 0; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            min-height: 100vh; 
+        }
+        
+        /* ==========================================
+           HEADER SUPERIOR
+        ========================================== */
+        .header { 
+            width: 100%; 
+            background: var(--bg-panel); 
+            padding: 20px 0; 
+            text-align: center; 
+            border-bottom: 2px solid var(--gold); 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5); 
+        }
+        
+        .header h1 { 
+            margin: 0; 
+            font-size: 20px; 
+            font-weight: 300; 
+            letter-spacing: 4px; 
+        }
+        
+        .header h1 span { 
+            color: var(--gold); 
+            font-weight: 800; 
+        }
 
-        .container { width: 90%; max-width: 400px; margin: 30px auto; display: flex; flex-direction: column; gap: 20px; }
+        .container { 
+            width: 90%; 
+            max-width: 400px; 
+            margin: 30px auto; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 20px; 
+        }
 
-        .search-box { background: var(--bg-panel); padding: 20px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
-        .search-box input { width: 100%; padding: 15px; margin-bottom: 15px; background: #1F2937; border: 1px solid var(--border); color: white; border-radius: 8px; font-size: 16px; text-align: center; box-sizing: border-box; font-weight: bold; letter-spacing: 2px;}
-        .search-box button { width: 100%; padding: 15px; background: var(--gold); color: black; border: none; border-radius: 8px; font-weight: 800; font-size: 14px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px;}
+        /* ==========================================
+           CAJA DE BÚSQUEDA
+        ========================================== */
+        .search-box { 
+            background: var(--bg-panel); 
+            padding: 20px; 
+            border-radius: 12px; 
+            border: 1px solid var(--border); 
+            text-align: center; 
+        }
+        
+        .search-box input { 
+            width: 100%; 
+            padding: 15px; 
+            margin-bottom: 15px; 
+            background: #1F2937; 
+            border: 1px solid var(--border); 
+            color: white; 
+            border-radius: 8px; 
+            font-size: 16px; 
+            text-align: center; 
+            box-sizing: border-box; 
+            font-weight: bold; 
+            letter-spacing: 2px;
+        }
+        
+        .search-box button { 
+            width: 100%; 
+            padding: 15px; 
+            background: var(--gold); 
+            color: black; 
+            border: none; 
+            border-radius: 8px; 
+            font-weight: 800; 
+            font-size: 14px; 
+            cursor: pointer; 
+            text-transform: uppercase; 
+            letter-spacing: 1px;
+        }
 
-        .status-card { background: var(--bg-panel); padding: 25px 20px; border-radius: 12px; border: 1px solid var(--border); text-align: center; display: none; }
-        .status-badge { display: inline-block; padding: 8px 16px; border-radius: 20px; font-weight: 800; font-size: 14px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px;}
+        /* ==========================================
+           TARJETA DE RESULTADO (STATUS)
+        ========================================== */
+        .status-card { 
+            background: var(--bg-panel); 
+            padding: 25px 20px; 
+            border-radius: 12px; 
+            border: 1px solid var(--border); 
+            text-align: center; 
+            display: none; 
+        }
+        
+        .status-badge { 
+            display: inline-block; 
+            padding: 8px 16px; 
+            border-radius: 20px; 
+            font-weight: 800; 
+            font-size: 14px; 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            margin-bottom: 15px;
+        }
         
         .estado-pendiente { background: rgba(59, 130, 246, 0.1); color: var(--blue); border: 1px solid var(--blue); }
         .estado-listo { background: rgba(5, 150, 105, 0.1); color: var(--success); border: 1px solid var(--success); animation: parpadeo 2s infinite; }
         .estado-archivado { background: rgba(156, 163, 175, 0.1); color: var(--text-muted); border: 1px solid var(--text-muted); }
         
-        @keyframes parpadeo { 0%, 100% { box-shadow: 0 0 10px rgba(5, 150, 105, 0.2); } 50% { box-shadow: 0 0 25px rgba(5, 150, 105, 0.6); } }
+        @keyframes parpadeo { 
+            0%, 100% { box-shadow: 0 0 10px rgba(5, 150, 105, 0.2); } 
+            50% { box-shadow: 0 0 25px rgba(5, 150, 105, 0.6); } 
+        }
 
         .cliente-name { font-size: 22px; font-weight: 800; margin: 10px 0 5px 0; }
         .servicio-info { color: var(--gold); font-size: 14px; font-weight: 600; margin-bottom: 20px; }
         .hora-entrega { font-size: 13px; color: var(--text-muted); background: #1F2937; padding: 10px; border-radius: 8px;}
 
         /* BOTÓN DE DESCARGA NUBE */
-        .btn-descarga { background: var(--blue); color: white; padding: 15px; border-radius: 8px; font-weight: 800; font-size: 14px; text-decoration: none; display: block; margin-top: 20px; transition: 0.3s; box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4); text-transform: uppercase; letter-spacing: 1px;}
+        .btn-descarga { 
+            background: var(--blue); 
+            color: white; 
+            padding: 15px; 
+            border-radius: 8px; 
+            font-weight: 800; 
+            font-size: 14px; 
+            text-decoration: none; 
+            display: block; 
+            margin-top: 20px; 
+            transition: 0.3s; 
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4); 
+            text-transform: uppercase; 
+            letter-spacing: 1px;
+        }
+        
         .btn-descarga:active { transform: scale(0.95); }
 
-        .promo-card { background: linear-gradient(145deg, #1f1c0d, #2d2610); border: 1px solid var(--gold); padding: 25px 20px; border-radius: 12px; text-align: center; box-shadow: 0 10px 30px rgba(212, 175, 55, 0.15); }
-        .promo-title { color: var(--gold); font-weight: 800; font-size: 18px; margin: 0 0 10px 0; letter-spacing: 1px; }
-        .promo-text { font-size: 13px; color: #D1D5DB; margin-bottom: 20px; line-height: 1.5; }
+        /* ==========================================
+           TARJETA DE PROMOCIONES Y REDES
+        ========================================== */
+        .promo-card { 
+            background: linear-gradient(145deg, #1f1c0d, #2d2610); 
+            border: 1px solid var(--gold); 
+            padding: 25px 20px; 
+            border-radius: 12px; 
+            text-align: center; 
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.15); 
+        }
         
-        .btn-social { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 14px; border-radius: 8px; font-weight: 800; font-size: 13px; cursor: pointer; text-decoration: none; text-transform: uppercase; letter-spacing: 1px; box-sizing: border-box; margin-bottom: 12px; transition: transform 0.2s;}
+        .promo-title { 
+            color: var(--gold); 
+            font-weight: 800; 
+            font-size: 18px; 
+            margin: 0 0 10px 0; 
+            letter-spacing: 1px; 
+        }
+        
+        .promo-text { 
+            font-size: 13px; 
+            color: #D1D5DB; 
+            margin-bottom: 20px; 
+            line-height: 1.5; 
+        }
+        
+        .btn-social { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 10px; 
+            width: 100%; 
+            padding: 14px; 
+            border-radius: 8px; 
+            font-weight: 800; 
+            font-size: 13px; 
+            cursor: pointer; 
+            text-decoration: none; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            box-sizing: border-box; 
+            margin-bottom: 12px; 
+            transition: transform 0.2s;
+        }
+        
         .btn-social:active { transform: scale(0.97); }
         .btn-google { background: white; color: #000; border: 1px solid #ddd; }
         .btn-facebook { background: var(--facebook); color: white; border: none; }
@@ -112,6 +274,7 @@
             messagingSenderId: "599045837547",
             appId: "1:599045837547:web:7bb72110d3cf36739ea4ae"
         };
+        
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
@@ -133,23 +296,45 @@
             document.getElementById('statusCard').style.display = 'block';
             document.getElementById('badgeEstado').innerText = "Cargando...";
 
-            db.ref('turnos').orderByChild('numeroTicket').equalTo(folio).once('value', snap => {
+            // BÚSQUEDA INTELIGENTE PARA GRUPOS
+            // Como un grupo en Firebase puede llamarse "40001, 40002", buscamos si el folio "incluye" el número
+            db.ref('turnos').once('value', snap => {
+                let encontrado = null;
+                
                 if(snap.exists()) {
-                    let datos;
-                    snap.forEach(child => { datos = child.val(); });
-                    mostrarDatos(datos);
+                    snap.forEach(child => {
+                        let val = child.val();
+                        // Dividimos los tickets por comas y limpiamos espacios para hacer coincidencia exacta
+                        let ticketsArr = String(val.numeroTicket).split(',').map(t => t.trim());
+                        
+                        if(ticketsArr.includes(String(folio))) {
+                            encontrado = val;
+                        }
+                    });
+                }
+
+                if(encontrado) {
+                    mostrarDatos(encontrado);
                 } else {
+                    // Si ya fue eliminado de turnos, buscamos en el historial histórico de VENTAS
                     db.ref('ventas').orderByChild('ticket').equalTo(folio).once('value', snapVentas => {
                         if(snapVentas.exists()) {
                             let datosHist;
                             snapVentas.forEach(child => { datosHist = child.val(); });
                             
                             let desc = "Servicio General";
-                            if(datosHist.carrito) { desc = datosHist.carrito.map(i => i.nombre).join(', '); }
+                            if(datosHist.carrito) { 
+                                desc = datosHist.carrito.map(i => i.nombre).join(', '); 
+                            }
                             
-                            // Si el cliente fue archivado pero guardaste su link en ventas, lo mostramos
-                            // (En este caso asumimos que lo descargó cuando estaba "listo")
-                            mostrarDatos({ nombre: datosHist.cliente, servicio: desc, estado: 'archivado', horaFormateada: 'Ya entregado' });
+                            // Pasamos el enlace descargable si lo tuviera guardado
+                            mostrarDatos({ 
+                                nombre: datosHist.cliente, 
+                                servicio: desc, 
+                                estado: 'archivado', 
+                                horaFormateada: 'Ya entregado',
+                                enlaceDescarga: datosHist.enlaceDescarga || null
+                            });
                         } else {
                             document.getElementById('statusCard').style.display = 'none';
                             document.getElementById('searchBox').style.display = 'block';
@@ -189,7 +374,7 @@
                 badge.classList.add('estado-listo');
                 boxHora.style.display = 'none';
                 
-                // MAGIA: Si subiste un enlace en Producción, se activa el botón
+                // Muestra el enlace de la Nube si Producción lo agregó
                 if(datos.enlaceDescarga && datos.enlaceDescarga.length > 5) {
                     btnDescarga.href = datos.enlaceDescarga;
                     btnDescarga.style.display = 'block';
@@ -198,10 +383,18 @@
                 }
             } 
             else {
+                // ESTADO ARCHIVADO: El Enlace Inmortal
                 badge.innerText = "📦 ENTREGADO";
                 badge.classList.add('estado-archivado');
                 boxHora.style.display = 'none';
-                btnDescarga.style.display = 'none';
+                
+                if(datos.enlaceDescarga && datos.enlaceDescarga.length > 5) {
+                    btnDescarga.href = datos.enlaceDescarga;
+                    btnDescarga.style.display = 'block';
+                    btnDescarga.innerHTML = "📥 DESCARGAR MIS FOTOS";
+                } else {
+                    btnDescarga.style.display = 'none';
+                }
             }
         }
 

@@ -7,110 +7,383 @@
     
     <meta name="theme-color" content="#0A0E17">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
     <style>
+        /* ==========================================
+           VARIABLES Y ESTILOS GLOBALES
+        ========================================== */
         :root {
-            --bg-body: #0A0E17; --bg-panel: #111827; --bg-input: #1F2937;
-            --text-main: #F3F4F6; --text-muted: #9CA3AF;
-            --gold: #D4AF37; --success: #059669; --danger: #991B1B;
-            --blue: #3b82f6; --border: rgba(255, 255, 255, 0.08);
+            --bg-body: #0A0E17; 
+            --bg-panel: #111827; 
+            --bg-input: #1F2937;
+            --text-main: #F3F4F6; 
+            --text-muted: #9CA3AF;
+            --gold: #D4AF37; 
+            --success: #059669; 
+            --danger: #991B1B;
+            --blue: #3b82f6; 
+            --border: rgba(255, 255, 255, 0.08);
             --card-bg: linear-gradient(145deg, #151d2e, #0e1420);
         }
         
-        body { font-family: 'Inter', sans-serif; background: var(--bg-body); color: var(--text-main); margin: 0; padding: 20px; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg-body); 
+            color: var(--text-main); 
+            margin: 0; 
+            padding: 20px; 
+        }
 
-        .header { background: var(--bg-panel); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-radius: 12px; border-bottom: 3px solid var(--blue); box-shadow: 0 10px 30px rgba(0,0,0,0.4); margin-bottom: 20px;}
-        .header h1 { margin: 0; font-size: 18px; font-weight: 300; letter-spacing: 3px; }
-        .header h1 span { color: var(--blue); font-weight: 800; }
+        /* ==========================================
+           HEADER SUPERIOR
+        ========================================== */
+        .header { 
+            background: var(--bg-panel); 
+            padding: 15px 30px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-radius: 12px; 
+            border-bottom: 3px solid var(--blue); 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4); 
+            margin-bottom: 20px;
+        }
         
-        .nav-botones { display: flex; gap: 10px; flex-wrap: wrap;}
-        .btn-nav { background: transparent; color: var(--text-main); border: 1px solid var(--border); padding: 8px 14px; border-radius: 6px; cursor: pointer; text-decoration: none; font-weight: 600; font-size: 11px; transition: 0.3s; letter-spacing: 1px; text-transform: uppercase;}
-        .btn-nav:hover { background: var(--bg-input); border-color: var(--blue); color: var(--blue); }
-
-        .filtro-container { text-align:center; margin-bottom:20px; display: flex; justify-content: center; align-items: center; gap: 15px; background: var(--bg-panel); padding: 15px; border-radius: 12px; border: 1px solid var(--border); width: fit-content; margin: 0 auto 20px auto;}
-        .filtro-container input[type="date"] { background: var(--bg-input); color: var(--gold); border: 1px solid var(--gold); padding: 10px 15px; border-radius: 8px; font-weight: 800; font-size: 16px; font-family: 'Inter', sans-serif; outline: none; cursor: pointer;}
-
-        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .header h1 { 
+            margin: 0; 
+            font-size: 18px; 
+            font-weight: 300; 
+            letter-spacing: 3px; 
+        }
         
-        .metric-card { background: var(--card-bg); border: 1px solid var(--border); padding: 25px; border-radius: 16px; box-shadow: 0 8px 25px rgba(0,0,0,0.3); text-align: center; position: relative; overflow: hidden;}
-        .metric-title { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 2px; font-weight: 600; margin-bottom: 10px; }
+        .header h1 span { 
+            color: var(--blue); 
+            font-weight: 800; 
+        }
+        
+        .nav-botones { 
+            display: flex; 
+            gap: 10px; 
+            flex-wrap: wrap;
+        }
+        
+        .btn-nav { 
+            background: transparent; 
+            color: var(--text-main); 
+            border: 1px solid var(--border); 
+            padding: 8px 14px; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            text-decoration: none; 
+            font-weight: 600; 
+            font-size: 11px; 
+            transition: 0.3s; 
+            letter-spacing: 1px; 
+            text-transform: uppercase;
+        }
+        
+        .btn-nav:hover { 
+            background: var(--bg-input); 
+            border-color: var(--blue); 
+            color: var(--blue); 
+        }
+
+        /* ==========================================
+           CONTROLES DE FILTRO Y ACCIONES PRINCIPALES
+        ========================================== */
+        .controles-superiores {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .filtro-container { 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+            background: var(--bg-panel); 
+            padding: 15px; 
+            border-radius: 12px; 
+            border: 1px solid var(--border); 
+        }
+        
+        .filtro-container input[type="date"] { 
+            background: var(--bg-input); 
+            color: var(--gold); 
+            border: 1px solid var(--gold); 
+            padding: 10px 15px; 
+            border-radius: 8px; 
+            font-weight: 800; 
+            font-size: 16px; 
+            font-family: 'Inter', sans-serif; 
+            outline: none; 
+            cursor: pointer;
+        }
+
+        .botones-accion {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn-caja-chica { 
+            padding: 15px 20px; 
+            font-size: 13px; 
+            font-weight: 800; 
+            background: var(--gold); 
+            color: black; 
+            border: none; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            letter-spacing: 1px; 
+            text-transform: uppercase; 
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3); 
+            transition: 0.3s;
+        }
+        .btn-caja-chica:hover { transform: translateY(-2px); }
+
+        .btn-corte { 
+            padding: 15px 20px; 
+            font-size: 13px; 
+            font-weight: 800; 
+            background: var(--blue); 
+            color: white; 
+            border: none; 
+            border-radius: 10px; 
+            cursor: pointer; 
+            letter-spacing: 1px; 
+            text-transform: uppercase; 
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.3); 
+            transition: 0.3s;
+        }
+        .btn-corte:hover { transform: translateY(-2px); background: #2563eb; }
+
+        /* ==========================================
+           DASHBOARD DE METRICAS
+        ========================================== */
+        .dashboard-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+            gap: 20px; 
+            margin-bottom: 30px; 
+        }
+        
+        .metric-card { 
+            background: var(--card-bg); 
+            border: 1px solid var(--border); 
+            padding: 25px; 
+            border-radius: 16px; 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3); 
+            text-align: center; 
+            position: relative; 
+            overflow: hidden;
+        }
+        
+        .metric-title { 
+            font-size: 12px; 
+            color: var(--text-muted); 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            font-weight: 600; 
+            margin-bottom: 10px; 
+        }
+        
         .metric-value { font-size: 38px; font-weight: 800; color: white; }
-        .metric-sub { font-size: 13px; color: var(--gold); margin-top: 10px; font-weight: 600; background: rgba(212, 175, 55, 0.1); padding: 4px 10px; border-radius: 20px; display: inline-block;}
+        
+        .metric-sub { 
+            font-size: 13px; 
+            color: var(--gold); 
+            margin-top: 10px; 
+            font-weight: 600; 
+            background: rgba(212, 175, 55, 0.1); 
+            padding: 4px 10px; 
+            border-radius: 20px; 
+            display: inline-block;
+        }
         
         .c-total .metric-value { color: var(--success); }
         .c-caja { border-top: 4px solid var(--blue); }
         .c-caja .metric-value { color: var(--blue); }
         .c-retiros { border-top: 4px solid var(--danger); }
+
+        /* ==========================================
+           TABLAS Y DESGLOSE
+        ========================================== */
+        .panel-listas { 
+            display: grid; 
+            grid-template-columns: 1fr 2fr; 
+            gap: 20px; 
+        }
         
-        .panel-listas { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; }
-        .lista-box { background: var(--bg-panel); border: 1px solid var(--border); border-radius: 12px; padding: 20px; max-height: 500px; overflow-y: auto;}
-        .lista-box h3 { margin-top: 0; color: var(--gold); font-size: 14px; border-bottom: 1px dashed var(--border); padding-bottom: 10px; letter-spacing: 1px;}
+        .lista-box { 
+            background: var(--bg-panel); 
+            border: 1px solid var(--border); 
+            border-radius: 12px; 
+            padding: 20px; 
+            max-height: 500px; 
+            overflow-y: auto;
+        }
         
-        .row-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--border); font-size: 13px; align-items: center;}
+        .lista-box h3 { 
+            margin-top: 0; 
+            color: var(--gold); 
+            font-size: 14px; 
+            border-bottom: 1px dashed var(--border); 
+            padding-bottom: 10px; 
+            letter-spacing: 1px;
+        }
+        
+        .row-item { 
+            display: flex; 
+            justify-content: space-between; 
+            padding: 12px 0; 
+            border-bottom: 1px solid var(--border); 
+            font-size: 13px; 
+            align-items: center;
+        }
         .row-item:last-child { border-bottom: none; }
         
-        .venta-row { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); padding: 12px; border-radius: 8px; margin-bottom: 8px; border-left: 4px solid var(--success);}
+        .venta-row { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            background: rgba(255,255,255,0.02); 
+            padding: 12px; 
+            border-radius: 8px; 
+            margin-bottom: 8px; 
+            border-left: 4px solid var(--success);
+        }
+        
         .venta-row.retiro { border-left-color: var(--danger); }
         .venta-row.ingreso { border-left-color: var(--blue); }
         .venta-row.anulado { border-left-color: var(--text-muted); opacity: 0.6; }
         
-        .btn-print-small { background: transparent; color: var(--gold); border: 1px solid var(--gold); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 800; text-transform: uppercase; transition: 0.2s;}
+        .btn-print-small { 
+            background: transparent; 
+            color: var(--gold); 
+            border: 1px solid var(--gold); 
+            padding: 6px 12px; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-size: 11px; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            transition: 0.2s;
+        }
         .btn-print-small:hover { background: var(--gold); color: black; }
 
-        .btn-corte { width: 100%; padding: 20px; font-size: 18px; font-weight: 800; background: var(--blue); color: white; border: none; border-radius: 12px; cursor: pointer; letter-spacing: 3px; text-transform: uppercase; margin-top: 20px; box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3); transition: 0.3s;}
-        .btn-corte:hover { background: #2563eb; transform: translateY(-3px); }
+        /* ==========================================
+           MODALES
+        ========================================== */
+        .modal-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.8); display: none; justify-content: center; 
+            align-items: center; z-index: 500; backdrop-filter: blur(5px);
+        }
+        
+        .modal-content { 
+            background: var(--bg-panel); padding: 30px; border-radius: 15px; 
+            width: 90%; max-width: 500px; border: 1px solid var(--border); 
+            max-height: 90vh; overflow-y: auto;
+        }
 
-        /* ZONAS DE IMPRESIÓN (OCULTAS EN PANTALLA) */
+        .modal-content input, .modal-content select {
+            width: 100%; padding: 14px; margin-bottom: 15px; 
+            background: var(--bg-input); border: 1px solid var(--border); 
+            color: white; border-radius: 8px; font-size: 15px; box-sizing: border-box;
+        }
+        .modal-content input:focus, .modal-content select:focus { outline: none; border-color: var(--gold); }
+        
+        .linea-pago { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
+        .linea-pago select { margin: 0; flex: 1; padding: 10px; font-size: 13px;}
+        .linea-pago input { margin: 0; flex: 1; text-align: right; font-size: 15px; font-weight: bold; color: var(--gold); padding: 10px;}
+        .btn-quitar-pago { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 18px; padding: 0 5px; }
+
+        /* ==========================================
+           NOTIFICACIONES
+        ========================================== */
+        #toast-container { 
+            position: fixed; bottom: 20px; right: 20px; z-index: 9999; 
+            display: flex; flex-direction: column; gap: 10px; pointer-events: none; 
+        }
+        
+        .toast { 
+            background: var(--success); color: white; padding: 15px 25px; 
+            border-radius: 8px; font-weight: 600; font-size: 14px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6); animation: slideIn 0.3s ease-out; 
+            border-left: 5px solid rgba(0,0,0,0.3);
+        }
+        .toast.info { background: var(--blue); }
+        .toast.error { background: var(--danger); }
+        
+        @keyframes slideIn { 
+            from { transform: translateX(100%); opacity: 0; } 
+            to { transform: translateX(0); opacity: 1; } 
+        }
+
+        #pantallaBloqueo { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: var(--bg-body); z-index: 1000; display: flex; 
+            justify-content: center; align-items: center; flex-direction: column; 
+        }
+        .spinner { 
+            border: 4px solid rgba(255,255,255,0.1); border-left-color: var(--blue); 
+            border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 20px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* ==========================================
+           ZONAS DE IMPRESIÓN (TICKET Y CORTE Z)
+        ========================================== */
         .zona-impresion { display: none; }
         
         @media print {
             @page { margin: 0; }
             body, html { margin: 0 !important; padding: 0 !important; background: white !important; display: block !important; height: auto !important; overflow: visible !important;}
-            /* Ocultamos toda la interfaz */
-            .header, .dashboard-grid, .panel-listas, .btn-corte, .filtro-container, #pantallaBloqueo { display: none !important; }
             
-            /* Mostramos SOLO la zona que tenga la clase activa */
+            /* Ocultar interfaz */
+            .header, .dashboard-grid, .panel-listas, .controles-superiores, .modal-overlay, #pantallaBloqueo, #toast-container { display: none !important; }
+            
+            /* Activar solo lo necesario */
             .zona-impresion.activa { display: block !important; position: relative !important; width: 47mm; max-width: 47mm; box-sizing: border-box; font-family: 'Arial', sans-serif; font-size: 11px; padding: 0 4px 0 0; margin: 0 auto !important; color: #000000; line-height: 1.3;}
             
-            /* Estilos compartidos para tickets */
+            /* Estilos compartidos */
             .tk-header { text-align: center; border-bottom: 1px dashed #000; padding-bottom: 6px; margin-bottom: 6px;}
             .tk-logo { max-width: 60%; filter: invert(1); margin: 0 auto; display: block;}
             .tk-titulo { font-size: 15px; margin: 4px 0; font-weight: bold;}
             .tk-info-head { font-size: 10px; margin-bottom: 2px;}
             .tk-info-tel { font-size: 11px; font-weight: bold; margin-bottom: 5px;}
             
-            /* Estilos Ticket Z */
+            /* Ticket Z */
             .tk-sub { font-size: 12px; font-weight: bold; margin-bottom: 5px;}
             .tk-linea { display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 11px;}
             .tk-bold { font-weight: bold; font-size: 12px;}
             .tk-divisor { border-top: 1px dashed #000; margin: 8px 0; padding-top: 8px;}
             .tk-caja-final { background: #000; color: #fff; padding: 8px; text-align: center; font-size: 14px; font-weight: bold; margin-top: 10px; -webkit-print-color-adjust: exact; print-color-adjust: exact;}
             
-            /* Estilos Ticket Normal */
+            /* Ticket Normal */
             .tk-datos-cliente { font-size: 11px; margin-bottom: 8px; padding-top: 6px;}
             .tk-tabla { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 11px;}
             .tk-tabla th { border-bottom: 1px dashed #000; text-align: left; padding-bottom: 3px;}
             .tk-tabla td { padding: 4px 0; vertical-align: top;}
-            .tk-tabla .td-cant { width: 15%; }
-            .tk-tabla .td-desc { width: 50%; padding-right: 5px;}
-            .tk-tabla .td-precio { width: 35%; text-align: right; }
             .tk-totales { border-top: 1px dashed #000; text-align: right; font-weight: bold; font-size: 15px; padding-top: 6px;}
-            .tk-pago-row { font-size: 11px; font-weight: normal; margin-top: 2px; color: #333;}
             .tk-saldo-row { font-size: 13px; font-weight: bold; margin-top: 4px; border-top: 1px solid #000; padding-top: 4px;}
             .tk-footer { text-align: center; font-size: 10px; margin-top: 15px; border-top: 1px dashed #000; padding-top: 10px;}
             .tk-rastreo-codigo { display: block; font-size: 17px; margin-top: 3px; font-weight: bold;}
             .tk-qr { width: 35mm; height: 35mm; margin: 5px auto; display: block;}
         }
 
-        #pantallaBloqueo { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); z-index: 1000; display: flex; justify-content: center; align-items: center; flex-direction: column; }
-        .spinner { border: 4px solid rgba(255,255,255,0.1); border-left-color: var(--blue); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 20px;}
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
         @media (max-width: 850px) {
             .panel-listas { grid-template-columns: 1fr; }
+            .controles-superiores { flex-direction: column; align-items: stretch;}
         }
     </style>
 </head>
 <body>
+
+    <div id="toast-container"></div>
 
     <div id="pantallaBloqueo">
         <div class="spinner"></div>
@@ -126,9 +399,16 @@
         </div>
     </header>
 
-    <div class="filtro-container">
-        <h2 style="margin:0; font-weight:300; font-size:16px;">📅 REPORTE DEL DÍA:</h2>
-        <input type="date" id="filtroFecha">
+    <div class="controles-superiores">
+        <div class="filtro-container">
+            <h2 style="margin:0; font-weight:300; font-size:16px;">📅 REPORTE DEL DÍA:</h2>
+            <input type="date" id="filtroFecha">
+        </div>
+
+        <div class="botones-accion">
+            <button class="btn-caja-chica" onclick="abrirModalMovimiento()">💵 REGISTRAR MOVIMIENTO</button>
+            <button class="btn-corte" onclick="imprimirCorteZ()">🖨️ IMPRIMIR CORTE Z</button>
+        </div>
     </div>
 
     <div class="dashboard-grid">
@@ -152,6 +432,7 @@
     </div>
 
     <div class="panel-listas">
+        
         <div class="lista-box">
             <h3>💳 DESGLOSE DE COBROS</h3>
             <div class="row-item"><span style="color:var(--success)">💵 Efectivo (Ventas)</span> <strong id="dEfectivo">$0.00</strong></div>
@@ -162,11 +443,58 @@
 
         <div class="lista-box">
             <h3>📋 AUDITORÍA: TODAS LAS OPERACIONES</h3>
-            <div id="listaOperaciones"></div>
+            <div id="listaOperaciones">
+                </div>
+        </div>
+
+    </div>
+
+    <div class="modal-overlay" id="modalMovimiento">
+        <div class="modal-content">
+            <h2 style="color:var(--blue); margin-top:0;">💵 MOVIMIENTO DE CAJA</h2>
+            <form id="formMovimiento" style="margin-bottom: 15px;">
+                <select id="movTipo">
+                    <option value="ingreso">⬇️ INGRESO DE DINERO (Fondo, Cambio)</option>
+                    <option value="retiro">⬆️ RETIRO DE DINERO (Material, Comida, Pagos)</option>
+                </select>
+                <input type="text" id="movConcepto" placeholder="Concepto (Ej. Pago de Luz, Compra de Papel)" required autocomplete="off">
+                <input type="number" id="movMonto" placeholder="Monto Total ($)" required min="1" step="0.50">
+                <button type="submit" class="btn-corte" style="width: 100%; margin-top: 10px;">REGISTRAR EN CAJA</button>
+            </form>
+            <button onclick="cerrarModalMovimiento()" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-weight: bold; width: 100%; padding: 10px;">Cancelar</button>
         </div>
     </div>
 
-    <button class="btn-corte" onclick="imprimirCorteZ()">🖨️ IMPRIMIR CORTE DE CAJA (Z)</button>
+    <div class="modal-overlay" id="modalEditarPago">
+        <div class="modal-content">
+            <h2 style="color:var(--gold); margin-top:0;">✏️ CORREGIR PAGO</h2>
+            <p style="font-size:12px; color:var(--text-muted); margin-bottom: 15px;">
+                Folio de venta: <strong id="editFolio" style="color:white;"></strong><br>
+                Total a Pagar: <strong id="editTotalNeto" style="color:var(--success); font-size:16px;"></strong>
+            </p>
+
+            <div id="editLineasPago"></div>
+            
+            <button onclick="agregarLineaEdicion()" style="width:100%; background:transparent; border:1px dashed var(--text-muted); color:var(--text-main); padding:10px; border-radius:8px; cursor:pointer; margin-bottom: 20px;">
+                ➕ Añadir forma de pago
+            </button>
+
+            <div style="background:#0A0E17; padding:15px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <div>
+                    <span style="color:var(--text-muted); font-size:11px;">Total Ingresado:</span><br>
+                    <strong id="editSumaRecibida" style="color:var(--blue); font-size:18px;">$0.00</strong>
+                </div>
+                <div style="text-align:right;">
+                    <span id="editLabelStatus" style="color:var(--text-muted); font-size:11px;">Falta:</span><br>
+                    <strong id="editValorStatus" style="color:var(--danger); font-size:18px;">$0.00</strong>
+                </div>
+            </div>
+
+            <button class="btn-caja-chica" id="btnGuardarEdicion" onclick="guardarEdicionPago()" style="width:100%; margin-bottom: 10px;">💾 GUARDAR CAMBIOS</button>
+            <button onclick="cerrarModalEditar()" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-weight: bold; width: 100%; padding: 10px;">Cancelar</button>
+        </div>
+    </div>
+
 
     <div id="zonaCorteImpresion" class="zona-impresion">
         <div class="tk-header">
@@ -245,12 +573,27 @@
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
+        
         const EMAIL_ADMIN = "edgaruriel.deluxe@outlook.com";
         const USUARIO_GH = "edgarsc97";
         const REPO_GH = "sistema-deluxe";
         const LINK_RASTREO = `https://${USUARIO_GH}.github.io/${REPO_GH}/rastreo.html`;
 
         let ventasMemoria = {};
+
+        // Notificaciones
+        function mostrarNotificacion(mensaje, tipo = 'success') { 
+            const container = document.getElementById('toast-container'); 
+            const toast = document.createElement('div'); 
+            toast.className = `toast ${tipo}`; 
+            toast.innerHTML = mensaje; 
+            container.appendChild(toast); 
+            setTimeout(() => { 
+                toast.style.opacity = '0'; 
+                toast.style.transform = 'translateX(100%)'; 
+                setTimeout(() => toast.remove(), 300); 
+            }, 3000); 
+        }
 
         // CONFIGURAR CALENDARIO (Día de hoy por defecto)
         const inputFecha = document.getElementById('filtroFecha');
@@ -271,22 +614,28 @@
             }
         });
 
+        // =========================================================
+        // MOTOR PRINCIPAL DE DATOS (LECTURA DE FIREBASE)
+        // =========================================================
         function cargarDatos() {
             document.getElementById('pantallaBloqueo').style.display = 'flex';
             ventasMemoria = {};
 
-            // Convertir la fecha del calendario (YYYY-MM-DD) al formato de Firebase (DD/MM/YYYY)
+            // Convertir la fecha del calendario a DD/MM/YYYY
             let val = inputFecha.value; 
             if(!val) return;
             let [y, m, d] = val.split('-');
-            let fechaFiltroStr = `${d}/${m}/${y}`; // Ej. 07/04/2026
+            let fechaFiltroStr = `${d}/${m}/${y}`; 
 
-            // Pedimos las ventas a Firebase. (Pedimos un bloque grande para asegurar agarrar días pasados)
             db.ref('ventas').once('value', snap => {
-                
-                let tVentasNeto = 0; let cVentas = 0;
-                let pagosEfectivo = 0; let pagosTarjeta = 0; let pagosSpei = 0;
-                let ingresosExtra = 0; let retirosGasto = 0; let cRetiros = 0;
+                let tVentasNeto = 0; 
+                let cVentas = 0;
+                let pagosEfectivo = 0; 
+                let pagosTarjeta = 0; 
+                let pagosSpei = 0;
+                let ingresosExtra = 0; 
+                let retirosGasto = 0; 
+                let cRetiros = 0;
                 
                 const listaUI = document.getElementById('listaOperaciones');
                 listaUI.innerHTML = '';
@@ -298,7 +647,6 @@
                     
                     snap.forEach(child => {
                         const v = child.val();
-                        // Filtrar por la fecha exacta seleccionada
                         if(v.fecha && v.fecha.includes(fechaFiltroStr)) {
                             operacionesDia.push({ id: child.key, ...v });
                             ventasMemoria[child.key] = v;
@@ -307,23 +655,50 @@
 
                     // Las volteamos para ver las más nuevas arriba
                     operacionesDia.reverse().forEach(v => {
-                        let horaStr = v.fecha.split(', ')[1] || ''; // Extraer solo la hora "05:48 p. m."
+                        let horaStr = v.fecha.split(', ')[1] || ''; 
 
                         if(v.esMovimiento) {
                             if (v.tipoMovimiento === 'ingreso') {
                                 ingresosExtra += Math.abs(v.total);
-                                htmlOperaciones += `<div class="venta-row ingreso"><div><span class="badge-tipo" style="background:var(--blue); color:white;">INGRESO</span><br><strong style="font-size:14px; margin-top:4px; display:block;">${v.cliente}</strong><span style="color:var(--text-muted); font-size:11px;">${horaStr}</span></div><strong style="color:var(--blue); font-size:16px;">+$${Math.abs(v.total).toFixed(2)}</strong></div>`;
+                                htmlOperaciones += `
+                                    <div class="venta-row ingreso">
+                                        <div>
+                                            <span class="badge-tipo" style="background:var(--blue); color:white; padding:2px 5px; border-radius:4px; font-size:10px;">INGRESO</span><br>
+                                            <strong style="font-size:14px; margin-top:4px; display:block;">${v.cliente}</strong>
+                                            <span style="color:var(--text-muted); font-size:11px;">${horaStr}</span>
+                                        </div>
+                                        <strong style="color:var(--blue); font-size:16px;">+$${Math.abs(v.total).toFixed(2)}</strong>
+                                    </div>`;
                             } else {
-                                retirosGasto += Math.abs(v.total); cRetiros++;
-                                htmlOperaciones += `<div class="venta-row retiro"><div><span class="badge-tipo" style="background:var(--danger); color:white;">RETIRO / GASTO</span><br><strong style="font-size:14px; margin-top:4px; display:block;">${v.cliente}</strong><span style="color:var(--text-muted); font-size:11px;">${horaStr}</span></div><strong style="color:var(--danger); font-size:16px;">-$${Math.abs(v.total).toFixed(2)}</strong></div>`;
+                                retirosGasto += Math.abs(v.total); 
+                                cRetiros++;
+                                htmlOperaciones += `
+                                    <div class="venta-row retiro">
+                                        <div>
+                                            <span class="badge-tipo" style="background:var(--danger); color:white; padding:2px 5px; border-radius:4px; font-size:10px;">RETIRO / GASTO</span><br>
+                                            <strong style="font-size:14px; margin-top:4px; display:block;">${v.cliente}</strong>
+                                            <span style="color:var(--text-muted); font-size:11px;">${horaStr}</span>
+                                        </div>
+                                        <strong style="color:var(--danger); font-size:16px;">-$${Math.abs(v.total).toFixed(2)}</strong>
+                                    </div>`;
                             }
                         } else {
                             // Es una venta
                             if(v.estado === 'anulado') {
-                                htmlOperaciones += `<div class="venta-row anulado"><div><span class="badge-tipo" style="background:var(--text-muted); color:black;">❌ ANULADO</span><br><strong style="font-size:14px; margin-top:4px; display:block;">Folio #${v.ticket} - ${v.cliente}</strong><span style="color:var(--text-muted); font-size:11px;">${horaStr}</span></div><strong style="text-decoration:line-through; font-size:16px;">$${(v.totalAnterior || 0).toFixed(2)}</strong></div>`;
+                                htmlOperaciones += `
+                                    <div class="venta-row anulado">
+                                        <div>
+                                            <span class="badge-tipo" style="background:var(--text-muted); color:black; padding:2px 5px; border-radius:4px; font-size:10px;">❌ ANULADO</span><br>
+                                            <strong style="font-size:14px; margin-top:4px; display:block;">Folio #${v.ticket} - ${v.cliente}</strong>
+                                            <span style="color:var(--text-muted); font-size:11px;">${horaStr}</span>
+                                        </div>
+                                        <strong style="text-decoration:line-through; font-size:16px;">$${(v.totalAnterior || 0).toFixed(2)}</strong>
+                                    </div>`;
                             } else {
-                                cVentas++; tVentasNeto += (v.total || 0);
+                                cVentas++; 
+                                tVentasNeto += (v.total || 0);
                                 
+                                // Sumar a las métricas correctas
                                 if(v.detallePagos) {
                                     v.detallePagos.forEach(p => {
                                         if(p.metodo === 'Efectivo') pagosEfectivo += p.monto;
@@ -331,18 +706,37 @@
                                         if(p.metodo === 'Transferencia') pagosSpei += p.monto;
                                     });
                                 } else {
+                                    // Legado (Por si hay ventas viejas)
                                     if(v.pago === 'Efectivo') pagosEfectivo += (v.totalRecibido || v.total);
                                     else if(v.pago === 'Tarjeta') pagosTarjeta += (v.totalRecibido || v.total);
                                     else if(v.pago === 'Transferencia') pagosSpei += (v.totalRecibido || v.total);
                                 }
 
-                                htmlOperaciones += `<div class="venta-row"><div><span class="badge-tipo" style="background:rgba(5, 150, 105, 0.2); color:var(--success);">✅ VENTA</span><br><strong style="font-size:14px; margin-top:4px; display:block;">Folio #${v.ticket} - ${v.cliente}</strong><span style="color:var(--text-muted); font-size:11px;">${horaStr} | Pago en ${v.pago}</span></div><div style="text-align:right;"><strong style="color:var(--success); font-size:16px; display:block; margin-bottom:5px;">$${(v.total || 0).toFixed(2)}</strong><button class="btn-print-small" onclick="reimprimirTicket('${v.id}')">🖨️ Ticket</button></div></div>`;
+                                // PUNTO 8: AÑADIDO BOTON PARA EDITAR PAGO
+                                htmlOperaciones += `
+                                    <div class="venta-row">
+                                        <div>
+                                            <span class="badge-tipo" style="background:rgba(5, 150, 105, 0.2); color:var(--success); padding:2px 5px; border-radius:4px; font-size:10px; font-weight:bold;">✅ VENTA</span><br>
+                                            <strong style="font-size:14px; margin-top:4px; display:block;">Folio #${v.ticket} - ${v.cliente}</strong>
+                                            <span style="color:var(--text-muted); font-size:11px;">${horaStr} | Pago en ${v.pago}</span>
+                                        </div>
+                                        <div style="text-align:right; display:flex; flex-direction:column; align-items:flex-end; gap:5px;">
+                                            <strong style="color:var(--success); font-size:16px;">$${(v.total || 0).toFixed(2)}</strong>
+                                            <div style="display:flex; gap:5px;">
+                                                <button class="btn-print-small" style="color:var(--blue); border-color:var(--blue);" onclick="abrirModalEditar('${v.id}')">✏️ Editar Pago</button>
+                                                <button class="btn-print-small" onclick="reimprimirTicket('${v.id}')">🖨️ Ticket</button>
+                                            </div>
+                                        </div>
+                                    </div>`;
                             }
                         }
                     });
                 }
 
-                if(htmlOperaciones === '') htmlOperaciones = '<div style="text-align:center; color:var(--text-muted); padding:20px;">No hay registros para este día</div>';
+                if(htmlOperaciones === '') {
+                    htmlOperaciones = '<div style="text-align:center; color:var(--text-muted); padding:20px;">No hay registros para este día</div>';
+                }
+                
                 listaUI.innerHTML = htmlOperaciones;
 
                 // Matemática de Caja Fuerte
@@ -376,11 +770,190 @@
         }
 
         // =========================================================
-        // CONTROL DE IMPRESIÓN INTELIGENTE (Z O INDIVIDUAL)
+        // PUNTO 7: MÓDULO DE MOVIMIENTOS (CAJA CHICA)
         // =========================================================
-        
+        function abrirModalMovimiento() {
+            document.getElementById('modalMovimiento').style.display = 'flex';
+        }
+
+        function cerrarModalMovimiento() {
+            document.getElementById('modalMovimiento').style.display = 'none';
+            document.getElementById('formMovimiento').reset();
+        }
+
+        document.getElementById('formMovimiento').addEventListener('submit', e => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            btn.disabled = true;
+
+            const tipo = document.getElementById('movTipo').value;
+            const concepto = document.getElementById('movConcepto').value.trim();
+            const monto = parseFloat(document.getElementById('movMonto').value);
+            
+            const tic = "CAJA-" + Math.floor(1000 + Math.random() * 9000);
+            const f = new Date().toLocaleString('es-MX', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true });
+            
+            const totalReal = tipo === 'retiro' ? -Math.abs(monto) : Math.abs(monto);
+            
+            const dataCaja = {
+                ticket: tic,
+                cliente: concepto,
+                total: totalReal,
+                pago: "Efectivo",
+                fecha: f,
+                timestamp: Date.now(),
+                esMovimiento: true,
+                tipoMovimiento: tipo
+            };
+
+            db.ref('ventas').push(dataCaja).then(() => {
+                mostrarNotificacion("✅ Movimiento Registrado", "info");
+                cerrarModalMovimiento();
+                btn.disabled = false;
+                cargarDatos(); // Recargar todo el panel
+            });
+        });
+
+        // =========================================================
+        // PUNTO 8: MÓDULO PARA EDITAR MÉTODO DE PAGO
+        // =========================================================
+        let edicionVentaId = null;
+        let edicionTotalNeto = 0;
+        let edicionLineasPago = [];
+
+        function abrirModalEditar(id) {
+            const v = ventasMemoria[id];
+            if (!v) return;
+
+            edicionVentaId = id;
+            edicionTotalNeto = v.total;
+            
+            // Si la venta es antigua y no tiene 'detallePagos', lo creamos artificialmente para editar
+            if (!v.detallePagos) {
+                edicionLineasPago = [{ metodo: v.pago, monto: v.totalRecibido || v.total }];
+            } else {
+                // Copia profunda para no alterar la memoria hasta que le de guardar
+                edicionLineasPago = JSON.parse(JSON.stringify(v.detallePagos));
+            }
+
+            document.getElementById('editFolio').innerText = v.ticket;
+            document.getElementById('editTotalNeto').innerText = '$' + v.total.toFixed(2);
+            
+            document.getElementById('modalEditarPago').style.display = 'flex';
+            renderizarEdicionLineas();
+        }
+
+        function cerrarModalEditar() {
+            document.getElementById('modalEditarPago').style.display = 'none';
+        }
+
+        function agregarLineaEdicion() {
+            edicionLineasPago.push({ id: Date.now(), metodo: 'Tarjeta', monto: 0 });
+            renderizarEdicionLineas();
+        }
+
+        function quitarLineaEdicion(id) {
+            edicionLineasPago = edicionLineasPago.filter(p => p.id !== id);
+            if(edicionLineasPago.length === 0) {
+                edicionLineasPago.push({ id: Date.now(), metodo: 'Efectivo', monto: 0 });
+            }
+            renderizarEdicionLineas();
+        }
+
+        function modificarMontoEdicion(id, valor) {
+            let p = edicionLineasPago.find(l => l.id === id);
+            if(p) p.monto = parseFloat(valor) || 0;
+            calcularResumenEdicion();
+        }
+
+        function modificarMetodoEdicion(id, metodo) {
+            let p = edicionLineasPago.find(l => l.id === id);
+            if(p) p.metodo = metodo;
+            calcularResumenEdicion();
+        }
+
+        function renderizarEdicionLineas() {
+            const cont = document.getElementById('editLineasPago');
+            cont.innerHTML = '';
+            
+            edicionLineasPago.forEach(linea => {
+                // Le ponemos un ID inventado si no lo tiene (para las ventas viejas)
+                if(!linea.id) linea.id = Math.random();
+
+                cont.innerHTML += `
+                    <div class="linea-pago">
+                        <select onchange="modificarMetodoEdicion(${linea.id}, this.value)">
+                            <option value="Efectivo" ${linea.metodo === 'Efectivo' ? 'selected' : ''}>💵 Efectivo</option>
+                            <option value="Tarjeta" ${linea.metodo === 'Tarjeta' ? 'selected' : ''}>💳 Tarjeta</option>
+                            <option value="Transferencia" ${linea.metodo === 'Transferencia' ? 'selected' : ''}>📱 Transferencia</option>
+                        </select>
+                        <input type="number" step="0.50" min="0" value="${linea.monto}" oninput="modificarMontoEdicion(${linea.id}, this.value)" placeholder="$0.00">
+                        <button class="btn-quitar-pago" onclick="quitarLineaEdicion(${linea.id})">✖</button>
+                    </div>`;
+            });
+            
+            calcularResumenEdicion();
+        }
+
+        function calcularResumenEdicion() {
+            let totalIngresado = edicionLineasPago.reduce((sum, p) => sum + p.monto, 0);
+            let diferencia = totalIngresado - edicionTotalNeto;
+            
+            document.getElementById('editSumaRecibida').innerText = `$${totalIngresado.toFixed(2)}`;
+            
+            const lbl = document.getElementById('editLabelStatus');
+            const val = document.getElementById('editValorStatus');
+
+            if (totalIngresado === 0) {
+                lbl.innerText = "Falta:"; lbl.style.color = "var(--text-muted)";
+                val.innerText = `$${edicionTotalNeto.toFixed(2)}`; val.style.color = "var(--danger)";
+            } else if (diferencia < 0) {
+                lbl.innerText = "ANTICIPO. Resta:"; lbl.style.color = "var(--gold)";
+                val.innerText = `$${Math.abs(diferencia).toFixed(2)}`; val.style.color = "var(--gold)";
+            } else if (diferencia > 0) {
+                lbl.innerText = "CAMBIO:"; lbl.style.color = "var(--text-muted)";
+                val.innerText = `$${diferencia.toFixed(2)}`; val.style.color = "var(--success)";
+            } else {
+                lbl.innerText = "PAGO EXACTO"; lbl.style.color = "var(--text-muted)";
+                val.innerText = `$0.00`; val.style.color = "var(--success)";
+            }
+        }
+
+        function guardarEdicionPago() {
+            let totalRecibidoFinal = edicionLineasPago.reduce((s, p) => s + p.monto, 0);
+            let saldoPendienteNuevo = totalRecibidoFinal < edicionTotalNeto ? edicionTotalNeto - totalRecibidoFinal : 0;
+            let metodoPrincipal = edicionLineasPago.length > 1 ? "Múltiple" : (totalRecibidoFinal === 0 ? "Pendiente" : edicionLineasPago[0].metodo);
+
+            const btn = document.getElementById('btnGuardarEdicion');
+            btn.disabled = true;
+            btn.innerText = "GUARDANDO...";
+
+            // Actualizamos la venta directamente en Firebase
+            db.ref('ventas/' + edicionVentaId).update({
+                detallePagos: edicionLineasPago,
+                pago: metodoPrincipal,
+                totalRecibido: totalRecibidoFinal,
+                saldoPendiente: saldoPendienteNuevo
+            }).then(() => {
+                mostrarNotificacion("✅ Cobro modificado exitosamente");
+                cerrarModalEditar();
+                btn.disabled = false;
+                btn.innerText = "💾 GUARDAR CAMBIOS";
+                
+                // Recargar el panel para ver el nuevo desglose
+                cargarDatos();
+            }).catch(err => {
+                alert("Error al actualizar la venta.");
+                btn.disabled = false;
+                btn.innerText = "💾 GUARDAR CAMBIOS";
+            });
+        }
+
+
+        // =========================================================
+        // CONTROL DE IMPRESIÓN (Z O INDIVIDUAL)
+        // =========================================================
         function imprimirCorteZ() {
-            // Activamos solo la zona del Corte Z
             document.getElementById('zonaCorteImpresion').classList.add('activa');
             document.getElementById('zonaTicketImpresion').classList.remove('activa');
             window.print();
@@ -390,37 +963,62 @@
             const v = ventasMemoria[id]; 
             if(!v) return;
 
-            // Reconstruimos los datos para imprimir
-            if(!v.detallePagos) { v.detallePagos = [{metodo: v.pago, monto: v.total}]; v.saldoPendiente = 0; v.totalRecibido = v.total; v.descuento = 0; }
+            if(!v.detallePagos) { 
+                v.detallePagos = [{metodo: v.pago, monto: v.total}]; 
+                v.saldoPendiente = 0; 
+                v.totalRecibido = v.total; 
+                v.descuento = 0; 
+            }
             
             document.getElementById('tkFecha').innerText = v.fecha; 
             document.getElementById('tkCliente').innerText = v.cliente; 
             document.getElementById('tkCodigoRastreo').innerText = v.ticket;
             
             const fT = document.getElementById('filaTelefono'); 
-            if (v.telefono) { document.getElementById('tkTelefono').innerText = v.telefono; fT.style.display = 'inline'; } 
-            else { fT.style.display = 'none'; }
+            if (v.telefono) { 
+                document.getElementById('tkTelefono').innerText = v.telefono; 
+                fT.style.display = 'inline'; 
+            } else { 
+                fT.style.display = 'none'; 
+            }
             
-            const tb = document.getElementById('tkDetalle'); tb.innerHTML = ''; 
-            if(v.carrito) { v.carrito.forEach(i => { tb.innerHTML += `<tr><td class="td-cant">${i.cantidad}</td><td class="td-desc">${i.nombre}</td><td class="td-precio">$${(i.precio * i.cantidad).toFixed(2)}</td></tr>`; }); }
+            const tb = document.getElementById('tkDetalle'); 
+            tb.innerHTML = ''; 
+            if(v.carrito) { 
+                v.carrito.forEach(i => { 
+                    tb.innerHTML += `<tr><td class="td-cant">${i.cantidad}</td><td class="td-desc">${i.nombre}</td><td class="td-precio">$${(i.precio * i.cantidad).toFixed(2)}</td></tr>`; 
+                }); 
+            }
             
             const uiDesc = document.getElementById('tkDescuentoUI'); 
-            if (v.descuento > 0) { uiDesc.style.display = 'block'; document.getElementById('tkDescuentoValor').innerText = `-$${parseFloat(v.descuento).toFixed(2)}`; } 
-            else { uiDesc.style.display = 'none'; }
+            if (v.descuento > 0) { 
+                uiDesc.style.display = 'block'; 
+                document.getElementById('tkDescuentoValor').innerText = `-$${parseFloat(v.descuento).toFixed(2)}`; 
+            } else { 
+                uiDesc.style.display = 'none'; 
+            }
             
             document.getElementById('tkTotalF').innerText = '$' + parseFloat(v.total).toFixed(2);
             
-            const listPagos = document.getElementById('tkListaPagos'); listPagos.innerHTML = '';
-            v.detallePagos.forEach(p => { if (p.monto > 0) listPagos.innerHTML += `<div class="tk-pago-row">Pago en ${p.metodo}: $${p.monto.toFixed(2)}</div>`; });
+            const listPagos = document.getElementById('tkListaPagos'); 
+            listPagos.innerHTML = '';
+            v.detallePagos.forEach(p => { 
+                if (p.monto > 0) {
+                    listPagos.innerHTML += `<div class="tk-pago-row">Pago en ${p.metodo}: $${p.monto.toFixed(2)}</div>`; 
+                }
+            });
 
             const uiSaldo = document.getElementById('tkSaldoUICaja');
-            if (v.saldoPendiente > 0) { uiSaldo.innerHTML = `ANTICIPO<br>RESTA PAGAR: $${parseFloat(v.saldoPendiente).toFixed(2)}`; uiSaldo.style.display = 'block';
-            } else { uiSaldo.style.display = 'none'; }
+            if (v.saldoPendiente > 0) { 
+                uiSaldo.innerHTML = `ANTICIPO<br>RESTA PAGAR: $${parseFloat(v.saldoPendiente).toFixed(2)}`; 
+                uiSaldo.style.display = 'block';
+                if(v.totalRecibido === 0) uiSaldo.innerHTML = `PAGO PENDIENTE<br>DEBE: $${parseFloat(v.saldoPendiente).toFixed(2)}`;
+            } else { 
+                uiSaldo.style.display = 'none'; 
+            }
 
-            // Generamos QR en vivo
             const qrImg = document.getElementById('tkQR');
             
-            // Activamos solo la zona del Ticket Individual
             document.getElementById('zonaTicketImpresion').classList.add('activa');
             document.getElementById('zonaCorteImpresion').classList.remove('activa');
 

@@ -6,73 +6,412 @@
     <title>ADMIN - PRODUCCIÓN DELUXE</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
+        /* ==========================================
+           VARIABLES GLOBALES
+        ========================================== */
         :root { 
-            --bg-body: #0A0E17; --bg-panel: #111827; --text-main: #F3F4F6;
-            --text-muted: #9CA3AF; --gold: #D4AF37; --success: #059669;
-            --danger: #991B1B; --purple: #8B5CF6; --border: rgba(255, 255, 255, 0.08);
-            --whatsapp: #25D366; --blue: #3b82f6; --express: #F59E0B;
+            --bg-body: #0A0E17; 
+            --bg-panel: #111827; 
+            --text-main: #F3F4F6;
+            --text-muted: #9CA3AF; 
+            --gold: #D4AF37; 
+            --success: #059669;
+            --danger: #991B1B; 
+            --purple: #8B5CF6; 
+            --border: rgba(255, 255, 255, 0.08);
+            --whatsapp: #25D366; 
+            --blue: #3b82f6; 
+            --express: #F59E0B;
         }
 
-        body { font-family: 'Inter', sans-serif; background: var(--bg-body); color: var(--text-main); margin: 0; padding: 20px; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background: var(--bg-body); 
+            color: var(--text-main); 
+            margin: 0; 
+            padding: 20px; 
+        }
         
-        #loginPanel { max-width: 380px; margin: 12vh auto; background: var(--bg-panel); padding: 40px; border-radius: 16px; box-shadow: 0 25px 50px rgba(0,0,0,0.5); text-align: center; border: 1px solid var(--border); border-top: 4px solid var(--gold); }
-        .logo-banco { font-size: 32px; letter-spacing: 4px; font-weight: 300; color: var(--gold); text-transform: uppercase; margin-bottom: 5px; }
-        input { width: 100%; padding: 14px; margin: 10px 0; background: #1F2937; border: 1px solid var(--border); color: white; border-radius: 8px; box-sizing: border-box; font-size: 14px; transition: 0.3s; }
-        input:focus { outline: none; border-color: var(--gold); }
-        .btn-login { width: 100%; padding: 14px; background: var(--gold); color: #000; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 15px; margin-top: 15px; transition: 0.3s; letter-spacing: 1px;}
-
-        .panel { max-width: 850px; margin: 0 auto; background: var(--bg-panel); padding: 35px; border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); border: 1px solid var(--border); }
-        .header-flex { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 25px; }
+        /* ==========================================
+           PANEL DE LOGIN
+        ========================================== */
+        #loginPanel { 
+            max-width: 380px; 
+            margin: 12vh auto; 
+            background: var(--bg-panel); 
+            padding: 40px; 
+            border-radius: 16px; 
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5); 
+            text-align: center; 
+            border: 1px solid var(--border); 
+            border-top: 4px solid var(--gold); 
+        }
         
-        .nav-botones { display: flex; gap: 10px; flex-wrap: wrap;}
-        .btn-nav { background: transparent; color: var(--gold); border: 1px solid var(--gold); text-decoration: none; padding: 10px 20px; border-radius: 6px; font-weight: 600; font-size: 11px; transition: 0.3s; letter-spacing: 1px; text-transform: uppercase;}
-        .btn-nav:hover { background: var(--gold); color: #000; }
+        .logo-banco { 
+            font-size: 32px; 
+            letter-spacing: 4px; 
+            font-weight: 300; 
+            color: var(--gold); 
+            text-transform: uppercase; 
+            margin-bottom: 5px; 
+        }
         
-        .btn-cascada { background: transparent; color: var(--text-muted); border: 1px dashed var(--text-muted); padding: 15px; border-radius: 8px; width: 100%; font-size: 13px; font-weight: 600; cursor: pointer; margin-bottom: 25px; transition: 0.3s; letter-spacing: 1px; }
+        input { 
+            width: 100%; 
+            padding: 14px; 
+            margin: 10px 0; 
+            background: #1F2937; 
+            border: 1px solid var(--border); 
+            color: white; 
+            border-radius: 8px; 
+            box-sizing: border-box; 
+            font-size: 14px; 
+            transition: 0.3s; 
+        }
+        
+        input:focus { 
+            outline: none; 
+            border-color: var(--gold); 
+        }
+        
+        .btn-login { 
+            width: 100%; 
+            padding: 14px; 
+            background: var(--gold); 
+            color: #000; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: 600; 
+            font-size: 15px; 
+            margin-top: 15px; 
+            transition: 0.3s; 
+            letter-spacing: 1px;
+        }
 
-        .titulo-seccion { font-size: 13px; color: var(--gold); border-bottom: 1px solid var(--gold); padding-bottom: 8px; margin: 30px 0 15px 0; text-transform: uppercase; letter-spacing: 2px; font-weight: 800;}
+        /* ==========================================
+           CONTENEDOR PRINCIPAL
+        ========================================== */
+        .panel { 
+            max-width: 1200px; 
+            margin: 0 auto; 
+            background: var(--bg-panel); 
+            padding: 35px; 
+            border-radius: 16px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4); 
+            border: 1px solid var(--border); 
+        }
+        
+        .header-flex { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 1px solid var(--border); 
+            padding-bottom: 20px; 
+            margin-bottom: 25px; 
+        }
+        
+        .nav-botones { 
+            display: flex; 
+            gap: 10px; 
+            flex-wrap: wrap;
+        }
+        
+        .btn-nav { 
+            background: transparent; 
+            color: var(--gold); 
+            border: 1px solid var(--gold); 
+            text-decoration: none; 
+            padding: 10px 20px; 
+            border-radius: 6px; 
+            font-weight: 600; 
+            font-size: 11px; 
+            transition: 0.3s; 
+            letter-spacing: 1px; 
+            text-transform: uppercase;
+        }
+        
+        .btn-nav:hover { 
+            background: var(--gold); 
+            color: #000; 
+        }
+        
+        .btn-cascada { 
+            background: transparent; 
+            color: var(--text-muted); 
+            border: 1px dashed var(--text-muted); 
+            padding: 15px; 
+            border-radius: 8px; 
+            width: 100%; 
+            font-size: 13px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            margin-bottom: 25px; 
+            transition: 0.3s; 
+            letter-spacing: 1px; 
+        }
 
-        .pedido-card { background: #1F2937; border: 1px solid var(--border); padding: 20px; margin-bottom: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; border-left: 5px solid var(--gold); transition: 0.3s; }
-        .pedido-card.listo { border-left-color: var(--success); background: rgba(5, 150, 105, 0.05); }
-        .pedido-card.pausado { border-left-color: var(--purple); opacity: 0.85; background: #151A2B; }
-        .pedido-card.vip { border-left: 5px solid var(--gold); background: linear-gradient(90deg, rgba(212,175,55,0.1) 0%, rgba(31,41,55,1) 30%);}
+        .titulo-seccion { 
+            font-size: 14px; 
+            color: var(--gold); 
+            border-bottom: 1px solid var(--gold); 
+            padding-bottom: 8px; 
+            margin: 0 0 15px 0; 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            font-weight: 800;
+        }
+
+        /* ==========================================
+           GRID PARA 2 COLUMNAS (PRODUCCIÓN Y LISTOS)
+        ========================================== */
+        .columnas-produccion {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 850px) {
+            .columnas-produccion {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ==========================================
+           TARJETAS DE PEDIDOS (DISEÑO MEJORADO)
+        ========================================== */
+        .pedido-card { 
+            background: #1F2937; 
+            border: 1px solid var(--border); 
+            padding: 20px; 
+            margin-bottom: 15px; 
+            border-radius: 12px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-left: 5px solid var(--gold); 
+            transition: 0.3s; 
+            position: relative;
+        }
+        
+        .pedido-card.listo { 
+            border-left-color: var(--success); 
+            background: rgba(5, 150, 105, 0.05); 
+        }
+        
+        .pedido-card.pausado { 
+            border-left-color: var(--purple); 
+            opacity: 0.85; 
+            background: #151A2B; 
+        }
+        
+        .pedido-card.vip { 
+            border-left: 5px solid var(--gold); 
+            background: linear-gradient(90deg, rgba(212,175,55,0.1) 0%, rgba(31,41,55,1) 30%);
+        }
+        
+        /* ESTILO PARA DEUDORES */
+        .pedido-card.deudor {
+            border-left-color: var(--danger);
+            border-right: 3px solid var(--danger);
+        }
+
+        .badge-deuda {
+            background: var(--danger);
+            color: white;
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 800;
+            white-space: nowrap; /* Evita que el texto se rompa en dos líneas */
+        }
         
         /* 🚨 ALARMA VISUAL DE RETRASO */
-        .pedido-card.retrasado { border-left-color: var(--danger); background: rgba(153, 27, 27, 0.1); animation: latido-rojo 2s infinite; }
-        @keyframes latido-rojo { 0%, 100% { box-shadow: 0 0 0 rgba(153, 27, 27, 0); } 50% { box-shadow: 0 0 15px rgba(153, 27, 27, 0.5); } }
-
-        .info-cliente strong { font-size: 18px; color: white; display: inline-flex; align-items: center; gap: 8px; margin-bottom: 4px; transition: 0.2s;}
-        .info-cliente strong:hover { color: var(--gold); }
-        .info-servicio { color: var(--gold); font-size: 12px; text-transform: uppercase; font-weight: 700; display: block; margin: 5px 0;}
-        .info-entrega { color: var(--text-muted); font-size: 13px; }
-        .alerta-texto { display: none; color: var(--danger); font-size: 11px; font-weight: bold; margin-top: 8px; text-transform: uppercase; letter-spacing: 1px;}
-
-        .acciones-btn { display: flex; flex-direction: column; gap: 8px; }
-        .btn-accion { background: transparent; border: 1px solid; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 11px; transition: 0.3s; text-transform: uppercase; min-width: 140px;}
+        .pedido-card.retrasado { 
+            border-left-color: var(--danger); 
+            background: rgba(153, 27, 27, 0.1); 
+            animation: latido-rojo 2s infinite; 
+        }
         
-        /* BOTÓN EXPRESS NUEVO */
+        @keyframes latido-rojo { 
+            0%, 100% { box-shadow: 0 0 0 rgba(153, 27, 27, 0); } 
+            50% { box-shadow: 0 0 15px rgba(153, 27, 27, 0.5); } 
+        }
+
+        /* ==========================================
+           DRAG AND DROP HANDLER
+        ========================================== */
+        .drag-handle {
+            cursor: grab;
+            color: var(--gold);
+            font-size: 20px;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+        }
+        
+        .drag-handle:active { 
+            cursor: grabbing; 
+        }
+        
+        .pedido-card.dragging { 
+            opacity: 0.5; 
+            transform: scale(0.98); 
+            background: var(--bg-panel); 
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
+        }
+
+        /* ==========================================
+           INFORMACIÓN DEL CLIENTE
+        ========================================== */
+        .info-cliente { 
+            flex: 1; 
+        }
+
+        /* Contenedor flexible para evitar que el título y las etiquetas se encimen */
+        .cliente-header {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+
+        .cliente-header strong { 
+            font-size: 18px; 
+            color: white; 
+            margin: 0;
+            transition: 0.2s;
+        }
+        
+        .cliente-header strong:hover { 
+            color: var(--gold); 
+        }
+        
+        .info-servicio { 
+            color: var(--gold); 
+            font-size: 12px; 
+            text-transform: uppercase; 
+            font-weight: 700; 
+            display: block; 
+            margin: 5px 0;
+        }
+        
+        .info-costo {
+            color: var(--success);
+            font-weight: 800;
+            font-size: 13px;
+        }
+
+        .info-entrega { 
+            color: var(--text-muted); 
+            font-size: 12px; 
+            display: block;
+            margin-top: 5px;
+        }
+        
+        .alerta-texto { 
+            display: none; 
+            color: var(--danger); 
+            font-size: 11px; 
+            font-weight: bold; 
+            margin-top: 8px; 
+            text-transform: uppercase; 
+            letter-spacing: 1px;
+        }
+
+        /* ==========================================
+           BOTONES DE ACCIÓN
+        ========================================== */
+        .acciones-btn { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 8px; 
+            margin-left: 15px;
+        }
+        
+        .btn-accion { 
+            background: transparent; 
+            border: 1px solid; 
+            padding: 8px 15px; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-weight: 700; 
+            font-size: 11px; 
+            transition: 0.3s; 
+            text-transform: uppercase; 
+            min-width: 140px;
+        }
+        
         .btn-express { color: var(--express); border-color: var(--express); }
         .btn-express:hover { background: var(--express); color: black; }
         
         .btn-verde { color: var(--success); border-color: var(--success); }
         .btn-verde:hover { background: var(--success); color: white; }
+        
         .btn-gris { color: var(--text-muted); border-color: var(--text-muted); }
         .btn-gris:hover { background: var(--text-muted); color: #000; }
+        
         .btn-pausa { color: var(--purple); border-color: var(--purple); }
         .btn-pausa:hover { background: var(--purple); color: white; }
+        
         .btn-reanudar { color: var(--gold); border-color: var(--gold); }
         
-        .btn-wa { background: transparent; color: var(--whatsapp); border: 1px solid var(--whatsapp); padding: 8px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer; margin-top: 10px; width: 100%; transition: 0.3s; text-transform: uppercase;}
-        .btn-wa:hover { background: var(--whatsapp); color: #000; }
-
-        /* MODALES */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 500; backdrop-filter: blur(5px);}
-        .modal-content { background: var(--bg-panel); padding: 30px; border-radius: 15px; width: 90%; max-width: 450px; border: 1px solid var(--border); text-align: center;}
+        .btn-wa { 
+            background: transparent; 
+            color: var(--whatsapp); 
+            border: 1px solid var(--whatsapp); 
+            padding: 8px; 
+            border-radius: 6px; 
+            font-size: 11px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            margin-top: 10px; 
+            width: 100%; 
+            transition: 0.3s; 
+            text-transform: uppercase;
+        }
         
-        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
-        .toast { background: var(--success); color: white; padding: 15px 25px; border-radius: 8px; font-weight: 600; font-size: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); animation: slideIn 0.3s ease-out; display: flex; align-items: center; gap: 10px; letter-spacing: 1px; border-left: 5px solid rgba(0,0,0,0.3);}
+        .btn-wa:hover { 
+            background: var(--whatsapp); 
+            color: #000; 
+        }
+
+        /* ==========================================
+           MODALES Y NOTIFICACIONES
+        ========================================== */
+        .modal-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.8); display: none; justify-content: center; 
+            align-items: center; z-index: 500; backdrop-filter: blur(5px);
+        }
+        
+        .modal-content { 
+            background: var(--bg-panel); padding: 30px; border-radius: 15px; 
+            width: 90%; max-width: 450px; border: 1px solid var(--border); text-align: center;
+        }
+        
+        #toast-container { 
+            position: fixed; bottom: 20px; right: 20px; z-index: 9999; 
+            display: flex; flex-direction: column; gap: 10px; pointer-events: none; 
+        }
+        
+        .toast { 
+            background: var(--success); color: white; padding: 15px 25px; 
+            border-radius: 8px; font-weight: 600; font-size: 14px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6); animation: slideIn 0.3s ease-out; 
+            display: flex; align-items: center; gap: 10px; letter-spacing: 1px; 
+            border-left: 5px solid rgba(0,0,0,0.3);
+        }
+        
         .toast.info { background: var(--blue); }
-        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        
+        @keyframes slideIn { 
+            from { transform: translateX(100%); opacity: 0; } 
+            to { transform: translateX(0); opacity: 1; } 
+        }
     </style>
 </head>
 <body>
@@ -105,8 +444,19 @@
 
             <button class="btn-cascada" onclick="retrasarTodo(5)">➕ RETRASAR TODA LA FILA (+5 MINUTOS)</button>
 
-            <div class="titulo-seccion" style="color:var(--success); border-color:var(--success);">▶️ EN PRODUCCIÓN (PANTALLA TV)</div>
-            <div id="listaPedidos"></div>
+            <div class="columnas-produccion">
+                
+                <div>
+                    <div class="titulo-seccion" style="color:var(--gold); border-color:var(--gold);">▶️ EN PRODUCCIÓN (TV)</div>
+                    <div id="listaPedidos"></div>
+                </div>
+
+                <div>
+                    <div class="titulo-seccion" style="color:var(--success); border-color:var(--success);">✅ LISTOS POR ARCHIVAR</div>
+                    <div id="listaListos"></div>
+                </div>
+
+            </div>
             
             <div class="titulo-seccion" style="color:var(--purple); border-color:var(--purple);">⏸️ TRABAJOS PAUSADOS</div>
             <div id="listaPausados"></div>
@@ -120,8 +470,8 @@
     <div class="modal-overlay" id="modalNube">
         <div class="modal-content">
             <h2 style="color:var(--blue); margin-top:0; letter-spacing:2px;">☁️ ENTREGA DIGITAL</h2>
-            <p style="color:var(--text-muted); font-size:13px; margin-bottom:20px;">Si el trabajo incluye fotos digitales, pega el enlace aquí. El cliente lo verá al escanear su ticket.</p>
-            <input type="url" id="linkDescargaNube" placeholder="Enlace de Google Drive / WeTransfer (Opcional)">
+            <p style="color:var(--text-muted); font-size:13px; margin-bottom:20px;">Pega el enlace de Google Drive. Seguirá visible para el cliente aunque archives el pedido.</p>
+            <input type="url" id="linkDescargaNube" placeholder="Enlace de Google Drive / WeTransfer">
             <input type="hidden" id="idTurnoActivo">
             
             <button class="btn-login" style="background:var(--success); color:white; margin-top:10px;" onclick="confirmarFinalizarNube()">✅ MARCAR COMO LISTO</button>
@@ -147,6 +497,7 @@
             messagingSenderId: "599045837547",
             appId: "1:599045837547:web:7bb72110d3cf36739ea4ae"
         };
+        
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.database();
@@ -154,9 +505,14 @@
         function mostrarNotificacion(mensaje, tipo = 'success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
-            toast.className = `toast ${tipo}`; toast.innerHTML = mensaje;
+            toast.className = `toast ${tipo}`; 
+            toast.innerHTML = mensaje;
             container.appendChild(toast);
-            setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(100%)'; setTimeout(() => toast.remove(), 300); }, 3500);
+            setTimeout(() => { 
+                toast.style.opacity = '0'; 
+                toast.style.transform = 'translateX(100%)'; 
+                setTimeout(() => toast.remove(), 300); 
+            }, 3500);
         }
 
         auth.onAuthStateChanged(user => {
@@ -172,10 +528,11 @@
 
         document.getElementById('formLogin').addEventListener('submit', e => {
             e.preventDefault();
-            auth.signInWithEmailAndPassword(document.getElementById('email').value, document.getElementById('password').value).catch(err => alert("Acceso Denegado"));
+            auth.signInWithEmailAndPassword(document.getElementById('email').value, document.getElementById('password').value)
+                .catch(err => alert("Acceso Denegado"));
         });
 
-        // --- FUNCION PARA COPIAR A PHOTOSHOP (NUEVO) ---
+        // 📋 COPIAR A PHOTOSHOP
         window.copiarParaPS = function(ticket, nombre) {
             const textoCopiar = `#${ticket} - ${nombre}`;
             navigator.clipboard.writeText(textoCopiar).then(() => {
@@ -185,50 +542,97 @@
             });
         };
 
+        // 🔄 ESCUCHAR PEDIDOS DE FIREBASE
         function escucharPedidos() {
             db.ref('turnos').on('value', snap => {
                 const contActivos = document.getElementById('listaPedidos');
+                const contListos = document.getElementById('listaListos');
                 const contPausados = document.getElementById('listaPausados');
-                let hActivos = '', hPausados = '';
+                
+                let hActivos = '', hListos = '', hPausados = '';
                 
                 if (!snap.exists()) {
                     contActivos.innerHTML = '<div style="text-align:center; padding:20px; color:gray;">Fila vacía</div>';
-                    contPausados.innerHTML = '<div style="text-align:center; padding:20px; color:gray;">Sin pausados</div>'; return;
+                    contListos.innerHTML = '<div style="text-align:center; padding:20px; color:gray;">No hay listos</div>';
+                    contPausados.innerHTML = '<div style="text-align:center; padding:20px; color:gray;">Sin pausados</div>'; 
+                    return;
                 }
 
-                let turnos = [];
-                snap.forEach(c => { turnos.push({id: c.key, ...c.val()}); });
-                turnos.sort((a,b) => a.timestampEntrega - b.timestampEntrega);
+                let pendientes = [];
+                let listos = [];
+                let pausados = [];
 
-                turnos.forEach(p => {
-                    if (p.estado === 'archivado') return;
+                snap.forEach(c => { 
+                    let val = c.val();
+                    let p = {id: c.key, ...val};
+                    
+                    if (p.estado === 'archivado') {
+                        return; // Omitimos los archivados
+                    }
 
+                    // Asignamos timestamp de estado si no lo tiene (Para orden correcto)
+                    if (!p.timestampEstado) {
+                        p.timestampEstado = p.timestampEntrega || Date.now();
+                    }
+
+                    if (p.estado === 'pendiente') pendientes.push(p);
+                    else if (p.estado === 'listo') listos.push(p);
+                    else if (p.estado === 'pausado') pausados.push(p);
+                });
+                
+                // ORDENAMIENTO ESTRICTO DE LAS LISTAS
+                pendientes.sort((a,b) => a.timestampEntrega - b.timestampEntrega); 
+                listos.sort((a,b) => a.timestampEstado - b.timestampEstado); 
+                pausados.sort((a,b) => a.timestampEstado - b.timestampEstado); 
+
+                // GENERADOR HTML DE TARJETAS
+                const generarHTML = (p) => {
                     const btnWA = (p.telefono && p.telefono.length >= 10) 
-                        ? `<button onclick="notificarWA('${p.telefono}', '${p.nombre}', '${p.servicio}', '${p.numeroTicket}')" class="btn-wa">🟢 Avisar WhatsApp</button>` : '';
+                        ? `<button onclick="notificarWA('${p.telefono}', '${p.nombre}', '${p.servicio}', '${p.numeroTicket}')" class="btn-wa">🟢 Avisar WhatsApp</button>` 
+                        : '';
 
                     const claseVIP = p.esVIP ? 'vip' : '';
                     const etiquetaVIP = p.esVIP ? '<span style="background:var(--gold); color:black; padding:2px 6px; border-radius:4px; font-size:10px; font-weight:800; margin-left:5px;">⭐ VIP</span>' : '';
+                    
+                    const etiquetaDeuda = p.saldoPendiente > 0 ? `<span class="badge-deuda">⚠️ DEBE $${parseFloat(p.saldoPendiente).toFixed(2)}</span>` : '';
+                    const claseDeudor = p.saldoPendiente > 0 ? 'deudor' : '';
 
-                    const cardHTML = `
-                        <div class="pedido-card ${p.estado} ${claseVIP}" data-entrega="${p.timestampEntrega}">
+                    const costoDisplay = p.totalVenta ? `<span class="info-costo"> - $${parseFloat(p.totalVenta).toFixed(2)}</span>` : '';
+                    const horaEntradaDisplay = p.horaEntrada || '--:--';
+
+                    // AHORA EL DRAG HANDLE SOLO APARECE EN PENDIENTES
+                    let dragHandle = p.estado === 'pendiente' ? `<div class="drag-handle" title="Arrastrar para reordenar">☰</div>` : '';
+                    
+                    // ⚠️ SE AÑADIÓ DRAGGABLE="TRUE" A LA TARJETA
+                    return `
+                        <div class="pedido-card ${p.estado} ${claseVIP} ${claseDeudor}" draggable="true" data-id="${p.id}" data-mins="${p.minutosServicio || 15}" data-entrega="${p.timestampEntrega}">
+                            ${dragHandle}
                             <div class="info-cliente">
-                                <strong onclick="copiarParaPS('${p.numeroTicket}', '${p.nombre}')" style="cursor:pointer;" title="Click para copiar y pegar en Photoshop">
-                                    #${p.numeroTicket} - ${p.nombre} <span style="font-size:12px; opacity:0.8;">📋</span>
-                                </strong> 
-                                ${etiquetaVIP}
                                 
-                                <span class="info-servicio">${p.servicio}</span>
-                                <span class="info-entrega">${p.estado === 'pausado' ? '⏸️ PAUSADO' : '🕒 ' + p.horaFormateada}</span>
+                                <div class="cliente-header">
+                                    <strong onclick="copiarParaPS('${p.numeroTicket}', '${p.nombre}')" style="cursor:pointer;" title="Click para copiar y pegar en Photoshop">
+                                        #${p.numeroTicket} - ${p.nombre} <span style="font-size:12px; opacity:0.8;">📋</span>
+                                    </strong> 
+                                    ${etiquetaVIP} 
+                                    ${etiquetaDeuda}
+                                </div>
+                                
+                                <span class="info-servicio">${p.servicio} ${costoDisplay}</span>
+                                
+                                <span class="info-entrega">
+                                    ${p.estado === 'pausado' ? '⏸️ PAUSADO' : `Entrada: <strong>${horaEntradaDisplay}</strong> &nbsp;|&nbsp; Salida: <strong>${p.horaFormateada}</strong>`}
+                                </span>
                                 
                                 <div class="alerta-texto">⚠️ TIEMPO AGOTADO - ¿Ya lo entregaste?</div>
 
                                 ${p.enlaceDescarga ? `<a href="${p.enlaceDescarga}" target="_blank" style="color:var(--blue); font-size:11px; text-decoration:none; display:block; margin-top:5px;">☁️ Ver Archivos Nube</a>` : ''}
                                 ${btnWA}
                             </div>
+                            
                             <div class="acciones-btn">
                                 ${p.estado === 'pendiente' ? `
                                     <button class="btn-accion btn-express" onclick="finalizarExpress('${p.id}')">⚡ FINALIZAR RÁPIDO</button>
-                                    <button class="btn-accion btn-verde" onclick="abrirModalNube('${p.id}')">☁️ Nube & Finalizar</button>
+                                    <button class="btn-accion btn-verde" onclick="abrirModalNube('${p.id}')">☁️ NUBE Y FINALIZAR</button>
                                     <button class="btn-accion btn-pausa" onclick="pausarPedido('${p.id}')">⏸️ Pausar</button>
                                 ` : p.estado === 'listo' ? `
                                     <button class="btn-accion btn-gris" onclick="archivarPedido('${p.id}')">📦 Archivar</button>
@@ -237,17 +641,98 @@
                                 `}
                             </div>
                         </div>`;
+                };
 
-                    if (p.estado === 'pausado') hPausados += cardHTML;
-                    else hActivos += cardHTML;
-                });
+                // PINTAMOS LAS LISTAS
+                pendientes.forEach(p => hActivos += generarHTML(p));
+                listos.forEach(p => hListos += generarHTML(p));
+                pausados.forEach(p => hPausados += generarHTML(p));
 
                 contActivos.innerHTML = hActivos || '<div style="text-align:center; padding:20px; color:gray;">Fila vacía</div>';
+                contListos.innerHTML = hListos || '<div style="text-align:center; padding:20px; color:gray;">No hay listos</div>';
                 contPausados.innerHTML = hPausados || '<div style="text-align:center; padding:20px; color:gray;">Sin pausados</div>';
+
+                // REACTIVAMOS EL DRAG AND DROP
+                activarDragAndDropFila();
             });
         }
 
-        // --- SISTEMAS DE FINALIZACIÓN ---
+        // ==========================================
+        // SISTEMA DRAG & DROP DE LA FILA
+        // ==========================================
+        function activarDragAndDropFila() {
+            const list = document.getElementById('listaPedidos');
+            if(!list) return;
+            
+            let draggedItem = null;
+
+            list.addEventListener('dragstart', e => {
+                draggedItem = e.target.closest('.pedido-card');
+                if(draggedItem) {
+                    setTimeout(() => draggedItem.classList.add('dragging'), 0);
+                }
+            });
+
+            list.addEventListener('dragend', e => {
+                setTimeout(() => {
+                    if(draggedItem) draggedItem.classList.remove('dragging');
+                    draggedItem = null;
+                    recalcularFilaPorDragAndDrop();
+                }, 0);
+            });
+
+            list.addEventListener('dragover', e => {
+                e.preventDefault();
+                const afterElement = getDragAfterElement(list, e.clientY);
+                if (draggedItem) {
+                    if (afterElement == null) {
+                        list.appendChild(draggedItem);
+                    } else {
+                        list.insertBefore(draggedItem, afterElement);
+                    }
+                }
+            });
+        }
+
+        function getDragAfterElement(container, y) {
+            const draggableElements = [...container.querySelectorAll('.pedido-card:not(.dragging)')];
+            
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else {
+                    return closest;
+                }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+
+        function recalcularFilaPorDragAndDrop() {
+            const cards = document.querySelectorAll('#listaPedidos .pedido-card');
+            let actualizaciones = {};
+            let tiempoAcumulado = Date.now();
+
+            cards.forEach((card) => {
+                let id = card.getAttribute('data-id');
+                let mins = parseInt(card.getAttribute('data-mins')) || 15;
+                
+                tiempoAcumulado += (mins * 60000);
+                
+                actualizaciones[`turnos/${id}/timestampEntrega`] = tiempoAcumulado;
+                actualizaciones[`turnos/${id}/horaFormateada`] = new Date(tiempoAcumulado).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true});
+            });
+
+            if(Object.keys(actualizaciones).length > 0) {
+                db.ref().update(actualizaciones).then(() => {
+                    mostrarNotificacion("🔄 Fila reordenada exitosamente", "info");
+                });
+            }
+        }
+
+        // ==========================================
+        // SISTEMAS DE FINALIZACIÓN Y ESTADOS
+        // ==========================================
         
         window.finalizarExpress = function(idTurno) {
             recalcularFilaEntera(idTurno, 'listo', "");
@@ -258,7 +743,10 @@
             document.getElementById('linkDescargaNube').value = '';
             document.getElementById('modalNube').style.display = 'flex';
         }
-        function cerrarModalNube() { document.getElementById('modalNube').style.display = 'none'; }
+        
+        function cerrarModalNube() { 
+            document.getElementById('modalNube').style.display = 'none'; 
+        }
 
         window.confirmarFinalizarNube = function() {
             const id = document.getElementById('idTurnoActivo').value;
@@ -267,19 +755,28 @@
             recalcularFilaEntera(id, 'listo', link);
         };
 
-        // --- EFECTO DOMINÓ ---
         window.recalcularFilaEntera = function(turnoIdAModificar, nuevoEstado, linkNube = "") {
             db.ref('turnos').once('value', snap => {
                 if(!snap.exists()) return;
-                let turnosPendientes = []; let actualizaciones = {};
                 
-                actualizaciones[`${turnoIdAModificar}/estado`] = nuevoEstado;
-                if(nuevoEstado === 'pausado') actualizaciones[`${turnoIdAModificar}/horaFormateada`] = '--:--';
-                if(linkNube) actualizaciones[`${turnoIdAModificar}/enlaceDescarga`] = linkNube;
+                let turnosPendientes = []; 
+                let actualizaciones = {};
+                
+                actualizaciones[`turnos/${turnoIdAModificar}/estado`] = nuevoEstado;
+                actualizaciones[`turnos/${turnoIdAModificar}/timestampEstado`] = Date.now(); 
+
+                if(nuevoEstado === 'pausado') {
+                    actualizaciones[`turnos/${turnoIdAModificar}/horaFormateada`] = '--:--';
+                }
+                if(linkNube) {
+                    actualizaciones[`turnos/${turnoIdAModificar}/enlaceDescarga`] = linkNube;
+                }
 
                 snap.forEach(c => { 
                     let t = {id: c.key, ...c.val()};
-                    if(t.estado === 'pendiente' && t.id !== turnoIdAModificar) { turnosPendientes.push(t); }
+                    if(t.estado === 'pendiente' && t.id !== turnoIdAModificar) { 
+                        turnosPendientes.push(t); 
+                    }
                 });
                 
                 turnosPendientes.sort((a, b) => a.timestampEntrega - b.timestampEntrega);
@@ -288,54 +785,81 @@
                 turnosPendientes.forEach(t => {
                     let mins = parseInt(t.minutosServicio) || 15; 
                     tiempoAcumulado += (mins * 60000); 
-                    actualizaciones[`${t.id}/timestampEntrega`] = tiempoAcumulado;
-                    actualizaciones[`${t.id}/horaFormateada`] = new Date(tiempoAcumulado).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true});
+                    actualizaciones[`turnos/${t.id}/timestampEntrega`] = tiempoAcumulado;
+                    actualizaciones[`turnos/${t.id}/horaFormateada`] = new Date(tiempoAcumulado).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true});
                 });
 
-                db.ref('turnos').update(actualizaciones).then(() => mostrarNotificacion(nuevoEstado === 'listo' ? `✅ Orden Finalizada y enviada a TV` : `✅ Fila actualizada`));
+                db.ref().update(actualizaciones).then(() => {
+                    mostrarNotificacion(nuevoEstado === 'listo' ? `✅ Orden Finalizada` : `✅ Fila actualizada`);
+                });
             });
         };
 
-        // ACCIONES DE BOTONES EXTRAS
-        window.pausarPedido = function(id) { if(confirm("¿Pausar este trabajo? El cliente saldrá de la fila actual.")) recalcularFilaEntera(id, 'pausado'); };
-        window.archivarPedido = function(id) { db.ref('turnos/' + id).update({estado: 'archivado'}); };
+        window.pausarPedido = function(id) { 
+            if(confirm("¿Pausar este trabajo? El cliente saldrá de la fila actual.")) {
+                recalcularFilaEntera(id, 'pausado'); 
+            }
+        };
+        
+        window.archivarPedido = function(id) { 
+            db.ref('turnos/' + id).update({estado: 'archivado'}); 
+            mostrarNotificacion("📦 Pedido archivado");
+        };
 
         window.reanudarPedido = function(id, mins) {
             db.ref('turnos').once('value', snap => {
                 let max = Date.now();
-                snap.forEach(c => { if(c.val().estado === 'pendiente' && c.val().timestampEntrega > max) max = c.val().timestampEntrega; });
+                snap.forEach(c => { 
+                    if(c.val().estado === 'pendiente' && c.val().timestampEntrega > max) {
+                        max = c.val().timestampEntrega; 
+                    }
+                });
+                
                 const nt = max + (mins * 60000);
-                db.ref('turnos/' + id).update({ estado: 'pendiente', timestampEntrega: nt, horaFormateada: new Date(nt).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true}) }).then(() => mostrarNotificacion("▶️ Trabajo reanudado al final de la fila", "info"));
+                
+                db.ref('turnos/' + id).update({ 
+                    estado: 'pendiente', 
+                    timestampEntrega: nt, 
+                    horaFormateada: new Date(nt).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true}),
+                    timestampEstado: Date.now() 
+                }).then(() => mostrarNotificacion("▶️ Trabajo reanudado al final de la fila", "info"));
             });
         };
 
         window.retrasarTodo = function(m) {
             if(!confirm(`¿Retrasar toda la producción ${m} minutos?`)) return;
+            
             db.ref('turnos').once('value', snap => {
                 const ups = {};
                 snap.forEach(c => {
                     const v = c.val();
                     if(v.estado === 'pendiente') {
                         const nt = v.timestampEntrega + (m * 60000);
-                        ups[`${c.key}/timestampEntrega`] = nt;
-                        ups[`${c.key}/horaFormateada`] = new Date(nt).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true});
+                        ups[`turnos/${c.key}/timestampEntrega`] = nt;
+                        ups[`turnos/${c.key}/horaFormateada`] = new Date(nt).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true});
                     }
                 });
-                db.ref('turnos').update(ups).then(() => mostrarNotificacion(`⏱️ Fila retrasada ${m} minutos`, "info"));
+                
+                db.ref().update(ups).then(() => mostrarNotificacion(`⏱️ Fila retrasada ${m} minutos`, "info"));
             });
         };
 
         window.notificarWA = function(tel, nom, serv, ticket) {
-            let num = tel.replace(/\D/g, ''); if(num.length === 10) num = "52" + num;
+            let num = tel.replace(/\D/g, ''); 
+            if(num.length === 10) num = "52" + num;
+            
             const msj = `¡Hola ${nom}! 👋 Tu pedido *#${ticket}* de *${serv}* está LISTO ✅.\n\nPuedes pasar a recogerlo al estudio. Si quieres ver el detalle de tu orden, entra aquí:\n🔗 ${LINK_RASTREO}?folio=${ticket}`;
             window.open(`https://wa.me/${num}?text=${encodeURIComponent(msj)}`, '_blank');
         };
 
-        // MOTOR PRINCIPAL DEL TIEMPO Y ALARMAS DE RETRASO
+        // ==========================================
+        // RELOJ Y ALARMA DE RETRASO
+        // ==========================================
         setInterval(() => { 
             document.getElementById('reloj').innerText = new Date().toLocaleTimeString('es-MX', {hour12:false}) + ' HRS'; 
             
             let hayRetrasos = false;
+            
             document.querySelectorAll('.pedido-card.pendiente').forEach(card => {
                 let tiempoEntrega = parseInt(card.getAttribute('data-entrega'));
                 
