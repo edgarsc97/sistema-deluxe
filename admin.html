@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ADMIN - PRODUCCIÓN DELUXE</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
     <style>
         /* ==========================================
-           VARIABLES GLOBALES
+           1. VARIABLES GLOBALES Y COLORES
         ========================================== */
         :root { 
             --bg-body: #0A0E17; 
@@ -33,7 +35,7 @@
         }
         
         /* ==========================================
-           PANEL DE LOGIN
+           2. PANEL DE LOGIN
         ========================================== */
         #loginPanel { 
             max-width: 380px; 
@@ -90,7 +92,7 @@
         }
 
         /* ==========================================
-           CONTENEDOR PRINCIPAL
+           3. CONTENEDOR PRINCIPAL
         ========================================== */
         .panel { 
             max-width: 1200px; 
@@ -122,13 +124,14 @@
             color: var(--gold); 
             border: 1px solid var(--gold); 
             text-decoration: none; 
-            padding: 10px 20px; 
+            padding: 10px 15px; 
             border-radius: 6px; 
             font-weight: 600; 
             font-size: 11px; 
             transition: 0.3s; 
             letter-spacing: 1px; 
             text-transform: uppercase;
+            cursor: pointer;
         }
         
         .btn-nav:hover { 
@@ -146,7 +149,7 @@
             font-size: 13px; 
             font-weight: 600; 
             cursor: pointer; 
-            margin-bottom: 25px; 
+            margin-bottom: 15px; 
             transition: 0.3s; 
             letter-spacing: 1px; 
         }
@@ -163,7 +166,7 @@
         }
 
         /* ==========================================
-           GRID PARA 2 COLUMNAS (PRODUCCIÓN Y LISTOS)
+           4. GRID PARA 2 COLUMNAS (PRODUCCIÓN Y LISTOS)
         ========================================== */
         .columnas-produccion {
             display: grid;
@@ -179,7 +182,7 @@
         }
 
         /* ==========================================
-           TARJETAS DE PEDIDOS (DISEÑO MEJORADO)
+           5. TARJETAS DE PEDIDOS (DISEÑO MEJORADO)
         ========================================== */
         .pedido-card { 
             background: #1F2937; 
@@ -213,7 +216,6 @@
         
         /* ESTILO PARA DEUDORES */
         .pedido-card.deudor {
-            border-left-color: var(--danger);
             border-right: 3px solid var(--danger);
         }
 
@@ -224,7 +226,7 @@
             padding: 4px 8px;
             border-radius: 4px;
             font-weight: 800;
-            white-space: nowrap; /* Evita que el texto se rompa en dos líneas */
+            white-space: nowrap;
         }
         
         /* 🚨 ALARMA VISUAL DE RETRASO */
@@ -240,7 +242,7 @@
         }
 
         /* ==========================================
-           DRAG AND DROP HANDLER
+           6. DRAG AND DROP HANDLER
         ========================================== */
         .drag-handle {
             cursor: grab;
@@ -264,13 +266,12 @@
         }
 
         /* ==========================================
-           INFORMACIÓN DEL CLIENTE
+           7. INFORMACIÓN DEL CLIENTE DENTRO DE LA TARJETA
         ========================================== */
         .info-cliente { 
             flex: 1; 
         }
 
-        /* Contenedor flexible para evitar que el título y las etiquetas se encimen */
         .cliente-header {
             display: flex;
             align-items: center;
@@ -298,6 +299,14 @@
             display: block; 
             margin: 5px 0;
         }
+
+        .info-detalles {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-top: 4px;
+            font-weight: 400;
+            line-height: 1.3;
+        }
         
         .info-costo {
             color: var(--success);
@@ -323,7 +332,7 @@
         }
 
         /* ==========================================
-           BOTONES DE ACCIÓN
+           8. BOTONES DE ACCIÓN (PRODUCCIÓN)
         ========================================== */
         .acciones-btn { 
             display: flex; 
@@ -380,7 +389,7 @@
         }
 
         /* ==========================================
-           MODALES Y NOTIFICACIONES
+           9. MODALES GLOBALES
         ========================================== */
         .modal-overlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
@@ -391,8 +400,49 @@
         .modal-content { 
             background: var(--bg-panel); padding: 30px; border-radius: 15px; 
             width: 90%; max-width: 450px; border: 1px solid var(--border); text-align: center;
+            max-height: 85vh; overflow-y: auto;
+        }
+
+        /* ==========================================
+           10. TABLA DE HISTORIAL / MARKETING
+        ========================================== */
+        .historial-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1F2937;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--gold);
+            text-align: left;
         }
         
+        .historial-info {
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .historial-info strong { color: white; font-size: 14px;}
+        .historial-info .sub { color: var(--text-muted); font-size: 11px;}
+        
+        .btn-wa-small {
+            background: rgba(37, 211, 102, 0.1);
+            color: var(--whatsapp);
+            border: 1px solid var(--whatsapp);
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: 0.2s;
+        }
+        .btn-wa-small:hover { background: var(--whatsapp); color: black; }
+
+        /* ==========================================
+           11. NOTIFICACIONES (TOAST)
+        ========================================== */
         #toast-container { 
             position: fixed; bottom: 20px; right: 20px; z-index: 9999; 
             display: flex; flex-direction: column; gap: 10px; pointer-events: none; 
@@ -407,6 +457,7 @@
         }
         
         .toast.info { background: var(--blue); }
+        .toast.error { background: var(--danger); border-left-color: white;}
         
         @keyframes slideIn { 
             from { transform: translateX(100%); opacity: 0; } 
@@ -430,6 +481,7 @@
 
     <div id="adminPanel" style="display:none;">
         <div class="panel">
+            
             <div class="header-flex">
                 <div>
                     <h1 style="margin:0; font-size:22px; font-weight: 300;">ORDENES EN VIVO</h1>
@@ -439,23 +491,26 @@
                     <a href="index.html" class="btn-nav">🏠 Dashboard</a>
                     <a href="pos.html" class="btn-nav">🛒 Caja</a>
                     <a href="estadisticas.html" class="btn-nav">📊 Finanzas</a>
+                    <button class="btn-nav" onclick="window.abrirModalArchivados()">📦 HISTORIAL ARCHIVADOS</button>
+                    <button class="btn-nav" style="border-color:var(--whatsapp); color:var(--whatsapp);" onclick="window.abrirModalMarketing()">📢 MARKETING WA</button>
                 </div>
             </div>
 
-            <button class="btn-cascada" onclick="retrasarTodo(5)">➕ RETRASAR TODA LA FILA (+5 MINUTOS)</button>
+            <div style="display:flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap;">
+                <button class="btn-cascada" style="margin-bottom:0; flex:1;" onclick="window.retrasarTodo(5)">➕ RETRASAR TODA LA FILA (+5 MINUTOS)</button>
+                
+                <button class="btn-cascada" style="margin-bottom:0; flex:1; border-color:var(--success); color:var(--success); font-weight:800; text-transform:uppercase;" onclick="window.lanzarAlertaPrueba()">🔔 TEST: DISPARAR FUEGO EN TV</button>
+            </div>
 
             <div class="columnas-produccion">
-                
                 <div>
                     <div class="titulo-seccion" style="color:var(--gold); border-color:var(--gold);">▶️ EN PRODUCCIÓN (TV)</div>
                     <div id="listaPedidos"></div>
                 </div>
-
                 <div>
                     <div class="titulo-seccion" style="color:var(--success); border-color:var(--success);">✅ LISTOS POR ARCHIVAR</div>
                     <div id="listaListos"></div>
                 </div>
-
             </div>
             
             <div class="titulo-seccion" style="color:var(--purple); border-color:var(--purple);">⏸️ TRABAJOS PAUSADOS</div>
@@ -471,11 +526,34 @@
         <div class="modal-content">
             <h2 style="color:var(--blue); margin-top:0; letter-spacing:2px;">☁️ ENTREGA DIGITAL</h2>
             <p style="color:var(--text-muted); font-size:13px; margin-bottom:20px;">Pega el enlace de Google Drive. Seguirá visible para el cliente aunque archives el pedido.</p>
+            
             <input type="url" id="linkDescargaNube" placeholder="Enlace de Google Drive / WeTransfer">
             <input type="hidden" id="idTurnoActivo">
             
-            <button class="btn-login" style="background:var(--success); color:white; margin-top:10px;" onclick="confirmarFinalizarNube()">✅ MARCAR COMO LISTO</button>
-            <button onclick="cerrarModalNube()" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-weight: bold; margin-top:15px;">Cancelar</button>
+            <button class="btn-login" style="background:var(--success); color:white; margin-top:10px;" onclick="window.confirmarFinalizarNube()">✅ MARCAR COMO LISTO</button>
+            <button onclick="window.cerrarModalNube()" style="background:none; border:none; color:var(--text-muted); cursor:pointer; font-weight: bold; margin-top:15px; width: 100%; padding: 10px;">Cancelar</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalArchivados">
+        <div class="modal-content" style="max-width: 700px;">
+            <h2 style="color:var(--gold); margin-top:0;">📦 HISTORIAL DE TRABAJOS</h2>
+            <p style="font-size:12px; color:var(--text-muted); margin-bottom: 15px;">Busca por nombre, folio o fecha.</p>
+            
+            <input type="text" id="buscadorArchivados" placeholder="🔍 Buscar pedido..." oninput="window.filtrarArchivados()">
+            <div id="listaArchivadosUI" style="max-height:400px; overflow-y:auto; margin-top: 15px;"></div>
+            <button onclick="window.cerrarModalArchivados()" style="background:none; border:1px solid var(--text-muted); color:var(--text-muted); cursor:pointer; font-weight: bold; margin-top:15px; width: 100%; padding: 12px; border-radius: 8px;">Cerrar Historial</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalMarketing">
+        <div class="modal-content" style="max-width: 700px;">
+            <h2 style="color:var(--whatsapp); margin-top:0;">📢 MARKETING Y DIRECTORIO VIP</h2>
+            <p style="font-size:12px; color:var(--text-muted); margin-bottom: 15px;">Envía un recordatorio de promoción a tus clientes registrados.</p>
+            
+            <input type="text" id="buscadorMarketing" placeholder="🔍 Buscar cliente..." oninput="window.filtrarMarketing()">
+            <div id="listaMarketingUI" style="max-height:400px; overflow-y:auto; margin-top: 15px;"></div>
+            <button onclick="window.cerrarModalMarketing()" style="background:none; border:1px solid var(--text-muted); color:var(--text-muted); cursor:pointer; font-weight: bold; margin-top:15px; width: 100%; padding: 12px; border-radius: 8px;">Cerrar Directorio</button>
         </div>
     </div>
 
@@ -502,19 +580,29 @@
         const auth = firebase.auth();
         const db = firebase.database();
 
-        function mostrarNotificacion(mensaje, tipo = 'success') {
+        let memoriaVentas = [];   
+        let memoriaClientes = []; 
+
+        // ==========================================
+        // 1. NOTIFICACIONES
+        // ==========================================
+        window.mostrarNotificacion = function(mensaje, tipo = 'success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
             toast.className = `toast ${tipo}`; 
             toast.innerHTML = mensaje;
             container.appendChild(toast);
+            
             setTimeout(() => { 
                 toast.style.opacity = '0'; 
                 toast.style.transform = 'translateX(100%)'; 
                 setTimeout(() => toast.remove(), 300); 
             }, 3500);
-        }
+        };
 
+        // ==========================================
+        // 2. AUTENTICACIÓN
+        // ==========================================
         auth.onAuthStateChanged(user => {
             if (user) { 
                 document.getElementById('loginPanel').style.display = 'none'; 
@@ -528,21 +616,27 @@
 
         document.getElementById('formLogin').addEventListener('submit', e => {
             e.preventDefault();
-            auth.signInWithEmailAndPassword(document.getElementById('email').value, document.getElementById('password').value)
-                .catch(err => alert("Acceso Denegado"));
+            auth.signInWithEmailAndPassword(
+                document.getElementById('email').value, 
+                document.getElementById('password').value
+            ).catch(err => alert("Acceso Denegado"));
         });
 
-        // 📋 COPIAR A PHOTOSHOP
+        // ==========================================
+        // 3. COPIAR PARA PHOTOSHOP
+        // ==========================================
         window.copiarParaPS = function(ticket, nombre) {
             const textoCopiar = `#${ticket} - ${nombre}`;
             navigator.clipboard.writeText(textoCopiar).then(() => {
-                mostrarNotificacion(`📋 Copiado para Photoshop: ${textoCopiar}`, 'info');
+                window.mostrarNotificacion(`📋 Copiado: ${textoCopiar}`, 'info');
             }).catch(err => {
                 console.error("Error al copiar", err);
             });
         };
 
-        // 🔄 ESCUCHAR PEDIDOS DE FIREBASE
+        // ==========================================
+        // 4. CARGA DE PRODUCCIÓN (EL MOTOR)
+        // ==========================================
         function escucharPedidos() {
             db.ref('turnos').on('value', snap => {
                 const contActivos = document.getElementById('listaPedidos');
@@ -566,29 +660,22 @@
                     let val = c.val();
                     let p = {id: c.key, ...val};
                     
-                    if (p.estado === 'archivado') {
-                        return; // Omitimos los archivados
-                    }
+                    if (p.estado === 'archivado') return; 
 
-                    // Asignamos timestamp de estado si no lo tiene (Para orden correcto)
-                    if (!p.timestampEstado) {
-                        p.timestampEstado = p.timestampEntrega || Date.now();
-                    }
+                    if (!p.timestampEstado) p.timestampEstado = p.timestampEntrega || Date.now();
 
                     if (p.estado === 'pendiente') pendientes.push(p);
                     else if (p.estado === 'listo') listos.push(p);
                     else if (p.estado === 'pausado') pausados.push(p);
                 });
                 
-                // ORDENAMIENTO ESTRICTO DE LAS LISTAS
                 pendientes.sort((a,b) => a.timestampEntrega - b.timestampEntrega); 
                 listos.sort((a,b) => a.timestampEstado - b.timestampEstado); 
                 pausados.sort((a,b) => a.timestampEstado - b.timestampEstado); 
 
-                // GENERADOR HTML DE TARJETAS
                 const generarHTML = (p) => {
                     const btnWA = (p.telefono && p.telefono.length >= 10) 
-                        ? `<button onclick="notificarWA('${p.telefono}', '${p.nombre}', '${p.servicio}', '${p.numeroTicket}')" class="btn-wa">🟢 Avisar WhatsApp</button>` 
+                        ? `<button onclick="window.notificarWA('${p.telefono}', '${p.nombre}', '${p.servicio}', '${p.numeroTicket}')" class="btn-wa">🟢 Avisar WhatsApp</button>` 
                         : '';
 
                     const claseVIP = p.esVIP ? 'vip' : '';
@@ -600,50 +687,56 @@
                     const costoDisplay = p.totalVenta ? `<span class="info-costo"> - $${parseFloat(p.totalVenta).toFixed(2)}</span>` : '';
                     const horaEntradaDisplay = p.horaEntrada || '--:--';
 
-                    // AHORA EL DRAG HANDLE SOLO APARECE EN PENDIENTES
-                    let dragHandle = p.estado === 'pendiente' ? `<div class="drag-handle" title="Arrastrar para reordenar">☰</div>` : '';
+                    // DRAG HANDLE SOLO EN PENDIENTES CON INLINE EVENTS PARA NO BLOQUEAR BOTONES
+                    let dragHandle = '';
+                    if (p.estado === 'pendiente') {
+                        dragHandle = `<div class="drag-handle" title="Mantén presionado para reordenar" onmousedown="this.closest('.pedido-card').setAttribute('draggable', 'true')" onmouseup="this.closest('.pedido-card').removeAttribute('draggable')" onmouseleave="this.closest('.pedido-card').removeAttribute('draggable')">☰</div>`;
+                    }
                     
-                    // ⚠️ SE AÑADIÓ DRAGGABLE="TRUE" A LA TARJETA
+                    let detallesHtml = '';
+                    if (p.carrito) {
+                        p.carrito.forEach(item => {
+                            if (item.descripcion) {
+                                detallesHtml += `<div class="info-detalles">↳ ${item.cantidad}x ${item.descripcion}</div>`;
+                            }
+                        });
+                    }
+
                     return `
-                        <div class="pedido-card ${p.estado} ${claseVIP} ${claseDeudor}" draggable="true" data-id="${p.id}" data-mins="${p.minutosServicio || 15}" data-entrega="${p.timestampEntrega}">
+                        <div class="pedido-card ${p.estado} ${claseVIP} ${claseDeudor}" data-id="${p.id}" data-mins="${p.minutosServicio || 15}" data-entrega="${p.timestampEntrega}">
                             ${dragHandle}
                             <div class="info-cliente">
-                                
                                 <div class="cliente-header">
-                                    <strong onclick="copiarParaPS('${p.numeroTicket}', '${p.nombre}')" style="cursor:pointer;" title="Click para copiar y pegar en Photoshop">
+                                    <strong onclick="window.copiarParaPS('${p.numeroTicket}', '${p.nombre}')" style="cursor:pointer;" title="Click para copiar">
                                         #${p.numeroTicket} - ${p.nombre} <span style="font-size:12px; opacity:0.8;">📋</span>
                                     </strong> 
                                     ${etiquetaVIP} 
                                     ${etiquetaDeuda}
                                 </div>
-                                
                                 <span class="info-servicio">${p.servicio} ${costoDisplay}</span>
-                                
+                                ${detallesHtml}
                                 <span class="info-entrega">
                                     ${p.estado === 'pausado' ? '⏸️ PAUSADO' : `Entrada: <strong>${horaEntradaDisplay}</strong> &nbsp;|&nbsp; Salida: <strong>${p.horaFormateada}</strong>`}
                                 </span>
-                                
                                 <div class="alerta-texto">⚠️ TIEMPO AGOTADO - ¿Ya lo entregaste?</div>
-
                                 ${p.enlaceDescarga ? `<a href="${p.enlaceDescarga}" target="_blank" style="color:var(--blue); font-size:11px; text-decoration:none; display:block; margin-top:5px;">☁️ Ver Archivos Nube</a>` : ''}
                                 ${btnWA}
                             </div>
                             
                             <div class="acciones-btn">
                                 ${p.estado === 'pendiente' ? `
-                                    <button class="btn-accion btn-express" onclick="finalizarExpress('${p.id}')">⚡ FINALIZAR RÁPIDO</button>
-                                    <button class="btn-accion btn-verde" onclick="abrirModalNube('${p.id}')">☁️ NUBE Y FINALIZAR</button>
-                                    <button class="btn-accion btn-pausa" onclick="pausarPedido('${p.id}')">⏸️ Pausar</button>
+                                    <button class="btn-accion btn-express" onclick="window.finalizarExpress('${p.id}')">⚡ FINALIZAR RÁPIDO</button>
+                                    <button class="btn-accion btn-verde" onclick="window.abrirModalNube('${p.id}')">☁️ NUBE Y FINALIZAR</button>
+                                    <button class="btn-accion btn-pausa" onclick="window.pausarPedido('${p.id}')">⏸️ Pausar</button>
                                 ` : p.estado === 'listo' ? `
-                                    <button class="btn-accion btn-gris" onclick="archivarPedido('${p.id}')">📦 Archivar</button>
+                                    <button class="btn-accion btn-gris" onclick="window.archivarPedido('${p.id}')">📦 Archivar</button>
                                 ` : `
-                                    <button class="btn-accion btn-reanudar" onclick="reanudarPedido('${p.id}', ${p.minutosServicio || 15})">▶️ Reanudar</button>
+                                    <button class="btn-accion btn-reanudar" onclick="window.reanudarPedido('${p.id}', ${p.minutosServicio || 15})">▶️ Reanudar</button>
                                 `}
                             </div>
                         </div>`;
                 };
 
-                // PINTAMOS LAS LISTAS
                 pendientes.forEach(p => hActivos += generarHTML(p));
                 listos.forEach(p => hListos += generarHTML(p));
                 pausados.forEach(p => hPausados += generarHTML(p));
@@ -652,15 +745,14 @@
                 contListos.innerHTML = hListos || '<div style="text-align:center; padding:20px; color:gray;">No hay listos</div>';
                 contPausados.innerHTML = hPausados || '<div style="text-align:center; padding:20px; color:gray;">Sin pausados</div>';
 
-                // REACTIVAMOS EL DRAG AND DROP
-                activarDragAndDropFila();
+                activarDragAndDrop();
             });
         }
 
         // ==========================================
-        // SISTEMA DRAG & DROP DE LA FILA
+        // 5. DRAG AND DROP SEGURO
         // ==========================================
-        function activarDragAndDropFila() {
+        function activarDragAndDrop() {
             const list = document.getElementById('listaPedidos');
             if(!list) return;
             
@@ -676,6 +768,7 @@
             list.addEventListener('dragend', e => {
                 setTimeout(() => {
                     if(draggedItem) draggedItem.classList.remove('dragging');
+                    document.querySelectorAll('.pedido-card').forEach(c => c.removeAttribute('draggable'));
                     draggedItem = null;
                     recalcularFilaPorDragAndDrop();
                 }, 0);
@@ -696,7 +789,6 @@
 
         function getDragAfterElement(container, y) {
             const draggableElements = [...container.querySelectorAll('.pedido-card:not(.dragging)')];
-            
             return draggableElements.reduce((closest, child) => {
                 const box = child.getBoundingClientRect();
                 const offset = y - box.top - box.height / 2;
@@ -725,41 +817,63 @@
 
             if(Object.keys(actualizaciones).length > 0) {
                 db.ref().update(actualizaciones).then(() => {
-                    mostrarNotificacion("🔄 Fila reordenada exitosamente", "info");
+                    window.mostrarNotificacion("🔄 Fila reordenada exitosamente", "info");
                 });
             }
         }
 
         // ==========================================
-        // SISTEMAS DE FINALIZACIÓN Y ESTADOS
+        // 6. PROTOCOLO DE TIEMPO FIJO Y EFECTO AHORRO
         // ==========================================
         
-        window.finalizarExpress = function(idTurno) {
-            recalcularFilaEntera(idTurno, 'listo', "");
+        // 🔔 FUNCIÓN DE PRUEBA INFALIBLE HACIA LA RUTA DE CONFIGURACIÓN 🔔
+        window.lanzarAlertaPrueba = function() {
+            db.ref('configuracion/tvAlertaAhorro').set({
+                minutos: 15,
+                timestamp: Date.now(),
+                id: Math.random() // Forzamos a que Firebase sepa que es un dato nuevo siempre
+            }).then(() => {
+                window.mostrarNotificacion("🔥 Alerta enviada por la ruta segura", "success");
+            }).catch(e => {
+                alert("Error de permisos en Firebase: " + e.message);
+            });
         };
 
-        function abrirModalNube(idTurno) {
+        window.finalizarExpress = function(idTurno) {
+            window.recalcularFilaEntera(idTurno, 'listo', "");
+        };
+
+        window.abrirModalNube = function(idTurno) {
             document.getElementById('idTurnoActivo').value = idTurno;
             document.getElementById('linkDescargaNube').value = '';
             document.getElementById('modalNube').style.display = 'flex';
-        }
+        };
         
-        function cerrarModalNube() { 
+        window.cerrarModalNube = function() { 
             document.getElementById('modalNube').style.display = 'none'; 
-        }
+        };
 
         window.confirmarFinalizarNube = function() {
             const id = document.getElementById('idTurnoActivo').value;
             const link = document.getElementById('linkDescargaNube').value.trim();
-            cerrarModalNube();
-            recalcularFilaEntera(id, 'listo', link);
+            window.cerrarModalNube();
+            window.recalcularFilaEntera(id, 'listo', link);
         };
 
         window.recalcularFilaEntera = function(turnoIdAModificar, nuevoEstado, linkNube = "") {
-            db.ref('turnos').once('value', snap => {
+            db.ref('turnos').once('value').then(snap => {
                 if(!snap.exists()) return;
                 
-                let turnosPendientes = []; 
+                let turnosArr = []; 
+                snap.forEach(function(c) {
+                    let d = c.val();
+                    d.id = c.key;
+                    turnosArr.push(d);
+                });
+                
+                let turnoTarget = turnosArr.find(t => t.id === turnoIdAModificar);
+                if(!turnoTarget) return;
+
                 let actualizaciones = {};
                 
                 actualizaciones[`turnos/${turnoIdAModificar}/estado`] = nuevoEstado;
@@ -772,44 +886,66 @@
                     actualizaciones[`turnos/${turnoIdAModificar}/enlaceDescarga`] = linkNube;
                 }
 
-                snap.forEach(c => { 
-                    let t = {id: c.key, ...c.val()};
-                    if(t.estado === 'pendiente' && t.id !== turnoIdAModificar) { 
-                        turnosPendientes.push(t); 
+                // ===========================================
+                // EFECTO AHORRO DE TIEMPO (POR RUTA SEGURA)
+                // ===========================================
+                if (nuevoEstado === 'listo' || nuevoEstado === 'pausado') {
+                    let ahora = Date.now();
+                    let entregaTarget = turnoTarget.timestampEntrega || ahora; 
+                    let tiempoSobrante = entregaTarget - ahora;
+                    
+                    if (tiempoSobrante >= 60000) {
+                        let minsAhorrados = Math.floor(tiempoSobrante / 60000);
+                        
+                        // 🔔 LA ORDEN REAL TAMBIEN SE VA POR LA RUTA SEGURA 🔔
+                        actualizaciones['configuracion/tvAlertaAhorro'] = {
+                            minutos: minsAhorrados,
+                            timestamp: ahora,
+                            id: Math.random()
+                        };
+                        
+                        turnosArr.forEach(t => {
+                            if (t.estado === 'pendiente' && t.id !== turnoIdAModificar) {
+                                if (t.timestampEntrega > entregaTarget) {
+                                    let nuevoTiempo = t.timestampEntrega - tiempoSobrante;
+                                    let tiempoMinimo = ahora + ((t.minutosServicio || 15) * 60000);
+                                    if (nuevoTiempo < tiempoMinimo) nuevoTiempo = tiempoMinimo;
+                                    
+                                    actualizaciones[`turnos/${t.id}/timestampEntrega`] = nuevoTiempo;
+                                    actualizaciones[`turnos/${t.id}/horaFormateada`] = new Date(nuevoTiempo).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true});
+                                }
+                            }
+                        });
                     }
-                });
-                
-                turnosPendientes.sort((a, b) => a.timestampEntrega - b.timestampEntrega);
-                let tiempoAcumulado = Date.now();
-
-                turnosPendientes.forEach(t => {
-                    let mins = parseInt(t.minutosServicio) || 15; 
-                    tiempoAcumulado += (mins * 60000); 
-                    actualizaciones[`turnos/${t.id}/timestampEntrega`] = tiempoAcumulado;
-                    actualizaciones[`turnos/${t.id}/horaFormateada`] = new Date(tiempoAcumulado).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true});
-                });
+                }
 
                 db.ref().update(actualizaciones).then(() => {
-                    mostrarNotificacion(nuevoEstado === 'listo' ? `✅ Orden Finalizada` : `✅ Fila actualizada`);
+                    window.mostrarNotificacion(nuevoEstado === 'listo' ? `✅ Orden Finalizada` : `✅ Fila actualizada`);
+                }).catch(err => {
+                    console.error("Error al actualizar la fila: ", err);
+                    alert("Error de conexión. Intenta de nuevo.");
                 });
             });
         };
 
+        // ==========================================
+        // 7. BOTONES EXTRAS DE PRODUCCIÓN
+        // ==========================================
         window.pausarPedido = function(id) { 
             if(confirm("¿Pausar este trabajo? El cliente saldrá de la fila actual.")) {
-                recalcularFilaEntera(id, 'pausado'); 
+                window.recalcularFilaEntera(id, 'pausado'); 
             }
         };
         
         window.archivarPedido = function(id) { 
             db.ref('turnos/' + id).update({estado: 'archivado'}); 
-            mostrarNotificacion("📦 Pedido archivado");
+            window.mostrarNotificacion("📦 Pedido archivado");
         };
 
         window.reanudarPedido = function(id, mins) {
-            db.ref('turnos').once('value', snap => {
+            db.ref('turnos').once('value').then(snap => {
                 let max = Date.now();
-                snap.forEach(c => { 
+                snap.forEach(function(c) {
                     if(c.val().estado === 'pendiente' && c.val().timestampEntrega > max) {
                         max = c.val().timestampEntrega; 
                     }
@@ -822,16 +958,16 @@
                     timestampEntrega: nt, 
                     horaFormateada: new Date(nt).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true}),
                     timestampEstado: Date.now() 
-                }).then(() => mostrarNotificacion("▶️ Trabajo reanudado al final de la fila", "info"));
+                }).then(() => window.mostrarNotificacion("▶️ Trabajo reanudado al final de la fila", "info"));
             });
         };
 
         window.retrasarTodo = function(m) {
             if(!confirm(`¿Retrasar toda la producción ${m} minutos?`)) return;
             
-            db.ref('turnos').once('value', snap => {
+            db.ref('turnos').once('value').then(snap => {
                 const ups = {};
-                snap.forEach(c => {
+                snap.forEach(function(c) {
                     const v = c.val();
                     if(v.estado === 'pendiente') {
                         const nt = v.timestampEntrega + (m * 60000);
@@ -840,12 +976,12 @@
                     }
                 });
                 
-                db.ref().update(ups).then(() => mostrarNotificacion(`⏱️ Fila retrasada ${m} minutos`, "info"));
+                db.ref().update(ups).then(() => window.mostrarNotificacion(`⏱️ Fila retrasada ${m} minutos`, "info"));
             });
         };
 
         window.notificarWA = function(tel, nom, serv, ticket) {
-            let num = tel.replace(/\D/g, ''); 
+            let num = String(tel).replace(/\D/g, ''); 
             if(num.length === 10) num = "52" + num;
             
             const msj = `¡Hola ${nom}! 👋 Tu pedido *#${ticket}* de *${serv}* está LISTO ✅.\n\nPuedes pasar a recogerlo al estudio. Si quieres ver el detalle de tu orden, entra aquí:\n🔗 ${LINK_RASTREO}?folio=${ticket}`;
@@ -853,7 +989,7 @@
         };
 
         // ==========================================
-        // RELOJ Y ALARMA DE RETRASO
+        // 8. RELOJ Y ALARMA "PREPARANDO"
         // ==========================================
         setInterval(() => { 
             document.getElementById('reloj').innerText = new Date().toLocaleTimeString('es-MX', {hour12:false}) + ' HRS'; 
@@ -865,7 +1001,8 @@
                 
                 if (tiempoEntrega && Date.now() > tiempoEntrega) {
                     card.classList.add('retrasado');
-                    card.querySelector('.alerta-texto').style.display = 'block';
+                    let alerta = card.querySelector('.alerta-texto');
+                    alerta.style.display = 'block';
                     hayRetrasos = true;
                 } else {
                     card.classList.remove('retrasado');
@@ -874,12 +1011,151 @@
             });
 
             if(hayRetrasos) {
-                document.title = document.title === "⚠️ REVISA LA FILA" ? "¡TIEMPO AGOTADO!" : "⚠️ REVISA LA FILA";
+                document.title = document.title === "⚠️ PREPARANDO ENTREGAS" ? "ADMIN - PRODUCCIÓN DELUXE" : "⚠️ PREPARANDO ENTREGAS";
             } else {
                 document.title = "ADMIN - PRODUCCIÓN DELUXE";
             }
 
         }, 1000);
+
+        // ==========================================
+        // 9. MODALES DE HISTORIAL Y MARKETING
+        // ==========================================
+        
+        window.abrirModalArchivados = function() {
+            document.getElementById('modalArchivados').style.display = 'flex';
+            document.getElementById('buscadorArchivados').value = '';
+            
+            db.ref('ventas').limitToLast(150).once('value').then(snap => {
+                memoriaVentas = [];
+                if(snap.exists()) {
+                    snap.forEach(function(child) { 
+                        let d = child.val();
+                        d.id = child.key;
+                        memoriaVentas.push(d); 
+                    });
+                }
+                memoriaVentas.reverse(); 
+                window.renderizarArchivados(memoriaVentas);
+            }).catch(e => console.log(e));
+        };
+        
+        window.cerrarModalArchivados = function() { 
+            document.getElementById('modalArchivados').style.display = 'none'; 
+        };
+        
+        window.filtrarArchivados = function() {
+            let txt = document.getElementById('buscadorArchivados').value.toLowerCase();
+            let filtrados = memoriaVentas.filter(v => {
+                let matchCliente = v.cliente && String(v.cliente).toLowerCase().includes(txt);
+                let matchTicket = v.ticket && String(v.ticket).toLowerCase().includes(txt);
+                let matchFecha = v.fecha && String(v.fecha).toLowerCase().includes(txt);
+                return matchCliente || matchTicket || matchFecha;
+            });
+            window.renderizarArchivados(filtrados);
+        };
+
+        window.renderizarArchivados = function(lista) {
+            const cont = document.getElementById('listaArchivadosUI');
+            cont.innerHTML = '';
+            
+            if(lista.length === 0) {
+                cont.innerHTML = '<p style="color:gray; text-align:center;">No se encontraron resultados.</p>';
+                return;
+            }
+
+            lista.forEach(v => {
+                let telCorrecto = v.telefono ? v.telefono : '';
+                let btnWA = telCorrecto.length >= 10 ? `<button class="btn-wa-small" onclick="window.pedirResena('${telCorrecto}', '${v.cliente}')">⭐ Pedir Reseña</button>` : '';
+                
+                let carritoText = "Servicio General";
+                if(v.carrito) { carritoText = v.carrito.map(i => i.nombre).join(', '); }
+
+                cont.innerHTML += `
+                    <div class="historial-item">
+                        <div class="historial-info">
+                            <strong>#${v.ticket} - ${v.cliente}</strong><br>
+                            <span class="sub">📅 ${v.fecha}</span><br>
+                            <span class="sub" style="color:var(--gold);">📸 ${carritoText}</span>
+                        </div>
+                        <div>${btnWA}</div>
+                    </div>`;
+            });
+        };
+
+        window.pedirResena = function(tel, nombre) {
+            let num = String(tel).replace(/\D/g, ''); 
+            if(num.length === 10) num = "52" + num;
+            let msg = `¡Hola ${nombre}! 👋 Esperamos que te hayan encantado tus fotos en Estudio Deluxe. 📸\n\nNos ayudarías muchísimo a seguir creciendo si nos regalas una breve reseña de 5 estrellas en Google Maps ⭐⭐⭐⭐⭐.\n\nEn tu próxima visita, muéstranos tu reseña y te daremos $10 MXN de bonificación. 🎁\n👉 https://g.page/r/CUBwuWzC-4A0EBI/review`;
+            window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`, '_blank');
+        };
+
+        // ================= MARKETING =================
+        window.abrirModalMarketing = function() {
+            document.getElementById('modalMarketing').style.display = 'flex';
+            document.getElementById('buscadorMarketing').value = '';
+            
+            db.ref('clientes').once('value').then(snap => {
+                memoriaClientes = [];
+                if(snap.exists()) {
+                    snap.forEach(function(child) { 
+                        let d = child.val();
+                        d.id = child.key;
+                        memoriaClientes.push(d); 
+                    });
+                }
+                memoriaClientes.sort((a,b) => (b.gastado || 0) - (a.gastado || 0));
+                window.renderizarMarketing(memoriaClientes);
+            }).catch(e => console.log(e));
+        };
+        
+        window.cerrarModalMarketing = function() { 
+            document.getElementById('modalMarketing').style.display = 'none'; 
+        };
+        
+        window.filtrarMarketing = function() {
+            let txt = document.getElementById('buscadorMarketing').value.toLowerCase();
+            let filtrados = memoriaClientes.filter(c => {
+                let matchNombre = c.nombre && String(c.nombre).toLowerCase().includes(txt);
+                let matchTel = c.telefono && String(c.telefono).toLowerCase().includes(txt);
+                return matchNombre || matchTel;
+            });
+            window.renderizarMarketing(filtrados);
+        };
+
+        window.renderizarMarketing = function(lista) {
+            const cont = document.getElementById('listaMarketingUI');
+            cont.innerHTML = '';
+            
+            if(lista.length === 0) {
+                cont.innerHTML = '<p style="color:gray; text-align:center;">No hay clientes en el directorio.</p>';
+                return;
+            }
+
+            lista.forEach(c => {
+                let tel = c.telefono ? String(c.telefono) : '';
+                let btnWA = (tel.length >= 10) 
+                    ? `<button class="btn-wa-small" style="background:rgba(59, 130, 246, 0.1); color:var(--blue); border-color:var(--blue);" onclick="window.enviarPromo('${tel}', '${c.nombre}')">📢 Enviar Promo</button>` 
+                    : '<span style="font-size:10px; color:gray;">Sin Teléfono</span>';
+                
+                cont.innerHTML += `
+                    <div class="historial-item" style="border-left-color:var(--blue);">
+                        <div class="historial-info">
+                            <strong>${c.nombre}</strong> <span style="background:var(--gold); color:black; padding:2px 5px; border-radius:4px; font-size:9px; font-weight:bold;">${c.visitas || 1} Visitas</span><br>
+                            <span class="sub">📞 ${tel || 'N/A'} | 💰 Gastado: $${parseFloat(c.gastado || 0).toFixed(2)}</span>
+                        </div>
+                        <div>${btnWA}</div>
+                    </div>`;
+            });
+        };
+
+        window.enviarPromo = function(tel, nombre) {
+            let num = String(tel).replace(/\D/g, ''); 
+            if(num.length === 10) num = "52" + num;
+            let msg = `¡Hola ${nombre}! 👋 Soy Edgar de Estudio Deluxe. 📸\n\nYa viene la temporada de graduaciones y queremos darte a ti, como nuestro cliente VIP, la oportunidad de apartar tu lugar con anticipación y un descuento especial. 🎓✨\n\n¿Te interesa? Mándanos un mensajito para darte los detalles.`;
+            window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`, '_blank');
+        };
+
     </script>
 </body>
 </html>

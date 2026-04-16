@@ -4,68 +4,76 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MONITOR TV - SISTEMA DELUXE</title>
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
     <style>
         /* ==========================================
-           VARIABLES Y ESTILOS GLOBALES
+           1. VARIABLES Y ESTILOS GLOBALES DELUXE
         ========================================== */
         :root {
-            --bg-body: #0A0E17; 
-            --bg-caja: #111827; 
+            --bg-body: #05080f; 
+            --bg-caja: rgba(17, 24, 39, 0.7); 
             --texto-principal: #F3F4F6;
             --texto-secundario: #9CA3AF;
             --acento-proceso: #D4AF37; 
             --acento-listo: #10B981; 
             --purple: #8B5CF6; 
             --blue: #3b82f6;
+            --cristal-border: rgba(255, 255, 255, 0.1);
         }
         
         body { 
             font-family: 'Inter', sans-serif; 
-            background-color: var(--bg-body); 
+            background: radial-gradient(circle at top right, #111827, #05080f); 
             color: var(--texto-principal); 
             margin: 0; 
-            padding: 10px; 
+            padding: 15px; 
             display: flex; 
             flex-direction: column; 
             height: 100vh; 
             overflow: hidden; 
+            box-sizing: border-box;
         }
         
         /* ==========================================
-           HEADER COMPACTO
+           2. HEADER COMPACTO Y ELEGANTE
         ========================================== */
         .header-deluxe { 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
-            padding: 10px 20px; 
+            padding: 12px 30px; 
             background: var(--bg-caja); 
-            border-radius: 10px; 
-            border-bottom: 3px solid var(--acento-proceso); 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5); 
+            border-radius: 12px; 
+            border-bottom: 2px solid var(--acento-proceso); 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6); 
+            backdrop-filter: blur(10px); 
             z-index: 10; 
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
         
         .logo-tv { 
-            font-size: 20px; 
+            font-size: 22px; 
             font-weight: 300; 
-            letter-spacing: 4px; 
+            letter-spacing: 5px; 
             margin: 0; 
             color: white;
+            text-shadow: 0 0 10px rgba(255,255,255,0.2);
         }
         
         .logo-tv span { 
             color: var(--acento-proceso); 
             font-weight: 800;
+            text-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
         }
         
         #reloj { 
             margin: 0; 
-            font-size: 1.6em; 
+            font-size: 1.8em; 
             font-weight: 800; 
             letter-spacing: 3px; 
+            color: white;
         }
         
         #pantallaDinamica { 
@@ -75,12 +83,12 @@
         }
 
         /* ==========================================
-           VISTA 1: COLAS DE PRODUCCIÓN
+           3. VISTA: COLAS DE PRODUCCIÓN
         ========================================== */
         #vistaColas { 
             display: flex; 
             flex-direction: column; 
-            gap: 10px; 
+            gap: 15px; 
             width: 100%; 
             height: 100%; 
             position: absolute; 
@@ -93,7 +101,7 @@
         
         .columnas-principales { 
             display: flex; 
-            gap: 15px; 
+            gap: 20px; 
             flex: 1; 
             overflow: hidden; 
         }
@@ -101,194 +109,220 @@
         .columna { 
             flex: 1; 
             background: var(--bg-caja); 
-            border-radius: 10px; 
-            padding: 10px; 
+            border-radius: 16px; 
+            padding: 15px; 
             display: flex; 
             flex-direction: column; 
-            box-shadow: inset 0 0 15px rgba(0,0,0,0.5); 
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.5), 0 10px 30px rgba(0,0,0,0.4); 
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--cristal-border);
         }
         
         .columna h2 { 
-            font-size: 1.1em; 
-            margin: 0 0 10px 0; 
+            font-size: 1.2em; 
+            margin: 0 0 15px 0; 
             border-bottom: 1px dashed rgba(255,255,255,0.1); 
-            padding-bottom: 8px;
+            padding-bottom: 10px;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
         
         /* ==========================================
-           TARJETAS DE TURNO
+           4. TARJETAS DE TURNO (MAGIA Y NEÓN)
         ========================================== */
         .turno { 
-            background: #1F2937; 
-            margin-bottom: 8px; 
-            padding: 10px 12px; 
-            border-radius: 8px; 
+            background: rgba(31, 41, 55, 0.6); 
+            margin-bottom: 12px; 
+            padding: 15px; 
+            border-radius: 12px; 
             border-left: 5px solid var(--acento-proceso); 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
-            animation: entrada 0.4s ease-out; 
-            box-shadow: 0 3px 10px rgba(0,0,0,0.2); 
-            transition: 0.3s;
+            animation: entrada-tarjeta 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3); 
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            border-right: 1px solid var(--cristal-border);
+            border-top: 1px solid var(--cristal-border);
+            border-bottom: 1px solid var(--cristal-border);
         }
         
+        .turno:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+        }
+
         .turno.listo { 
             border-left-color: var(--acento-listo); 
-            background: rgba(16, 185, 129, 0.05); 
-            animation: parpadeo-listo 2s infinite; 
+            background: linear-gradient(90deg, rgba(16, 185, 129, 0.1) 0%, rgba(31, 41, 55, 0.6) 100%);
+            animation: resplandor-verde 2s infinite; 
         }
         
+        .turno.en-turno {
+            border-left-color: var(--blue);
+            background: linear-gradient(90deg, rgba(59, 130, 246, 0.15) 0%, rgba(31, 41, 55, 0.8) 100%);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .turno.en-turno::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 50%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.1), transparent);
+            animation: escaner-luz 3s infinite;
+        }
+
         .turno-info { 
             display: flex; 
             flex-direction: column; 
-            gap: 2px; 
+            gap: 4px; 
+            z-index: 2; 
         }
         
-        /* EFECTO PARA EL CLIENTE "EN TURNO" (EL PRIMERO) */
-        .turno.en-turno {
-            border-left-color: var(--blue);
-            background: linear-gradient(90deg, rgba(59, 130, 246, 0.15) 0%, rgba(31, 41, 55, 1) 40%);
-            animation: pulso-activo 2s infinite;
-        }
-        
-        .badge-en-turno {
-            background: var(--blue);
-            color: white;
-            font-size: 0.55em;
-            padding: 3px 8px;
-            border-radius: 4px;
-            vertical-align: middle;
-            margin-left: 8px;
-            letter-spacing: 1px;
-            animation: parpadeo-suave 1.5s infinite;
-            display: inline-block;
-        }
-
-        @keyframes pulso-activo { 
-            0%, 100% { box-shadow: 0 0 5px rgba(59, 130, 246, 0.2); } 
-            50% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); } 
-        }
-        
-        @keyframes parpadeo-suave { 
-            0%, 100% { opacity: 1; } 
-            50% { opacity: 0.6; } 
-        }
-
-        @keyframes entrada { 
-            from { opacity: 0; transform: translateX(-15px); } 
-            to { opacity: 1; transform: translateX(0); } 
-        }
-        
-        @keyframes parpadeo-listo { 
-            0%, 100% { border-color: var(--acento-listo); box-shadow: 0 0 10px rgba(16, 185, 129, 0.1); } 
-            50% { border-color: white; box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); } 
-        }
-        
-        @keyframes pulso-naranja { 
-            0%, 100% { opacity: 1; } 
-            50% { opacity: 0.5; } 
-        }
-
-        /* TEXTOS DE LA TARJETA */
         .nombre { 
-            font-size: 1.3em; 
+            font-size: 1.4em; 
             font-weight: 800; 
             color: white; 
             line-height: 1.1; 
             display: flex; 
             align-items: center;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
         }
         
         .descripcion-servicio { 
-            font-size: 0.75em; 
+            font-size: 0.8em; 
             color: var(--acento-proceso); 
             font-weight: 600; 
             letter-spacing: 1px; 
             text-transform: uppercase; 
-            background: rgba(212, 175, 55, 0.1); 
-            padding: 2px 6px; 
-            border-radius: 4px; 
+            background: rgba(212, 175, 55, 0.15); 
+            padding: 3px 8px; 
+            border-radius: 6px; 
             width: fit-content; 
+            margin-top: 4px;
+        }
+
+        .item-desc-tv {
+            font-size: 0.75em;
+            color: var(--texto-secundario);
+            font-style: italic;
             margin-top: 2px;
+            font-weight: 300;
         }
         
         .turno.listo .descripcion-servicio { 
             color: var(--acento-listo); 
-            background: rgba(16, 185, 129, 0.1); 
+            background: rgba(16, 185, 129, 0.15); 
         }
         
         .turno.en-turno .descripcion-servicio { 
             color: var(--blue); 
-            background: rgba(59, 130, 246, 0.1); 
+            background: rgba(59, 130, 246, 0.15); 
+        }
+
+        .badge-en-turno {
+            background: var(--blue);
+            color: white;
+            font-size: 0.55em;
+            padding: 4px 10px;
+            border-radius: 6px;
+            vertical-align: middle;
+            margin-left: 10px;
+            letter-spacing: 1px;
+            animation: parpadeo-suave 1.5s infinite;
+            display: inline-block;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+        }
+
+        .badge-vip-tv { 
+            background: linear-gradient(45deg, var(--acento-proceso), #FFF8D6); 
+            color: black; 
+            font-size: 0.55em; 
+            padding: 4px 8px; 
+            border-radius: 6px; 
+            vertical-align: middle; 
+            margin-left: 8px; 
+            letter-spacing: 1px;
+            font-weight: 800;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
         }
         
-        /* BLOQUE DEL RELOJ REGRESIVO */
         .bloque-tiempo { 
             text-align: right; 
-            min-width: 90px; 
+            min-width: 110px; 
             display: flex; 
             flex-direction: column; 
             align-items: flex-end; 
             justify-content: center;
+            z-index: 2;
         }
         
         .texto-estimado { 
             font-size: 0.65em; 
             color: var(--texto-secundario); 
             font-weight: 600; 
-            letter-spacing: 1px; 
+            letter-spacing: 2px; 
             text-transform: uppercase; 
             margin-bottom: 2px;
         }
         
         .timer-regresivo { 
-            font-size: 1.5em; 
+            font-size: 1.8em; 
             font-weight: 800; 
             color: var(--acento-proceso); 
             font-variant-numeric: tabular-nums; 
             line-height: 1;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
         }
         
-        .turno.en-turno .timer-regresivo { color: var(--blue); }
+        .turno.en-turno .timer-regresivo { 
+            color: #60A5FA; 
+            text-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+        }
         
         .hora-fija-tv { 
             font-size: 0.75em; 
             color: var(--texto-secundario); 
-            margin-top: 2px; 
+            margin-top: 4px; 
             font-weight: 600; 
             letter-spacing: 1px;
         }
         
         .status-txt-listo { 
-            font-size: 1.5em; 
+            font-size: 1.6em; 
             font-weight: 800; 
             color: var(--acento-listo); 
             text-transform: uppercase; 
+            text-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
         }
 
         /* ==========================================
-           CARRUSEL DE PAUSADOS (MARQUESINA)
+           5. CARRUSEL DE PAUSADOS (MARQUESINA)
         ========================================== */
         .barra-pausados { 
-            background: #151A2B; 
+            background: rgba(15, 23, 42, 0.8); 
             border: 1px solid var(--purple); 
-            border-radius: 8px; 
-            padding: 8px 15px; 
+            border-radius: 12px; 
+            padding: 10px 20px; 
             display: flex; 
             align-items: center; 
-            gap: 10px; 
-            box-shadow: 0 5px 15px rgba(139, 92, 246, 0.15); 
-            animation: entrada 0.5s ease-out; 
+            gap: 15px; 
+            box-shadow: 0 5px 25px rgba(139, 92, 246, 0.2); 
+            animation: entrada-suave 0.5s ease-out; 
             margin-top: 5px;
+            backdrop-filter: blur(10px);
         }
         
         .titulo-pausados-tv { 
-            color: var(--purple); 
+            color: #C4B5FD; 
             font-weight: 800; 
             font-size: 0.9em; 
             text-transform: uppercase; 
             white-space: nowrap; 
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
         }
         
         .contenedor-pausados { 
@@ -299,30 +333,104 @@
         }
         
         .badge-pausado { 
-            background: rgba(139, 92, 246, 0.15); 
-            color: #C4B5FD; 
-            padding: 4px 10px; 
-            border-radius: 6px; 
+            background: rgba(139, 92, 246, 0.2); 
+            color: white; 
+            padding: 6px 15px; 
+            border-radius: 8px; 
             font-weight: 600; 
-            font-size: 0.85em; 
-            border: 1px solid rgba(139, 92, 246, 0.3); 
-            margin-right: 15px; 
+            font-size: 0.9em; 
+            border: 1px solid rgba(139, 92, 246, 0.5); 
+            margin-right: 20px; 
             display: inline-block;
-        }
-
-        .badge-vip-tv { 
-            background: var(--acento-proceso); 
-            color: black; 
-            font-size: 0.5em; 
-            padding: 3px 6px; 
-            border-radius: 4px; 
-            vertical-align: middle; 
-            margin-left: 8px; 
-            letter-spacing: 1px;
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.2);
         }
 
         /* ==========================================
-           VISTA 2: ANUNCIOS DINÁMICOS
+           6. LETRERO MÁGICO DE "LA FILA AVANZA"
+        ========================================== */
+        .alerta-ahorro {
+            position: fixed;
+            top: -200px; /* Escondido arriba por defecto */
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #FFD700, #F59E0B);
+            border: 3px solid white;
+            color: black;
+            padding: 20px 50px;
+            border-radius: 50px;
+            font-weight: 900;
+            font-size: 28px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            box-shadow: 0 20px 50px rgba(212, 175, 55, 0.8);
+            z-index: 9999999; /* Por encima de todo, sin lugar a dudas */
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            opacity: 0;
+            pointer-events: none;
+            /* Transición rápida y fluida */
+            transition: top 0.5s ease-in-out, opacity 0.5s ease-in-out;
+        }
+
+        .alerta-ahorro.mostrar {
+            opacity: 1;
+            top: 60px; /* Baja y se muestra */
+            pointer-events: auto;
+            animation: vibrar-magia 0.5s infinite alternate; /* Animación más agresiva y festiva */
+        }
+
+        .icono-fuego {
+            font-size: 40px;
+            animation: saltar-fuego 0.5s infinite alternate;
+        }
+
+        @keyframes vibrar-magia {
+            0% { transform: translateX(-50%) scale(1); box-shadow: 0 20px 50px rgba(212, 175, 55, 0.8); }
+            100% { transform: translateX(-50%) scale(1.05); box-shadow: 0 20px 80px rgba(255, 255, 255, 0.8); }
+        }
+
+        @keyframes saltar-fuego {
+            0% { transform: translateY(0) scale(1); }
+            100% { transform: translateY(-10px) scale(1.2); }
+        }
+
+        /* ==========================================
+           7. KEYFRAMES GLOBALES
+        ========================================== */
+        @keyframes entrada-tarjeta { 
+            0% { opacity: 0; transform: translateX(-30px) scale(0.95); } 
+            100% { opacity: 1; transform: translateX(0) scale(1); } 
+        }
+
+        @keyframes entrada-suave {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes escaner-luz {
+            0% { left: -100%; }
+            50% { left: 100%; }
+            100% { left: 100%; }
+        }
+        
+        @keyframes resplandor-verde { 
+            0%, 100% { border-color: var(--acento-listo); box-shadow: 0 0 15px rgba(16, 185, 129, 0.1); } 
+            50% { border-color: white; box-shadow: 0 0 30px rgba(16, 185, 129, 0.4); } 
+        }
+        
+        @keyframes parpadeo-suave { 
+            0%, 100% { opacity: 1; } 
+            50% { opacity: 0.6; } 
+        }
+
+        @keyframes preparacion-dorada {
+            0%, 100% { opacity: 1; text-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
+            50% { opacity: 0.7; text-shadow: 0 0 20px rgba(16, 185, 129, 1); }
+        }
+
+        /* ==========================================
+           8. VISTA: ANUNCIOS DINÁMICOS
         ========================================== */
         #vistaPromos { 
             position: absolute; 
@@ -337,7 +445,7 @@
             justify-content: center; 
             align-items: center; 
             background: #000; 
-            border-radius: 10px; 
+            border-radius: 16px; 
             overflow: hidden; 
         }
         
@@ -359,65 +467,66 @@
         
         .aviso-retorno { 
             position: absolute; 
-            bottom: 20px; 
+            bottom: 30px; 
             background: rgba(0,0,0,0.8); 
-            padding: 10px 20px; 
-            border-radius: 20px; 
+            padding: 12px 25px; 
+            border-radius: 30px; 
             border: 1px solid var(--acento-proceso); 
             color: white; 
-            font-weight: 600; 
+            font-weight: 800; 
             text-transform: uppercase; 
-            letter-spacing: 1px; 
-            font-size: 0.8em; 
+            letter-spacing: 2px; 
+            font-size: 0.9em; 
             z-index: 20; 
-            backdrop-filter: blur(5px); 
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5); 
+            backdrop-filter: blur(10px); 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6); 
         }
 
         /* ==========================================
-           QR FLOTANTE Y PANTALLA DE INICIO
+           9. QR FLOTANTE Y PANTALLA DE INICIO
         ========================================== */
         .qr-flotante { 
             position: fixed; 
-            bottom: 15px; 
-            right: 15px; 
-            background: var(--bg-caja); 
+            bottom: 20px; 
+            right: 20px; 
+            background: rgba(17, 24, 39, 0.85); 
             border: 1px solid var(--acento-proceso); 
-            border-radius: 10px; 
-            padding: 10px; 
-            box-shadow: 0 10px 20px rgba(0,0,0,0.6); 
+            border-radius: 16px; 
+            padding: 15px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.8), inset 0 0 15px rgba(212,175,55,0.2); 
             display: flex; 
             flex-direction: column; 
             align-items: center; 
             z-index: 50; 
-            animation: flotar 4s ease-in-out infinite; 
-            backdrop-filter: blur(10px);
+            animation: flotar-lujo 4s ease-in-out infinite; 
+            backdrop-filter: blur(15px);
         }
         
         .qr-texto { 
             text-align: center; 
-            font-size: 10px; 
+            font-size: 11px; 
             font-weight: 600; 
             color: var(--texto-secundario); 
-            margin-bottom: 5px; 
+            margin-bottom: 8px; 
             text-transform: uppercase; 
             letter-spacing: 1px; 
         }
         
         .qr-texto span { 
             color: var(--acento-proceso); 
-            font-size: 12px; 
+            font-size: 14px; 
             display: block; 
-            margin-top: 2px; 
+            margin-top: 4px; 
             font-weight: 800;
+            text-shadow: 0 0 5px rgba(212,175,55,0.4);
         }
         
-        .qr-img { width: 75px; height: 75px; border-radius: 4px; background: white; padding: 4px; }
+        .qr-img { width: 85px; height: 85px; border-radius: 8px; background: white; padding: 6px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);}
 
-        @keyframes flotar { 
-            0% { transform: translateY(0px); } 
-            50% { transform: translateY(-6px); } 
-            100% { transform: translateY(0px); } 
+        @keyframes flotar-lujo { 
+            0% { transform: translateY(0px); box-shadow: 0 15px 35px rgba(0,0,0,0.8), inset 0 0 15px rgba(212,175,55,0.2); } 
+            50% { transform: translateY(-8px); box-shadow: 0 25px 45px rgba(0,0,0,0.9), inset 0 0 25px rgba(212,175,55,0.4); } 
+            100% { transform: translateY(0px); box-shadow: 0 15px 35px rgba(0,0,0,0.8), inset 0 0 15px rgba(212,175,55,0.2); } 
         }
 
         #pantallaInicio { 
@@ -435,29 +544,35 @@
         }
         
         .btn-inicio { 
-            padding: 20px 40px; 
-            font-size: 20px; 
-            background: var(--acento-proceso); 
+            padding: 25px 50px; 
+            font-size: 24px; 
+            background: linear-gradient(135deg, var(--acento-proceso), #FFEA8C); 
             color: #000; 
             border: none; 
-            border-radius: 10px; 
+            border-radius: 12px; 
             cursor: pointer; 
             font-weight: 800; 
             text-transform: uppercase; 
-            box-shadow: 0 0 25px rgba(212, 175, 55, 0.4); 
-            transition: 0.3s; 
-            letter-spacing: 2px;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.5); 
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            letter-spacing: 3px;
         }
         
-        .btn-inicio:hover { transform: scale(1.05); }
+        .btn-inicio:hover { transform: scale(1.08); box-shadow: 0 15px 40px rgba(212, 175, 55, 0.7); }
     </style>
 </head>
 <body>
 
+    <div id="alertaAhorro" class="alerta-ahorro">
+        <span class="icono-fuego">🔥</span>
+        <span>¡LA FILA AVANZA! TIEMPO AHORRADO: -<span id="txtAhorroMins">10</span> MINUTOS</span>
+        <span class="icono-fuego">🔥</span>
+    </div>
+
     <div id="pantallaInicio">
-        <h1 style="color: var(--acento-proceso); margin-bottom: 30px; letter-spacing:8px; font-weight:300;">MONITOR <strong style="font-weight:800;">TV</strong></h1>
-        <button class="btn-inicio" onclick="iniciarSistema()">ENCENDER PANTALLA</button>
-        <p style="color: var(--texto-secundario); margin-top: 20px; font-size: 13px; letter-spacing: 2px;">Sistema de Producción Deluxe</p>
+        <h1 style="color: var(--acento-proceso); margin-bottom: 40px; letter-spacing:10px; font-weight:300; font-size:3em; text-shadow: 0 0 20px rgba(212,175,55,0.3);">MONITOR <strong style="font-weight:800;">TV</strong></h1>
+        <button class="btn-inicio" onclick="window.iniciarSistema()">ENCENDER PANTALLA</button>
+        <p style="color: var(--texto-secundario); margin-top: 30px; font-size: 14px; letter-spacing: 3px; text-transform:uppercase;">Sistema de Producción Deluxe</p>
     </div>
 
     <div class="header-deluxe">
@@ -469,20 +584,23 @@
         
         <div id="vistaColas">
             <div class="columnas-principales">
+                
                 <div class="columna">
-                    <h2 style="color:var(--acento-proceso); text-align: center; letter-spacing: 3px; font-weight: 300;">⏳ EN PROCESO</h2>
+                    <h2 style="color:var(--acento-proceso); text-align: center; letter-spacing: 4px; font-weight: 300;">⏳ EN PROCESO</h2>
                     <div id="listaProceso" style="overflow-y: auto; padding-right: 5px; flex:1;"></div>
                 </div>
+
                 <div class="columna">
-                    <h2 style="color:var(--acento-listo); text-align: center; letter-spacing: 3px; font-weight: 300;">✅ PARA ENTREGAR</h2>
+                    <h2 style="color:var(--acento-listo); text-align: center; letter-spacing: 4px; font-weight: 300;">✅ PARA ENTREGAR</h2>
                     <div id="listaListos" style="overflow-y: auto; padding-right: 5px; flex:1;"></div>
                 </div>
+
             </div>
             
             <div class="barra-pausados" id="barraPausadosContainer" style="display: none;">
                 <div class="titulo-pausados-tv">⏸️ PAUSADOS:</div>
                 <div class="contenedor-pausados">
-                    <marquee id="listaPausadosTv" scrollamount="6" scrolldelay="50"></marquee>
+                    <marquee id="listaPausadosTv" scrollamount="7" scrolldelay="50"></marquee>
                 </div>
             </div>
         </div>
@@ -491,6 +609,7 @@
             <div id="contenedorMedios"></div>
             <div class="aviso-retorno">Tu turno aparecerá en pantalla en breve...</div>
         </div>
+
     </div>
 
     <div class="qr-flotante">
@@ -518,20 +637,26 @@
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
+        // VARIABLES DE CONTROL
         let primeraCarga = true;
         let ultimosListos = [];
         let totalFila = 0;
         let timerInactividad;
         let timerRetorno;
+        let timerCartelAhorro;
         window.ultimoCP = 0; 
         
+        // CARRUSEL
         let listaMediosGlobal = [];
         let indexMedio = 0;
         let timerCarrusel;
-
         let vozHabilitada = true; 
         
-        function iniciarSistema() {
+        // =========================================================
+        // INICIALIZACIÓN DE LA TV
+        // =========================================================
+        window.iniciarSistema = function() {
+            // Desbloquear la Voz en navegadores estrictos
             if ('speechSynthesis' in window) {
                 let msgVacio = new SpeechSynthesisUtterance('');
                 msgVacio.volume = 0;
@@ -546,12 +671,53 @@
             
             cargarConfiguracionTV();
             escucharTurnos();
+            escucharAhorroDeTiempo(); // Lanza el cartel mágico
             resetLogicaVista();
             setInterval(actualizarCronometros, 1000);
+        };
+
+        // =========================================================
+        // EFECTO MAGICO: LA FILA AVANZA (POR RUTA SEGURA)
+        // =========================================================
+        let ultimoIdAlerta = 0;
+
+        function escucharAhorroDeTiempo() {
+            // 🔔 AHORA ESCUCHA EN LA CARPETA 'configuracion' QUE SÍ TIENE PERMISOS 🔔
+            db.ref('configuracion/tvAlertaAhorro').on('value', snap => {
+                if(!snap.exists()) return;
+                
+                const data = snap.val();
+                
+                // Evitamos que se dispare dos veces el mismo evento
+                if (data.id === ultimoIdAlerta) return;
+                ultimoIdAlerta = data.id;
+
+                // Solo muestra si ocurrió hace menos de 10 segundos
+                if (Date.now() - data.timestamp < 10000) {
+                    mostrarCartelMagico(data.minutos);
+                }
+            });
+        }
+
+        function mostrarCartelMagico(minutos) {
+            const cartel = document.getElementById('alertaAhorro');
+            document.getElementById('txtAhorroMins').innerText = minutos;
+            
+            // 🔔 USAMOS UN ARCHIVO LOCAL QUE YA SABEMOS QUE FUNCIONA 🔔
+            let audioAhorro = new Audio('nuevo.mp3'); 
+            audioAhorro.play().catch(e => console.log('Audio bloqueado:', e));
+            
+            cartel.classList.add('mostrar');
+            
+            // Lo ocultamos después de 6 segundos
+            clearTimeout(timerCartelAhorro);
+            timerCartelAhorro = setTimeout(() => {
+                cartel.classList.remove('mostrar');
+            }, 6000); 
         }
 
         // =========================================================
-        // REPRODUCTOR DE ANUNCIOS
+        // REPRODUCTOR DE ANUNCIOS (CARRUSEL)
         // =========================================================
         function cargarConfiguracionTV() {
             db.ref('configuracion/tv/medios').on('value', snap => {
@@ -604,6 +770,9 @@
             timerCarrusel = setTimeout(reproducirSiguienteMedio, duracionMs);
         }
 
+        // =========================================================
+        // CONTROL DE VISTAS (TV / ANUNCIOS)
+        // =========================================================
         function resetLogicaVista() {
             clearTimeout(timerInactividad); 
             clearTimeout(timerRetorno);
@@ -614,7 +783,8 @@
             document.getElementById('vistaPromos').style.opacity = '0'; 
             document.getElementById('vistaPromos').style.zIndex = '1';
             
-            timerInactividad = setTimeout(mostrarAnuncios, 20000);
+            // Si pasan 25 segundos sin que toques la caja, entran los comerciales
+            timerInactividad = setTimeout(mostrarAnuncios, 25000);
         }
 
         function mostrarAnuncios() {
@@ -624,6 +794,7 @@
             document.getElementById('vistaColas').style.opacity = '0'; 
             document.getElementById('vistaColas').style.zIndex = '1';
             
+            // Vuelve a la TV después de 10 segundos
             if (totalFila > 0) {
                 timerRetorno = setTimeout(resetLogicaVista, 10000);
             }
@@ -634,7 +805,7 @@
             audio.play().then(() => {
                 if(vozHabilitada) {
                     setTimeout(() => {
-                        const msg = new SpeechSynthesisUtterance(`Atención. El pedido de ${nombre}, está listo.`);
+                        const msg = new SpeechSynthesisUtterance(`Atención. El pedido de ${nombre}, está listo para entregar.`);
                         msg.lang = 'es-MX'; 
                         msg.rate = 0.85; 
                         window.speechSynthesis.speak(msg);
@@ -644,7 +815,7 @@
         }
 
         // =========================================================
-        // CRONÓMETRO REGRESIVO
+        // CRONÓMETRO REGRESIVO (LA MAGIA DE LA ESPERA CERO)
         // =========================================================
         function actualizarCronometros() {
             document.querySelectorAll('.timer-regresivo').forEach(el => {
@@ -655,8 +826,10 @@
                 let diff = Math.floor((entrega - ahora) / 1000); 
                 
                 if (diff <= 0) { 
-                    el.innerHTML = '<span style="color: #F59E0B; animation: pulso-naranja 1s infinite; font-size: 0.7em;">¡POR SALIR!</span>';
+                    // Cuando llega a Cero, desaparece el reloj y se pone en verde
+                    el.innerHTML = '<span style="color: var(--acento-listo); font-size: 0.7em; animation: preparacion-dorada 2s infinite;">✨ PREPARANDO ENTREGA</span>';
                 } else {
+                    // Minutos Naturales
                     const min = Math.floor(diff / 60); 
                     const sec = diff % 60;
                     el.innerText = `${min.toString().padStart(2, '0')}:${sec.toString().padStart(2, '0')}`;
@@ -665,7 +838,7 @@
         }
 
         // =========================================================
-        // MOTOR PRINCIPAL DE COLAS DE TV (LÍMITE A 5 LISTOS)
+        // MOTOR PRINCIPAL DE COLAS DE TV (LÍMITE A 7 LISTOS)
         // =========================================================
         function escucharTurnos() {
             db.ref('turnos').on('value', snapshot => {
@@ -705,12 +878,23 @@
                 let esPrimeroEnFila = true;
                 
                 pendientes.forEach(t => {
-                    const descripcionHtml = t.servicio ? `<span class="descripcion-servicio">${t.servicio}</span>` : '';
+                    // DESCRIPCIÓN DEL PAQUETE EN PEQUEÑO
+                    let detallesHtml = '';
+                    if (t.carrito) {
+                        t.carrito.forEach(item => {
+                            if (item.descripcion) {
+                                detallesHtml += `<div class="item-desc-tv">↳ ${item.cantidad}x ${item.descripcion}</div>`;
+                            }
+                        });
+                    }
+
+                    const tituloServicio = t.servicio ? `<span class="descripcion-servicio">${t.servicio}</span>` : '';
                     const etiquetaVIP = t.esVIP ? `<span class="badge-vip-tv">⭐ VIP</span>` : '';
+                    
                     let claseExtra = '';
                     let etiquetaAtendiendo = '';
 
-                    // Al primero de la fila lo iluminamos de Azul (Está siendo atendido)
+                    // Al primero de la fila lo iluminamos de Azul y le pasamos el rayo escáner
                     if (esPrimeroEnFila) {
                         claseExtra = 'en-turno';
                         etiquetaAtendiendo = `<span class="badge-en-turno">👉 EN TURNO</span>`;
@@ -721,7 +905,8 @@
                         <div class="turno ${claseExtra}">
                             <div class="turno-info">
                                 <span class="nombre">${t.nombre} ${etiquetaAtendiendo} ${etiquetaVIP}</span>
-                                ${descripcionHtml}
+                                ${tituloServicio}
+                                ${detallesHtml}
                             </div>
                             <div class="bloque-tiempo">
                                 <span class="texto-estimado">ESTIMADO</span>
@@ -731,19 +916,19 @@
                         </div>`;
                 });
 
-                // 2. GENERAR COLUMNA "LISTOS" (LÍMITE A LOS 5 MÁS RECIENTES)
-                const MAX_LISTOS = 5; 
+                // 2. 🔔 GENERAR COLUMNA "LISTOS" (LÍMITE A LOS 7 MÁS RECIENTES) 🔔
+                const MAX_LISTOS = 7; 
                 let listosMostrados = listos.slice(0, MAX_LISTOS);
 
                 listosMostrados.forEach(t => {
-                    const descripcionHtml = t.servicio ? `<span class="descripcion-servicio">${t.servicio}</span>` : '';
+                    const tituloServicio = t.servicio ? `<span class="descripcion-servicio">${t.servicio}</span>` : '';
                     const etiquetaVIP = t.esVIP ? `<span class="badge-vip-tv">⭐ VIP</span>` : '';
                     
                     listaL.innerHTML += `
                         <div class="turno listo">
                             <div class="turno-info">
                                 <span class="nombre">${t.nombre} ${etiquetaVIP}</span>
-                                ${descripcionHtml}
+                                ${tituloServicio}
                             </div>
                             <span class="status-txt-listo">RECOGER</span>
                         </div>`;

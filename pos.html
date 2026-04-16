@@ -26,6 +26,7 @@
             --success: #059669; 
             --success-hover: #047857;
             --blue: #3b82f6; 
+            --mp-blue: #009EE3; /* Azul Oficial Mercado Pago */
             --border: rgba(255, 255, 255, 0.08); 
             --whatsapp: #25D366;
         }
@@ -254,6 +255,26 @@
             letter-spacing: 1px;
         }
 
+        /* TOGGLE SWITCH GRUPO */
+        .switch-container { 
+            background: rgba(59, 130, 246, 0.1); 
+            padding: 12px; 
+            border-radius: 8px; 
+            border: 1px dashed var(--blue); 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            margin-top: 10px; 
+            cursor: pointer;
+        }
+        
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #374151; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--blue); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
         /* CONTENEDOR AUTOCOMPLETADO CRM */
         .input-wrapper { position: relative; width: 100%; }
         
@@ -286,8 +307,6 @@
             background: #2d3748; 
             color: var(--gold); 
         }
-        
-        .sugerencia-item:last-child { border-bottom: none; }
 
         input, select { 
             width: 100%; 
@@ -395,17 +414,37 @@
         
         .btn-cobrar:hover { 
             background: var(--success-hover); 
+            filter: brightness(1.1); 
         }
         
         .btn-cobrar:disabled { 
-            background: var(--bg-input); 
-            color: var(--text-muted); 
+            background: var(--bg-input) !important; 
+            color: var(--text-muted) !important; 
             cursor: not-allowed; 
         }
 
-        /* ==========================================
-           HISTORIAL DE VENTAS
-        ========================================== */
+        /* 🚀 BOTÓN DE TERMINAL MERCADO PAGO 🚀 */
+        .btn-terminal { 
+            background: var(--mp-blue); 
+            color: white; 
+            border: none; 
+            width: 100%; 
+            padding: 15px; 
+            font-size: 13px; 
+            font-weight: 800; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            transition: 0.3s; 
+            margin-bottom: 10px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            gap: 10px;
+        }
+
+        /* HISTORIAL ITEMS */
         .venta-item { 
             background: var(--bg-input); 
             padding: 12px; 
@@ -453,9 +492,7 @@
             align-items: center; 
         }
 
-        /* ==========================================
-           DRAG AND DROP EN CATÁLOGO
-        ========================================== */
+        /* DRAG AND DROP EN CATÁLOGO */
         .item-draggable { 
             display: flex; 
             justify-content: space-between; 
@@ -482,9 +519,7 @@
             padding-right: 12px; 
         }
 
-        /* ==========================================
-           DISEÑO MÓVIL
-        ========================================== */
+        /* PWA RESPONSIVE */
         @media (max-width: 850px) {
             body { height: auto; overflow-y: auto; }
             #posPanel { height: auto !important; }
@@ -503,29 +538,54 @@
             .cita-item { flex-direction: column; align-items: flex-start; gap: 10px;}
         }
 
-        /* ==========================================
-           MODALES Y NOTIFICACIONES
-        ========================================== */
-        .panel-login-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-body); z-index: 1000; display: flex; justify-content: center; align-items: center; }
-        .login-card { background: var(--bg-panel); padding: 40px; border-radius: 16px; border-top: 4px solid var(--gold); text-align: center; width: 90%; max-width: 350px; }
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center; z-index: 500; }
-        .modal-content { background: var(--bg-panel); padding: 30px; border-radius: 15px; width: 90%; max-width: 600px; border: 1px solid var(--border); max-height: 90vh; overflow-y: auto; }
+        /* MODALES Y LOGIN */
+        .panel-login-container { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: var(--bg-body); z-index: 1000; display: flex; 
+            justify-content: center; align-items: center; 
+        }
+        .login-card { 
+            background: var(--bg-panel); padding: 40px; border-radius: 16px; 
+            border-top: 4px solid var(--gold); text-align: center; width: 90%; max-width: 350px; 
+        }
+        .modal-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.8); display: none; justify-content: center; 
+            align-items: center; z-index: 500; 
+        }
+        .modal-content { 
+            background: var(--bg-panel); padding: 30px; border-radius: 15px; 
+            width: 90%; max-width: 600px; border: 1px solid var(--border); 
+            max-height: 90vh; overflow-y: auto; 
+        }
 
-        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
-        .toast { background: var(--success); color: white; padding: 15px 25px; border-radius: 8px; font-weight: 600; font-size: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); animation: slideIn 0.3s ease-out; display: flex; align-items: center; gap: 10px; letter-spacing: 1px; border-left: 5px solid rgba(0,0,0,0.3);}
+        /* NOTIFICACIONES */
+        #toast-container { 
+            position: fixed; bottom: 20px; right: 20px; z-index: 9999; 
+            display: flex; flex-direction: column; gap: 10px; pointer-events: none; 
+        }
+        .toast { 
+            background: var(--success); color: white; padding: 15px 25px; 
+            border-radius: 8px; font-weight: 600; font-size: 14px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6); animation: slideIn 0.3s ease-out; 
+            display: flex; align-items: center; gap: 10px; letter-spacing: 1px; 
+            border-left: 5px solid rgba(0,0,0,0.3);
+        }
         .toast.error { background: var(--danger); }
         .toast.info { background: var(--blue); }
-        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        
+        @keyframes slideIn { 
+            from { transform: translateX(100%); opacity: 0; } 
+            to { transform: translateX(0); opacity: 1; } 
+        }
 
-        /* LÍNEAS DE PAGO (CAJA) */
+        /* LÍNEAS DE PAGO */
         .linea-pago { display: flex; gap: 10px; margin-bottom: 10px; align-items: center; }
         .linea-pago select { margin: 0; flex: 1; }
         .linea-pago input { margin: 0; flex: 1; text-align: right; font-size: 16px; font-weight: bold; color: var(--gold); }
         .btn-quitar-pago { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 18px; padding: 0 5px; }
 
-        /* ==========================================
-           ZONA IMPRESIÓN DEL TICKET
-        ========================================== */
+        /* ZONA IMPRESIÓN */
         #zonaImpresion { display: none; }
         
         @media print {
@@ -627,7 +687,6 @@
         </header>
 
         <div class="main-container">
-            
             <div class="panel-izquierdo">
                 <div id="seccionCatalogo">
                     <h3 style="color:var(--gold); font-weight:300; margin-top:0;">SERVICIOS</h3>
@@ -650,22 +709,27 @@
 
                     <input type="text" id="telefonoCliente" placeholder="WhatsApp (10 dígitos)" autocomplete="off">
                     
-                    <div style="display: flex; gap: 10px; margin-top: 10px;">
-                        <label class="vip-toggle" style="flex: 1; margin-top: 0;">
-                            <input type="checkbox" id="esVIP">
-                            <span>⭐ CITA VIP</span>
+                    <label class="vip-toggle" style="margin-top: 10px;">
+                        <input type="checkbox" id="esVIP">
+                        <span>⭐ CITA VIP (Prioridad)</span>
+                    </label>
+
+                    <div class="switch-container">
+                        <div>
+                            <span style="color: var(--blue); font-weight: bold; font-size: 12px; display:block;">👥 MODO GRUPO</span>
+                            <span style="color: var(--text-muted); font-size: 10px;">Une los cobros en un solo ticket en TV</span>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="toggleModoGrupo" onchange="manejarModoGrupo(this)">
+                            <span class="slider"></span>
                         </label>
-                        
-                        <label class="vip-toggle" style="flex: 1; margin-top: 0; border-color: var(--blue);" title="Si lo marcas, este cobro se fusionará con el último cliente en TV">
-                            <input type="checkbox" id="esGrupo">
-                            <span style="color: var(--blue);">👥 UNIR A GRUPO</span>
-                        </label>
+                    </div>
+                    <div id="grupoActivoAlerta" style="display:none; color: var(--success); font-size: 10px; font-weight: bold; margin-top: 6px; text-align: right;">
+                        🟢 Agregando al grupo de Producción...
                     </div>
 
                 </div>
-                
                 <div class="lista-carrito" id="contenedorCarrito"></div>
-                
                 <div class="resumen-cobro">
                     <div class="total-box">
                         <span style="color:var(--text-muted)">TOTAL:</span>
@@ -707,7 +771,12 @@
 
             <div id="mpLineasPago" style="margin-bottom:15px;"></div>
             
-            <button class="btn-nav" onclick="agregarLineaPago()" style="width:100%; border-style:dashed; margin-bottom:20px; padding:12px; font-size:13px;">➕ Añadir forma de pago (Dividir Cuenta)</button>
+            <button class="btn-nav" onclick="agregarLineaPago()" style="width:100%; border-style:dashed; margin-bottom:20px; padding:12px; font-size:13px;">➕ Añadir forma de pago</button>
+            
+            <button class="btn-terminal" id="btnTerminalMP" onclick="iniciarCobroTerminalCaja()" style="display:none;">
+                <span>📲 MANDAR COBRO A TERMINAL</span>
+            </button>
+            <div id="statusTerminalMP" style="text-align:center; font-size:12px; font-weight:bold; margin-bottom:15px; display:none;"></div>
 
             <div style="background:#0e1420; padding:20px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-left: 5px solid var(--blue);">
                 <div>
@@ -754,7 +823,6 @@
     <div class="modal-overlay" id="modalCatalogo">
         <div class="modal-content" style="max-width: 600px;">
             <h2 style="color:var(--gold); margin-top:0; font-size:14px;">⚙️ GESTIÓN DE CATÁLOGO</h2>
-            
             <form id="formNuevoProducto" style="margin-bottom: 15px; background: #192233; padding: 15px; border-radius: 8px;">
                 <input type="text" id="prodNombre" placeholder="Título Corto (Ej. Infantil TSU)" required style="font-weight:bold;">
                 <input type="text" id="prodDesc" placeholder="Descripción Detallada (Ej. 7 fotos con retoque...)" autocomplete="off">
@@ -764,7 +832,6 @@
                 </div>
                 <button type="submit" id="btnGuardarCatalogo" class="btn-cobrar" style="background:var(--gold); color:black; padding:12px; font-size:12px;">Guardar Servicio</button>
             </form>
-            
             <p style="font-size: 10px; color: var(--text-muted); margin-bottom: 8px;">Mantén presionado ☰ para arrastrar y cambiar el orden.</p>
             
             <div id="listaInventarioAdmin" style="max-height:250px; overflow-y:auto; border-top: 1px solid var(--border); padding-top: 10px;"></div>
@@ -786,6 +853,13 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <script>
+        // ============================================================================
+        // CREDENCIALES DE MERCADO PAGO Y FIREBASE
+        // ============================================================================
+        const MP_ACCESS_TOKEN = "APP_USR-938695069288041-041601-a301efbbe0fe574f80ba519ed73ac903-560333709"; // 🔴 PEGA TU ACCESS TOKEN AQUÍ
+        const MP_DEVICE_ID = "PAX_A910__SMARTPOS1495009992"; // 🔴 PEGA TU DEVICE ID AQUÍ
+
+
         const firebaseConfig = {
             apiKey: "AIzaSyAn0H-50sbh8sMcqn_k8IlVnJX6ko58ws4",
             authDomain: "sistemafotos-cf459.firebaseapp.com",
@@ -815,12 +889,19 @@
         let totalNetoPagar = 0; 
         let lineasDePago = [];
         
+        let mpCajaInterval = null; // Para detener la búsqueda de la terminal en la caja
+        
         let configTicketPromo = { activo: false, titulo: '', texto: '', link: '' };
         
         db.ref('configuracion/ticketPromo').on('value', snap => { 
-            if(snap.exists()) { configTicketPromo = snap.val(); } 
+            if(snap.exists()) { 
+                configTicketPromo = snap.val(); 
+            } 
         });
 
+        // ----------------------------------------------------
+        // NOTIFICACIONES
+        // ----------------------------------------------------
         function mostrarNotificacion(mensaje, tipo = 'success') { 
             const container = document.getElementById('toast-container'); 
             const toast = document.createElement('div'); 
@@ -835,11 +916,15 @@
             }, 4000); 
         }
 
+        // ----------------------------------------------------
+        // AUTENTICACIÓN
+        // ----------------------------------------------------
         firebase.auth().onAuthStateChanged(user => {
             if (user) { 
                 document.getElementById('loginPanel').style.display = 'none'; 
                 document.getElementById('posPanel').style.display = 'flex'; 
                 esJefe = (user.email.toLowerCase() === EMAIL_ADMIN.toLowerCase()); 
+                
                 iniciarPOS(); 
                 escucharVentasRecientes(); 
                 escucharDirectorioClientes(); 
@@ -853,11 +938,32 @@
 
         document.getElementById('formLogin').addEventListener('submit', e => { 
             e.preventDefault(); 
-            firebase.auth().signInWithEmailAndPassword(document.getElementById('email').value, document.getElementById('password').value)
-                .catch(() => alert("Credenciales incorrectas")); 
+            firebase.auth().signInWithEmailAndPassword(
+                document.getElementById('email').value, 
+                document.getElementById('password').value
+            ).catch(() => alert("Credenciales incorrectas")); 
         });
 
-        // --- SISTEMA KIOSCO ---
+        // ----------------------------------------------------
+        // LÓGICA DE GRUPO (TOGGLE)
+        // ----------------------------------------------------
+        window.manejarModoGrupo = function(checkbox) {
+            const alerta = document.getElementById('grupoActivoAlerta');
+            if (checkbox.checked) {
+                window.grupoActivoTurnoId = null; 
+                alerta.style.display = 'block';
+                alerta.innerText = "🟢 El próximo cobro creará el Grupo...";
+                alerta.style.color = "var(--gold)";
+            } else {
+                window.grupoActivoTurnoId = null;
+                alerta.style.display = 'none';
+                mostrarNotificacion("🚫 Modo Grupo Desactivado", "info");
+            }
+        };
+
+        // ----------------------------------------------------
+        // KIOSCO
+        // ----------------------------------------------------
         function escucharKiosco() { 
             db.ref('pedidosKiosco').on('value', snap => { 
                 const btn = document.getElementById('btnKiosco'); 
@@ -884,7 +990,10 @@
                 let primerPedido = null; 
                 
                 snap.forEach(child => { 
-                    if(!primerID) { primerID = child.key; primerPedido = child.val(); } 
+                    if(!primerID) { 
+                        primerID = child.key; 
+                        primerPedido = child.val(); 
+                    } 
                 }); 
                 
                 if(confirm(`¿Cargar el pedido de ${primerPedido.cliente} a la caja?`)) { 
@@ -905,13 +1014,21 @@
                     actualizarUI(); 
                     db.ref('pedidosKiosco/' + primerID).remove(); 
                     mostrarNotificacion("✅ Pedido del Kiosco cargado correctamente."); 
+                    
+                    // Si ya pagaron en el Kiosco con la terminal
+                    if(primerPedido.metodoElegido === "Mercado Pago Terminal") {
+                        mostrarNotificacion("💳 Este pedido YA FUE PAGADO en el Kiosco", "info");
+                        // Preparamos la linea de pago en Tarjeta con el total
+                        lineasDePago = [{ id: Date.now(), metodo: 'Tarjeta', monto: subtotalCarrito }];
+                    }
                 } 
             }); 
         }
 
-        // --- SISTEMA DE CITAS ---
+        // ----------------------------------------------------
+        // CITAS WEB
+        // ----------------------------------------------------
         let memoriaCitasPOS = {};
-        
         function escucharCitasPendientesWeb() { 
             db.ref('citasWeb').on('value', snap => { 
                 const btnNotif = document.getElementById('btnNotifCitas'); 
@@ -981,7 +1098,9 @@
             db.ref('citasWeb/' + id).remove(); 
         };
 
-        // --- DIRECTORIO CRM ---
+        // ----------------------------------------------------
+        // CRM Y DIRECTORIO
+        // ----------------------------------------------------
         function escucharDirectorioClientes() { 
             db.ref('clientes').on('value', snap => { 
                 baseClientes = []; 
@@ -1070,26 +1189,41 @@
             if (v > 0) { 
                 badge.style.display = 'inline-block'; 
                 if (v >= 5 || g >= 2000) { 
-                    badge.style.background = 'var(--gold)'; badge.style.color = 'black'; badge.innerHTML = `👑 PLATINO (${v} Visitas)`; 
+                    badge.style.background = 'var(--gold)'; 
+                    badge.style.color = 'black'; 
+                    badge.innerHTML = `👑 PLATINO (${v} Visitas)`; 
                 } else if (v >= 3) { 
-                    badge.style.background = 'var(--blue)'; badge.style.color = 'white'; badge.innerHTML = `💎 FRECUENTE (${v} Visitas)`; 
+                    badge.style.background = 'var(--blue)'; 
+                    badge.style.color = 'white'; 
+                    badge.innerHTML = `💎 FRECUENTE (${v} Visitas)`; 
                 } else { 
-                    badge.style.background = 'var(--success)'; badge.style.color = 'white'; badge.innerHTML = `🌟 CONOCIDO (${v} Visitas)`; 
+                    badge.style.background = 'var(--success)'; 
+                    badge.style.color = 'white'; 
+                    badge.innerHTML = `🌟 CONOCIDO (${v} Visitas)`; 
                 } 
             } else { 
                 badge.style.display = 'none'; 
             } 
         };
 
-        // --- SISTEMA DE FOLIOS ---
+        // ----------------------------------------------------
+        // FOLIOS Y CAJA CHICA
+        // ----------------------------------------------------
         function generarFolioConsecutivo(carrito, callback) { 
             let textoCarrito = carrito.map(p => String(p.nombre || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()).join(" "); 
             let categoriaDB = "general"; 
             let numBase = 40000; 
             
-            if (textoCarrito.includes("titul")) { categoriaDB = "titulacion"; numBase = 10000; } 
-            else if (textoCarrito.includes("servicio") || textoCarrito.includes("serv")) { categoriaDB = "servicio"; numBase = 20000; } 
-            else if (textoCarrito.includes("infantil") || textoCarrito.includes("infan")) { categoriaDB = "infantil"; numBase = 30000; } 
+            if (textoCarrito.includes("titul")) { 
+                categoriaDB = "titulacion"; 
+                numBase = 10000; 
+            } else if (textoCarrito.includes("servicio") || textoCarrito.includes("serv")) { 
+                categoriaDB = "servicio"; 
+                numBase = 20000; 
+            } else if (textoCarrito.includes("infantil") || textoCarrito.includes("infan")) { 
+                categoriaDB = "infantil"; 
+                numBase = 30000; 
+            } 
             
             db.ref('configuracion/folios/' + categoriaDB).transaction( 
                 function(val) { return (val || numBase) + 1; }, 
@@ -1105,6 +1239,7 @@
             const tipo = document.getElementById('tipoMovimiento').value; 
             const concepto = document.getElementById('conceptoMovimiento').value.trim(); 
             const monto = parseFloat(document.getElementById('montoMovimiento').value); 
+            
             const tic = "CAJA-" + Math.floor(1000 + Math.random() * 9000); 
             const f = new Date().toLocaleString('es-MX', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true }); 
             const totalReal = tipo === 'retiro' ? -Math.abs(monto) : Math.abs(monto); 
@@ -1125,12 +1260,15 @@
             }); 
         });
 
-        // --- CATÁLOGO CON DRAG & DROP CORRECTO ---
+        // ----------------------------------------------------
+        // CATÁLOGO Y DRAG AND DROP
+        // ----------------------------------------------------
         function iniciarPOS() {
             db.ref('productos').on('value', snap => {
                 inventario = []; 
                 const cont = document.getElementById('contenedorProductos'); 
                 const listaAdm = document.getElementById('listaInventarioAdmin');
+                
                 cont.innerHTML = ''; 
                 listaAdm.innerHTML = '';
                 
@@ -1141,7 +1279,6 @@
                     arr.push({ id: child.key, ...child.val() }); 
                 });
                 
-                // Ordenar por el número guardado en la base de datos
                 arr.sort((a, b) => (a.orden || 0) - (b.orden || 0));
 
                 arr.forEach(p => {
@@ -1158,7 +1295,6 @@
                     const nomS = p.nombre.replace(/'/g, "\\'"); 
                     const descS = (p.descripcion || '').replace(/'/g, "\\'");
                     
-                    // AQUI ESTÁ EL TRUCO: draggable="true" ESTÁ ACTIVO
                     listaAdm.innerHTML += `
                         <div class="item-draggable" draggable="true" data-id="${p.id}">
                             <div style="display:flex; align-items:center; gap:10px; width:70%;">
@@ -1175,19 +1311,19 @@
                         </div>`;
                 });
                 
-                // Activar eventos del Drag and Drop
                 activarDrag();
             });
         }
 
-        // LÓGICA DRAG AND DROP
         function activarDrag() {
             const list = document.getElementById('listaInventarioAdmin'); 
             let drg = null;
             
             list.addEventListener('dragstart', e => { 
                 drg = e.target.closest('.item-draggable'); 
-                if(drg) setTimeout(() => drg.classList.add('dragging'), 0); 
+                if(drg) {
+                    setTimeout(() => drg.classList.add('dragging'), 0); 
+                }
             });
             
             list.addEventListener('dragend', e => { 
@@ -1238,6 +1374,7 @@
             document.getElementById('prodDesc').value = desc; 
             document.getElementById('prodPrecio').value = pre; 
             document.getElementById('prodTiempo').value = tiem; 
+            
             const b = document.getElementById('btnGuardarCatalogo'); 
             b.innerText = "🔄 Actualizar"; 
             b.style.background = "var(--blue)"; 
@@ -1247,6 +1384,7 @@
         function resetFormCatalogo() { 
             document.getElementById('formNuevoProducto').reset(); 
             window.productoEditandoId = null; 
+            
             const b = document.getElementById('btnGuardarCatalogo'); 
             b.innerText = "Guardar Servicio"; 
             b.style.background = "var(--gold)"; 
@@ -1261,18 +1399,35 @@
             const t = parseInt(document.getElementById('prodTiempo').value);
             
             if (window.productoEditandoId) { 
-                db.ref('productos/' + window.productoEditandoId).update({ nombre: n, descripcion: d, precio: p, tiempoMinutos: t }).then(() => { mostrarNotificacion("✅ Actualizado"); resetFormCatalogo(); }); 
+                db.ref('productos/' + window.productoEditandoId).update({ 
+                    nombre: n, descripcion: d, precio: p, tiempoMinutos: t 
+                }).then(() => { 
+                    mostrarNotificacion("✅ Actualizado"); 
+                    resetFormCatalogo(); 
+                }); 
             } else { 
-                db.ref('productos').push({ nombre: n, descripcion: d, precio: p, tiempoMinutos: t, orden: inventario.length }).then(() => { mostrarNotificacion("✅ Creado"); resetFormCatalogo(); }); 
+                db.ref('productos').push({ 
+                    nombre: n, descripcion: d, precio: p, tiempoMinutos: t, orden: inventario.length 
+                }).then(() => { 
+                    mostrarNotificacion("✅ Creado"); 
+                    resetFormCatalogo(); 
+                }); 
             }
         });
 
-        // --- CARRITO ---
+        // ----------------------------------------------------
+        // CARRITO
+        // ----------------------------------------------------
         function agregarAlCarrito(id) { 
             const p = inventario.find(i => i.id === id); 
             const ex = carrito.find(i => i.id === id); 
-            if (ex) { ex.cantidad++; } 
-            else { carrito.push({ ...p, cantidad: 1 }); } 
+            
+            if (ex) { 
+                ex.cantidad++; 
+            } else { 
+                carrito.push({ ...p, cantidad: 1 }); 
+            } 
+            
             actualizarUI(); 
         }
         
@@ -1313,19 +1468,27 @@
             document.getElementById('btnCobrar').disabled = false;
         }
 
-        // --- MÓDULO DE PAGOS AVANZADOS ---
+        // ----------------------------------------------------
+        // MÓDULO DE PAGOS AVANZADOS
+        // ----------------------------------------------------
         function abrirModalPagoAvanzado() { 
             document.getElementById('mpValorDesc').value = '0'; 
-            lineasDePago = [{ id: Date.now(), metodo: 'Efectivo', monto: subtotalCarrito }]; 
+            
+            if(lineasDePago.length === 0) {
+                lineasDePago = [{ id: Date.now(), metodo: 'Efectivo', monto: subtotalCarrito }]; 
+            }
+            
             document.getElementById('modalPagoAvanzado').style.display = 'flex'; 
             renderizarLineasPago(); 
             calcularTotalesPago(); 
         }
         
         function cerrarModalPagoAvanzado() { 
+            if(mpCajaInterval) clearInterval(mpCajaInterval);
+            document.getElementById('statusTerminalMP').style.display = 'none';
             document.getElementById('modalPagoAvanzado').style.display = 'none'; 
         }
-        
+
         function agregarLineaPago() { 
             lineasDePago.push({ id: Date.now(), metodo: 'Tarjeta', monto: 0 }); 
             renderizarLineasPago(); 
@@ -1334,7 +1497,9 @@
         
         function quitarLineaPago(id) { 
             lineasDePago = lineasDePago.filter(p => p.id !== id); 
-            if(lineasDePago.length === 0) lineasDePago.push({ id: Date.now(), metodo: 'Efectivo', monto: 0 }); 
+            if(lineasDePago.length === 0) {
+                lineasDePago.push({ id: Date.now(), metodo: 'Efectivo', monto: 0 }); 
+            }
             renderizarLineasPago(); 
             calcularTotalesPago(); 
         }
@@ -1354,7 +1519,11 @@
         function renderizarLineasPago() { 
             const cont = document.getElementById('mpLineasPago'); 
             cont.innerHTML = ''; 
+            let hayTarjeta = false;
+            
             lineasDePago.forEach(linea => { 
+                if(linea.metodo === 'Tarjeta') hayTarjeta = true;
+                
                 cont.innerHTML += `
                     <div class="linea-pago">
                         <select onchange="actualizarMetodoLinea(${linea.id}, this.value)">
@@ -1366,6 +1535,14 @@
                         <button class="btn-quitar-pago" onclick="quitarLineaPago(${linea.id})">✖</button>
                     </div>`; 
             }); 
+
+            // Mostrar el botón de mandar a la terminal solo si hay una línea que dice "Tarjeta"
+            const btnMP = document.getElementById('btnTerminalMP');
+            if(hayTarjeta) {
+                btnMP.style.display = 'flex';
+            } else {
+                btnMP.style.display = 'none';
+            }
         }
 
         function calcularTotalesPago() {
@@ -1373,8 +1550,11 @@
             const valorDesc = parseFloat(document.getElementById('mpValorDesc').value) || 0; 
             
             descuentoTotal = 0; 
-            if (tipoDesc === 'fijo') { descuentoTotal = valorDesc; } 
-            else if (tipoDesc === 'porcentaje') { descuentoTotal = subtotalCarrito * (valorDesc / 100); }
+            if (tipoDesc === 'fijo') { 
+                descuentoTotal = valorDesc; 
+            } else if (tipoDesc === 'porcentaje') { 
+                descuentoTotal = subtotalCarrito * (valorDesc / 100); 
+            }
             
             if (descuentoTotal > subtotalCarrito) descuentoTotal = subtotalCarrito; 
             totalNetoPagar = subtotalCarrito - descuentoTotal;
@@ -1391,14 +1571,13 @@
             const valSaldo = document.getElementById('mpValorSaldo'); 
             const btnConf = document.getElementById('btnConfirmarPagoFinal');
             
-            // LA MAGIA DEL BOTÓN DE FIADO
+            // LÓGICA DEL BOTÓN
             if (sumaPagos === 0 && totalNetoPagar > 0) { 
                 lblSaldo.innerText = "SE PAGA EN ENTREGA:"; 
                 lblSaldo.style.color = "var(--danger)"; 
                 valSaldo.innerText = `$${totalNetoPagar.toFixed(2)}`; 
                 valSaldo.style.color = "var(--danger)"; 
                 
-                // NO SE BLOQUEA EL BOTON
                 btnConf.disabled = false; 
                 btnConf.innerText = "ENVIAR (SIN PAGO)"; 
                 btnConf.style.background = "var(--danger)";
@@ -1435,16 +1614,113 @@
                 } 
                 
                 btnConf.disabled = false; 
-                btnConf.innerText = "COBRAR TOTAL"; 
+                btnConf.innerText = "COBRAR E IMPRIMIR"; 
                 btnConf.style.background = "var(--success)";
+            }
+            
+            renderizarLineasPago(); 
+        }
+
+        // ----------------------------------------------------
+        // 🚀 INTEGRACIÓN REAL: MANDAR A TERMINAL DESDE LA CAJA
+        // ----------------------------------------------------
+        async function iniciarCobroTerminalCaja() {
+            let lineaTarjeta = lineasDePago.find(l => l.metodo === 'Tarjeta');
+            if(!lineaTarjeta || lineaTarjeta.monto <= 0) {
+                return alert("El monto de la tarjeta debe ser mayor a 0");
+            }
+
+            const statusUI = document.getElementById('statusTerminalMP');
+            statusUI.style.display = 'block';
+            statusUI.style.color = "var(--gold)";
+            statusUI.innerText = "Enviando señal a la terminal...";
+
+            const urlCrear = `https://api.mercadopago.com/point/integration-api/devices/${MP_DEVICE_ID}/payment-intents`;
+            const dataPost = {
+                amount: lineaTarjeta.monto,
+                description: "Cobro Caja Deluxe",
+                payment: { 
+                    installments: 1, 
+                    type: "credit_card", 
+                    installments_cost: "seller" 
+                }
+            };
+
+            try {
+                const response = await fetch(urlCrear, {
+                    method: 'POST',
+                    headers: { 
+                        'Authorization': `Bearer ${MP_ACCESS_TOKEN}`, 
+                        'Content-Type': 'application/json' 
+                    },
+                    body: JSON.stringify(dataPost)
+                });
+
+                const dataResponse = await response.json();
+
+                if(response.ok && dataResponse.id) {
+                    statusUI.style.color = "var(--mp-blue)";
+                    statusUI.innerText = "Terminal lista. Pase la tarjeta del cliente...";
+                    
+                    // Iniciar Polling (espera de respuesta)
+                    verificarEstatusPagoCaja(dataResponse.id);
+                } else {
+                    statusUI.style.color = "var(--danger)";
+                    statusUI.innerText = "Error: Terminal apagada o desvinculada.";
+                    console.error("Error MP:", dataResponse);
+                }
+            } catch(e) {
+                statusUI.style.color = "var(--danger)";
+                statusUI.innerText = "Error de internet al conectar con Mercado Pago.";
+                console.error("Error Fetch:", e);
             }
         }
 
-        // --- LÓGICA DE FUSIÓN (GRUPOS) ---
+        function verificarEstatusPagoCaja(intentId) {
+            const statusUI = document.getElementById('statusTerminalMP');
+            const urlRevisar = `https://api.mercadopago.com/point/integration-api/payment-intents/${intentId}`;
+
+            mpCajaInterval = setInterval(async () => {
+                try {
+                    const response = await fetch(urlRevisar, { 
+                        method: 'GET', 
+                        headers: { 'Authorization': `Bearer ${MP_ACCESS_TOKEN}` } 
+                    });
+                    
+                    const statusData = await response.json();
+
+                    if (statusData.state === 'FINISHED') {
+                        // El cliente pagó exitosamente
+                        clearInterval(mpCajaInterval);
+                        statusUI.style.color = "var(--success)";
+                        statusUI.innerText = "¡PAGO APROBADO EN TERMINAL! Procesando orden...";
+                        
+                        // Guardamos e imprimimos automáticamente
+                        setTimeout(() => {
+                            confirmarPagoAvanzado();
+                        }, 1000);
+
+                    } else if (statusData.state === 'CANCELED' || statusData.state === 'ERROR') {
+                        // El pago fue rechazado
+                        clearInterval(mpCajaInterval);
+                        statusUI.style.color = "var(--danger)";
+                        statusUI.innerText = "Pago rechazado o cancelado en la terminal.";
+                    }
+                } catch(e) { 
+                    console.error("Error en polling:", e);
+                }
+            }, 3000);
+        }
+
+        // ----------------------------------------------------
+        // GUARDAR ORDEN FINAL EN BASE DE DATOS
+        // ----------------------------------------------------
         function confirmarPagoAvanzado() {
+            if(mpCajaInterval) clearInterval(mpCajaInterval);
+
             let sumaPagos = lineasDePago.reduce((sum, p) => sum + p.monto, 0); 
             
-            // Bloqueo si está todo en cero y el carrito también
+            // Bloqueo de seguridad
             if (sumaPagos === 0 && totalNetoPagar === 0) return;
             
             const btnConf = document.getElementById('btnConfirmarPagoFinal'); 
@@ -1455,7 +1731,6 @@
                 if(!folioNuevo) { 
                     btnConf.disabled = false; 
                     btnConf.innerText = "COBRAR TOTAL"; 
-                    mostrarNotificacion("Error al generar folio", "error"); 
                     return; 
                 }
                 
@@ -1464,26 +1739,35 @@
                 
                 const tel = document.getElementById('telefonoCliente').value.trim(); 
                 const esVIP = document.getElementById('esVIP') ? document.getElementById('esVIP').checked : false; 
-                const quiereGrupo = document.getElementById('esGrupo') ? document.getElementById('esGrupo').checked : false; 
+                const esGrupo = document.getElementById('toggleModoGrupo') ? document.getElementById('toggleModoGrupo').checked : false;
                 
                 const fechaActual = new Date();
-                const f = fechaActual.toLocaleString('es-MX', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true });
+                const f = fechaActual.toLocaleString('es-MX');
                 const horaActualStr = fechaActual.toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true});
                 
                 let saldoPendiente = sumaPagos < totalNetoPagar ? totalNetoPagar - sumaPagos : 0; 
                 let metodoPrincipal = lineasDePago.length > 1 ? "Múltiple" : (sumaPagos === 0 ? "Pendiente" : lineasDePago[0].metodo);
 
-                // ACTUALIZAR CRM
+                // GUARDAR EN CRM
                 if(nom !== "GENERAL") { 
-                    let clienteGuardado = baseClientes.find(c => c && c.nombre && String(c.nombre).toUpperCase() === nom); 
-                    if(clienteGuardado) { 
-                        db.ref('clientes/' + clienteGuardado.id).update({ visitas: (clienteGuardado.visitas || 0) + 1, gastado: (clienteGuardado.gastado || 0) + totalNetoPagar, telefono: tel || clienteGuardado.telefono }); 
+                    let cg = baseClientes.find(c => c && c.nombre && String(c.nombre).toUpperCase() === nom); 
+                    if(cg) { 
+                        db.ref('clientes/' + cg.id).update({ 
+                            visitas: (cg.visitas || 0) + 1, 
+                            gastado: (cg.gastado || 0) + totalNetoPagar, 
+                            telefono: tel || cg.telefono 
+                        }); 
                     } else { 
-                        db.ref('clientes').push({ nombre: nom, telefono: tel || "", visitas: 1, gastado: totalNetoPagar }); 
+                        db.ref('clientes').push({ 
+                            nombre: nom, 
+                            telefono: tel || "", 
+                            visitas: 1, 
+                            gastado: totalNetoPagar 
+                        }); 
                     } 
                 }
 
-                // SIEMPRE CREA UNA VENTA NUEVA (Para historial y Finanzas)
+                // GUARDAR EN VENTAS (Para Finanzas)
                 const dataVenta = { 
                     ticket: folioNuevo, 
                     cliente: nom, 
@@ -1500,68 +1784,80 @@
                     carrito: carrito, 
                     esVIP: esVIP 
                 };
+                
                 db.ref('ventas').push(dataVenta);
 
                 let minsTotal = carrito.reduce((sum, p) => sum + ((p.tiempoMinutos || 0) * p.cantidad), 0); 
                 let serviciosText = carrito.map(i => `${i.cantidad}x ${i.nombre}`).join(' + ');
+                let carritoParaProduccion = carrito.map(item => ({ 
+                    nombre: item.nombre, 
+                    cantidad: item.cantidad, 
+                    descripcion: item.descripcion || "" 
+                }));
 
-                // --- EVALUAR SI SE UNE A GRUPO O SE CREA TURNO NUEVO ---
+                // ===============================================
+                // GUARDAR EN PRODUCCIÓN (TURNOS Y GRUPOS)
+                // ===============================================
                 db.ref('turnos').once('value', snap => {
                     let turnosActivos = [];
-                    if (snap.exists()) {
-                        snap.forEach(child => {
-                            let t = child.val();
-                            if(t.estado === 'pendiente') {
-                                turnosActivos.push({key: child.key, ...t});
-                            }
-                        });
+                    if (snap.exists()) { 
+                        snap.forEach(child => { 
+                            let t = child.val(); 
+                            if(t.estado === 'pendiente') { 
+                                turnosActivos.push({key: child.key, ...t}); 
+                            } 
+                        }); 
                     }
                     
                     let actualizaciones = {};
+                    let tiempoBaseActual = Date.now(); 
 
-                    // SI MARCÓ LA CASILLA DE GRUPO Y HAY TURNOS PENDIENTES
-                    if (quiereGrupo && turnosActivos.length > 0) {
-                        // Toma el turno que fue creado al final de la fila
-                        turnosActivos.sort((a,b) => a.timestampEntrega - b.timestampEntrega);
-                        let turnoPadre = turnosActivos[turnosActivos.length - 1]; 
+                    // --- LÓGICA DE FUSIÓN (MODO GRUPO) ---
+                    if (esGrupo && window.grupoActivoTurnoId) {
+                        let tGrupo = turnosActivos.find(x => x.key === window.grupoActivoTurnoId);
+                        
+                        if (tGrupo) {
+                            let nuevoNombre = tGrupo.nombre;
+                            if (!nuevoNombre.includes("GRUPO DE")) nuevoNombre = "GRUPO DE " + tGrupo.nombre.split(" + ")[0];
+                            if (!nuevoNombre.includes(nom)) nuevoNombre += " + " + nom;
 
-                        if (turnoPadre) {
-                            let nuevoTicket = turnoPadre.numeroTicket + ", " + folioNuevo;
-                            let nuevoServicio = turnoPadre.servicio + " + " + serviciosText;
-                            let nuevosMins = (turnoPadre.minutosServicio || 0) + minsTotal;
-                            let nuevoSaldo = (turnoPadre.saldoPendiente || 0) + saldoPendiente;
-                            let nuevoTotalVenta = (turnoPadre.totalVenta || 0) + totalNetoPagar;
-                            let nuevoTiempoFinal = turnoPadre.timestampEntrega + (minsTotal * 60000);
+                            let nTicket = tGrupo.numeroTicket + ", " + folioNuevo;
+                            let nServ = tGrupo.servicio + " + " + serviciosText;
+                            let nMins = (tGrupo.minutosServicio || 0) + minsTotal;
+                            let nSal = (tGrupo.saldoPendiente || 0) + saldoPendiente;
+                            let nTot = (tGrupo.totalVenta || 0) + totalNetoPagar;
+                            let nTFinal = tGrupo.timestampEntrega + (minsTotal * 60000);
+                            
+                            let nuevoCarritoGrupo = (tGrupo.carrito || []).concat(carritoParaProduccion);
 
-                            // Lógica de nombre para Grupo
-                            let nuevoNombre = turnoPadre.nombre;
-                            if (!nuevoNombre.includes("GRUPO DE")) {
-                                nuevoNombre = "GRUPO DE " + turnoPadre.nombre.split(" + ")[0];
-                            }
-                            if (nom !== "GENERAL" && !nuevoNombre.includes(nom)) {
-                                nuevoNombre += " + " + nom;
-                            }
+                            actualizaciones[`turnos/${tGrupo.key}/nombre`] = nuevoNombre;
+                            actualizaciones[`turnos/${tGrupo.key}/numeroTicket`] = nTicket;
+                            actualizaciones[`turnos/${tGrupo.key}/servicio`] = nServ;
+                            actualizaciones[`turnos/${tGrupo.key}/minutosServicio`] = nMins;
+                            actualizaciones[`turnos/${tGrupo.key}/saldoPendiente`] = nSal;
+                            actualizaciones[`turnos/${tGrupo.key}/totalVenta`] = nTot;
+                            actualizaciones[`turnos/${tGrupo.key}/timestampEntrega`] = nTFinal;
+                            actualizaciones[`turnos/${tGrupo.key}/carrito`] = nuevoCarritoGrupo;
+                            actualizaciones[`turnos/${tGrupo.key}/horaFormateada`] = new Date(nTFinal).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true});
 
-                            actualizaciones[`turnos/${turnoPadre.key}/nombre`] = nuevoNombre;
-                            actualizaciones[`turnos/${turnoPadre.key}/numeroTicket`] = nuevoTicket;
-                            actualizaciones[`turnos/${turnoPadre.key}/servicio`] = nuevoServicio;
-                            actualizaciones[`turnos/${turnoPadre.key}/minutosServicio`] = nuevosMins;
-                            actualizaciones[`turnos/${turnoPadre.key}/saldoPendiente`] = nuevoSaldo;
-                            actualizaciones[`turnos/${turnoPadre.key}/totalVenta`] = nuevoTotalVenta;
-                            actualizaciones[`turnos/${turnoPadre.key}/timestampEntrega`] = nuevoTiempoFinal;
-                            actualizaciones[`turnos/${turnoPadre.key}/horaFormateada`] = new Date(nuevoTiempoFinal).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true});
-
-                            db.ref().update(actualizaciones).then(() => {
-                                imprimirTicketAvanzado(dataVenta);
-                                limpiarCajaCobro(btnConf, false, true);
+                            // Desplaza los de abajo
+                            turnosActivos.forEach(other => {
+                                if (other.timestampEntrega > tGrupo.timestampEntrega && other.key !== tGrupo.key) {
+                                    let sT = other.timestampEntrega + (minsTotal * 60000);
+                                    actualizaciones[`turnos/${other.key}/timestampEntrega`] = sT;
+                                    actualizaciones[`turnos/${other.key}/horaFormateada`] = new Date(sT).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true});
+                                }
                             });
-                            return; // Terminamos aquí
+
+                            db.ref().update(actualizaciones).then(() => { 
+                                imprimirTicketAvanzado(dataVenta); 
+                                limpiarCajaCobro(btnConf, false, true); 
+                            });
+                            return; 
                         }
                     }
 
-                    // --- VENTA NORMAL (NO ES GRUPO) ---
-                    let tiempoBaseActual = Date.now(); 
-
+                    // --- VENTA NORMAL O LIDER DEL GRUPO ---
                     let nuevoTurno = { 
                         nombre: nom, 
                         numeroTicket: folioNuevo, 
@@ -1569,10 +1865,11 @@
                         estado: 'pendiente', 
                         servicio: serviciosText, 
                         minutosServicio: minsTotal, 
-                        esVIP: esVIP,
-                        horaEntrada: horaActualStr,
-                        saldoPendiente: saldoPendiente,
-                        totalVenta: totalNetoPagar
+                        esVIP: esVIP, 
+                        horaEntrada: horaActualStr, 
+                        saldoPendiente: saldoPendiente, 
+                        totalVenta: totalNetoPagar, 
+                        carrito: carritoParaProduccion 
                     };
 
                     if (esVIP) { 
@@ -1580,18 +1877,17 @@
                         nuevoTurno.timestampEntrega = tiempoFinalVIP; 
                         nuevoTurno.horaFormateada = new Date(tiempoFinalVIP).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true}); 
                         
-                        turnosActivos.forEach(turno => {
+                        turnosActivos.forEach(turno => { 
                             let nuevoTiempo = Math.max(turno.timestampEntrega, tiempoBaseActual) + (minsTotal * 60000); 
                             actualizaciones[`turnos/${turno.key}/timestampEntrega`] = nuevoTiempo; 
                             actualizaciones[`turnos/${turno.key}/horaFormateada`] = new Date(nuevoTiempo).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true}); 
                         });
                     } else { 
-                        turnosActivos.forEach(turno => {
+                        turnosActivos.forEach(turno => { 
                             if (turno.timestampEntrega > tiempoBaseActual) { 
                                 tiempoBaseActual = turno.timestampEntrega; 
                             } 
                         });
-                        
                         let tiempoFinal = tiempoBaseActual + (minsTotal * 60000); 
                         nuevoTurno.timestampEntrega = tiempoFinal; 
                         nuevoTurno.horaFormateada = new Date(tiempoFinal).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true}); 
@@ -1599,54 +1895,63 @@
 
                     let nuevoRef = db.ref('turnos').push(); 
                     actualizaciones[`turnos/${nuevoRef.key}`] = nuevoTurno;
+
+                    if (esGrupo) {
+                        window.grupoActivoTurnoId = nuevoRef.key;
+                    }
                     
                     db.ref().update(actualizaciones).then(() => { 
                         imprimirTicketAvanzado(dataVenta); 
-                        limpiarCajaCobro(btnConf, esVIP, false);
+                        limpiarCajaCobro(btnConf, esVIP, esGrupo && !window.grupoActivoTurnoId ? false : esGrupo); 
                     });
                 });
             });
         }
 
         function limpiarCajaCobro(btnConf, esVIP, esGrupo) {
+            lineasDePago = [];
+            document.getElementById('statusTerminalMP').style.display = 'none';
             carrito = []; 
             document.getElementById('nombreCliente').value = ''; 
             document.getElementById('telefonoCliente').value = ''; 
             document.getElementById('badgeCliente').style.display='none'; 
+            
             if(document.getElementById('esVIP')) document.getElementById('esVIP').checked = false; 
             
-            // Si la cajera marcó grupo, desmarcamos automáticamente para evitar errores en futuras ventas
-            if(document.getElementById('esGrupo')) document.getElementById('esGrupo').checked = false; 
-
             actualizarUI(); 
             cerrarModalPagoAvanzado(); 
             
             let msg = "✅ Venta cobrada";
             if (esVIP) msg = "⭐ CITA VIP PRIORIZADA";
-            if (esGrupo) msg = "👥 AÑADIDO AL TURNO ANTERIOR";
-            
+            if (esGrupo && window.grupoActivoTurnoId) msg = "👥 AGREGADO AL GRUPO";
+            if (esGrupo && !window.grupoActivoTurnoId) msg = "🟢 GRUPO INICIADO";
+
             mostrarNotificacion(msg); 
+            
             btnConf.disabled = false; 
             btnConf.innerText = "COBRAR E IMPRIMIR"; 
             btnConf.style.background = "var(--success)";
         }
 
-        // --- IMPRESIÓN ---
+        // ----------------------------------------------------
+        // IMPRESIÓN Y REIMPRESIÓN DE TICKETS
+        // ----------------------------------------------------
         function imprimirTicketAvanzado(venta) { 
             document.getElementById('tkFecha').innerText = venta.fecha; 
             
             if(venta.esVIP) { 
-                document.getElementById('tkCliente').innerHTML = venta.cliente + " <br><strong style='color:#000; font-size:14px;'>⭐ TICKET VIP ⭐</strong>"; 
+                document.getElementById('tkCliente').innerHTML = venta.cliente + " <br><strong>⭐ VIP ⭐</strong>"; 
             } else { 
                 document.getElementById('tkCliente').innerText = venta.cliente; 
             } 
             
             document.getElementById('tkCodigoRastreo').innerText = venta.ticket; 
-            const fT = document.getElementById('filaTelefono'); 
             
+            const fT = document.getElementById('filaTelefono'); 
             if (venta.telefono) { 
-                document.getElementById('tkTelefono').innerText = venta.telefono; fT.style.display = 'inline'; 
-            } else {
+                document.getElementById('tkTelefono').innerText = venta.telefono; 
+                fT.style.display = 'inline'; 
+            } else { 
                 fT.style.display = 'none'; 
             }
             
@@ -1658,7 +1963,8 @@
             
             const uiDesc = document.getElementById('tkDescuentoUI'); 
             if (venta.descuento > 0) { 
-                uiDesc.style.display = 'block'; document.getElementById('tkDescuentoValor').innerText = `-$${venta.descuento.toFixed(2)}`; 
+                uiDesc.style.display = 'block'; 
+                document.getElementById('tkDescuentoValor').innerText = `-$${venta.descuento.toFixed(2)}`; 
             } else { 
                 uiDesc.style.display = 'none'; 
             } 
@@ -1668,15 +1974,22 @@
             const listPagos = document.getElementById('tkListaPagos'); 
             listPagos.innerHTML = ''; 
             venta.detallePagos.forEach(p => { 
-                if (p.monto > 0) listPagos.innerHTML += `<div class="tk-pago-row">Pago en ${p.metodo}: $${p.monto.toFixed(2)}</div>`; 
+                if (p.monto > 0) {
+                    listPagos.innerHTML += `<div class="tk-pago-row">Pago en ${p.metodo}: $${p.monto.toFixed(2)}</div>`; 
+                }
             }); 
             
             const uiSaldo = document.getElementById('tkSaldoUICaja'); 
             if (venta.saldoPendiente > 0) { 
-                uiSaldo.innerHTML = `ANTICIPO RECIBIDO<br>RESTA PAGAR: $${venta.saldoPendiente.toFixed(2)}`; uiSaldo.style.display = 'block'; 
-                if(venta.totalRecibido === 0) uiSaldo.innerHTML = `PAGO PENDIENTE<br>DEBE PAGO AL ENTREGAR: $${venta.saldoPendiente.toFixed(2)}`;
+                uiSaldo.innerHTML = `ANTICIPO RECIBIDO<br>RESTA PAGAR: $${venta.saldoPendiente.toFixed(2)}`; 
+                uiSaldo.style.display = 'block'; 
+                if(venta.totalRecibido === 0) {
+                    uiSaldo.innerHTML = `PAGO PENDIENTE<br>DEBE PAGO AL ENTREGAR: $${venta.saldoPendiente.toFixed(2)}`;
+                }
             } else if (venta.totalRecibido > venta.total) { 
-                let cambio = venta.totalRecibido - venta.total; uiSaldo.innerHTML = `SU CAMBIO: $${cambio.toFixed(2)}`; uiSaldo.style.display = 'block'; 
+                let cambio = venta.totalRecibido - venta.total; 
+                uiSaldo.innerHTML = `SU CAMBIO: $${cambio.toFixed(2)}`; 
+                uiSaldo.style.display = 'block'; 
             } else { 
                 uiSaldo.style.display = 'none'; 
             } 
@@ -1684,7 +1997,8 @@
             const promoUI = document.getElementById('tkPromoContainer'); 
             if(configTicketPromo.activo === true || (configTicketPromo.titulo && configTicketPromo.titulo.length > 2)) { 
                 document.getElementById('tkPromoTitulo').innerText = configTicketPromo.titulo || "⭐ ¡GANA $10 DE BONIFICACIÓN! ⭐"; 
-                document.getElementById('tkPromoTexto').innerText = configTicketPromo.texto || "Escanea el código QR y déjanos tu reseña."; promoUI.style.display = 'block'; 
+                document.getElementById('tkPromoTexto').innerText = configTicketPromo.texto || "Escanea el código QR y déjanos tu reseña."; 
+                promoUI.style.display = 'block'; 
             } else { 
                 promoUI.style.display = 'none'; 
             } 
@@ -1695,15 +2009,23 @@
             qrImg.src = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" + encodeURIComponent(LINK_RASTREO + "?folio=" + venta.ticket); 
         }
 
-        // --- HISTORIAL DE VENTAS ---
+        // ----------------------------------------------------
+        // HISTORIAL DE VENTAS
+        // ----------------------------------------------------
         function escucharVentasRecientes() { 
             db.ref('ventas').limitToLast(20).on('value', snap => { 
                 const cont = document.getElementById('listaVentasMain'); 
                 cont.innerHTML = ''; 
-                if(!snap.exists()) { cont.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding: 20px;">Sin ventas aún</div>'; return; } 
+                if(!snap.exists()) { 
+                    cont.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding: 20px;">Sin ventas aún</div>'; 
+                    return; 
+                } 
                 
                 let vArr = []; 
-                snap.forEach(c => { vArr.push({ id: c.key, ...c.val() }); window.ventasMemoria[c.key] = c.val(); }); 
+                snap.forEach(c => { 
+                    vArr.push({ id: c.key, ...c.val() }); 
+                    window.ventasMemoria[c.key] = c.val(); 
+                }); 
                 
                 vArr.reverse().forEach(v => { 
                     if (v.esMovimiento) { 
@@ -1730,9 +2052,16 @@
                         let colorBorde = v.esVIP ? 'var(--gold)' : 'var(--success)'; 
                         let etiquetaAnticipo = ''; 
                         
-                        if(v.esVIP) etiquetaAnticipo += ` <span style="background:var(--gold); color:black; padding:2px 5px; border-radius:3px; font-size:10px; font-weight:bold;">⭐ VIP</span>`; 
-                        if(v.saldoPendiente > 0 && !esAnulado) { colorBorde = 'var(--danger)'; etiquetaAnticipo += ` <span style="background:var(--danger); color:white; padding:2px 5px; border-radius:3px; font-size:10px; font-weight:bold;">DEBE $${parseFloat(v.saldoPendiente).toFixed(2)}</span>`; } 
-                        if(esAnulado) colorBorde = 'var(--danger)'; 
+                        if(v.esVIP) {
+                            etiquetaAnticipo += ` <span style="background:var(--gold); color:black; padding:2px 5px; border-radius:3px; font-size:10px; font-weight:bold;">⭐ VIP</span>`; 
+                        }
+                        if(v.saldoPendiente > 0 && !esAnulado) { 
+                            colorBorde = 'var(--danger)'; 
+                            etiquetaAnticipo += ` <span style="background:var(--danger); color:white; padding:2px 5px; border-radius:3px; font-size:10px; font-weight:bold;">DEBE $${parseFloat(v.saldoPendiente).toFixed(2)}</span>`; 
+                        } 
+                        if(esAnulado) {
+                            colorBorde = 'var(--danger)'; 
+                        }
                         
                         const opacidad = esAnulado ? '0.7' : '1'; 
                         const displayTotal = esAnulado ? `<span style="text-decoration: line-through; color:var(--danger)">$${(v.totalAnterior || 0).toFixed(2)}</span> <strong style="color:var(--danger)">DEVOLUCIÓN</strong>` : `<strong style="color:var(--success)">$${(v.total || 0).toFixed(2)}</strong>`; 
@@ -1750,16 +2079,35 @@
             }); 
         }
 
-        window.reenviarWA = id => { const v = window.ventasMemoria[id]; let num = v.telefono.replace(/\D/g, ''); if(num.length === 10) num = "52" + num; const msj = `¡Hola ${v.cliente}! 👋 Te enviamos el comprobante de tu pedido *#${v.ticket}*. Puedes rastrear tu orden aquí:\n🔗 ${LINK_RASTREO}?folio=${v.ticket}`; window.open(`https://wa.me/${num}?text=${encodeURIComponent(msj)}`, '_blank'); };
+        window.reenviarWA = id => { 
+            const v = window.ventasMemoria[id]; 
+            let num = v.telefono.replace(/\D/g, ''); 
+            if(num.length === 10) num = "52" + num; 
+            const msj = `¡Hola ${v.cliente}! 👋 Te enviamos el comprobante de tu pedido *#${v.ticket}*. Puedes rastrear tu orden aquí:\n🔗 ${LINK_RASTREO}?folio=${v.ticket}`; 
+            window.open(`https://wa.me/${num}?text=${encodeURIComponent(msj)}`, '_blank'); 
+        };
         
-        window.reimprimir = id => { const v = window.ventasMemoria[id]; if(!v.detallePagos) { v.detallePagos = [{metodo: v.pago, monto: v.total}]; v.saldoPendiente = 0; v.totalRecibido = v.total; v.descuento = 0; } const ventaCopia = {...v, fecha: v.fecha + " (COPIA)"}; imprimirTicketAvanzado(ventaCopia); };
+        window.reimprimir = id => { 
+            const v = window.ventasMemoria[id]; 
+            if(!v.detallePagos) { 
+                v.detallePagos = [{metodo: v.pago, monto: v.total}]; 
+                v.saldoPendiente = 0; 
+                v.totalRecibido = v.total; 
+                v.descuento = 0; 
+            } 
+            const ventaCopia = {...v, fecha: v.fecha + " (COPIA)"}; 
+            imprimirTicketAvanzado(ventaCopia); 
+        };
         
         window.reembolsar = (id, esMovimientoInterno) => { 
             const venta = window.ventasMemoria[id]; 
             if (esMovimientoInterno) { 
-                if(confirm("¿Seguro que deseas eliminar este movimiento de caja?")) { db.ref('ventas/' + id).remove().then(() => mostrarNotificacion("✅ Movimiento eliminado", "info")); } 
+                if(confirm("¿Seguro que deseas eliminar este movimiento de caja?")) { 
+                    db.ref('ventas/' + id).remove().then(() => mostrarNotificacion("✅ Movimiento eliminado", "info")); 
+                } 
                 return; 
             } 
+            
             const pass = prompt(`Vas a ANULAR el folio #${venta.ticket} por $${venta.total.toFixed(2)}.\n\nEscribe CANCELAR para autorizar:`); 
             if (pass === "CANCELAR" || pass === "cancelar") { 
                 db.ref('turnos').once('value', snap => { 
@@ -1769,21 +2117,56 @@
                         }
                     }); 
                 }); 
-                db.ref('ventas/' + id).update({ estado: 'anulado', cliente: '❌ ' + venta.cliente, totalAnterior: venta.total, total: 0 }).then(() => { 
-                    mostrarNotificacion("✅ Devolución procesada", "info"); cerrarModalHistorial(); 
+                
+                db.ref('ventas/' + id).update({ 
+                    estado: 'anulado', 
+                    cliente: '❌ ' + venta.cliente, 
+                    totalAnterior: venta.total, 
+                    total: 0 
+                }).then(() => { 
+                    mostrarNotificacion("✅ Devolución procesada", "info"); 
+                    cerrarModalHistorial(); 
                 }); 
             } 
         };
 
-        // --- MANEJO DE MODALES ---
-        function abrirModalCaja() { document.getElementById('modalCaja').style.display = 'flex'; } 
-        function cerrarModalCaja() { document.getElementById('modalCaja').style.display = 'none'; document.getElementById('formCaja').reset(); } 
-        function abrirModalCatalogo() { document.getElementById('modalCatalogo').style.display = 'flex'; } 
-        function cerrarModalCatalogo() { document.getElementById('modalCatalogo').style.display = 'none'; resetFormCatalogo(); } 
-        function abrirModalHistorial() { document.getElementById('modalHistorial').style.display = 'flex'; document.getElementById('listaReimpresion').innerHTML = document.getElementById('listaVentasMain').innerHTML; } 
-        function cerrarModalHistorial() { document.getElementById('modalHistorial').style.display = 'none'; } 
-        function abrirModalDirectorio() { document.getElementById('modalDirectorio').style.display = 'flex'; } 
-        function cerrarModalDirectorio() { document.getElementById('modalDirectorio').style.display = 'none'; }
+        // ----------------------------------------------------
+        // MANEJO DE MODALES
+        // ----------------------------------------------------
+        function abrirModalCaja() { 
+            document.getElementById('modalCaja').style.display = 'flex'; 
+        } 
+        
+        function cerrarModalCaja() { 
+            document.getElementById('modalCaja').style.display = 'none'; 
+            document.getElementById('formCaja').reset(); 
+        } 
+        
+        function abrirModalCatalogo() { 
+            document.getElementById('modalCatalogo').style.display = 'flex'; 
+        } 
+        
+        function cerrarModalCatalogo() { 
+            document.getElementById('modalCatalogo').style.display = 'none'; 
+            resetFormCatalogo(); 
+        } 
+        
+        function abrirModalHistorial() { 
+            document.getElementById('modalHistorial').style.display = 'flex'; 
+            document.getElementById('listaReimpresion').innerHTML = document.getElementById('listaVentasMain').innerHTML; 
+        } 
+        
+        function cerrarModalHistorial() { 
+            document.getElementById('modalHistorial').style.display = 'none'; 
+        } 
+        
+        function abrirModalDirectorio() { 
+            document.getElementById('modalDirectorio').style.display = 'flex'; 
+        } 
+        
+        function cerrarModalDirectorio() { 
+            document.getElementById('modalDirectorio').style.display = 'none'; 
+        }
     </script>
 </body>
 </html>

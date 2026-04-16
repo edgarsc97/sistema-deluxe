@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Buscador de Terminales MP - Deluxe</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #0A0E17; color: white; padding: 50px; text-align: center; }
+        input { padding: 15px; width: 80%; max-width: 500px; border-radius: 8px; border: 2px solid #009EE3; margin-bottom: 20px; font-size: 16px; }
+        button { background: #009EE3; color: white; padding: 15px 30px; border: none; border-radius: 8px; font-size: 18px; cursor: pointer; font-weight: bold; }
+        .resultado { margin-top: 30px; background: #111827; padding: 20px; border-radius: 10px; text-align: left; max-width: 600px; margin-left: auto; margin-right: auto; }
+        .terminal { border-left: 5px solid #059669; padding: 10px; margin-bottom: 10px; background: #1F2937; }
+    </style>
+</head>
+<body>
+    <h1 style="color: #009EE3;">Buscador de Terminales Mercado Pago</h1>
+    <p>1. Pega tu Access Token de Producción aquí abajo:</p>
+    <input type="text" id="token" placeholder="APP_USR-00000000000-XXXXXX...">
+    <br>
+    <button onclick="buscarTerminales()">2. BUSCAR MIS TERMINALES</button>
+
+    <div id="pantallaResultado" class="resultado" style="display:none;"></div>
+
+    <script>
+        async function buscarTerminales() {
+            const token = document.getElementById('token').value.trim();
+            const divRes = document.getElementById('pantallaResultado');
+            if(!token) return alert("Pega tu token primero");
+
+            divRes.style.display = 'block';
+            divRes.innerHTML = "Buscando terminales encendidas y vinculadas a tu cuenta...";
+
+            try {
+                const respuesta = await fetch('https://api.mercadopago.com/point/integration-api/devices', {
+                    method: 'GET',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                const datos = await respuesta.json();
+                
+                if(datos.devices && datos.devices.length > 0) {
+                    divRes.innerHTML = "<h3 style='color:#059669;'>✅ Terminales Encontradas:</h3>";
+                    datos.devices.forEach(t => {
+                        divRes.innerHTML += `
+                        <div class="terminal">
+                            <strong>DEVICE ID:</strong> <span style="color:#D4AF37; font-size: 18px;">${t.id}</span><br>
+                            <span style="font-size: 12px; color: gray;">Modelo: ${t.operating_mode}</span>
+                        </div>`;
+                    });
+                    divRes.innerHTML += "<p><i>* Copia el DEVICE ID de color dorado y pégalo en tu código.</i></p>";
+                } else {
+                    divRes.innerHTML = "<h3 style='color:#991B1B;'>❌ No se encontraron terminales</h3><p>Asegúrate de que tu terminal esté encendida, conectada a internet y vinculada a tu cuenta de Mercado Pago.</p>";
+                }
+            } catch(e) {
+                divRes.innerHTML = "<p style='color:red;'>Error de conexión. Revisa tu token.</p>";
+            }
+        }
+    </script>
+</body>
+</html>
