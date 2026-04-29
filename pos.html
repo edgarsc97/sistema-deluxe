@@ -1635,7 +1635,9 @@
             statusUI.style.color = "var(--gold)";
             statusUI.innerText = "Enviando señal a la terminal...";
 
-            const urlCrear = `https://api.mercadopago.com/point/integration-api/devices/${MP_DEVICE_ID}/payment-intents`;
+            // Usamos un Puente Proxy para saltar la seguridad CORS del navegador
+	    const urlOriginal = `https://api.mercadopago.com/point/integration-api/devices/${MP_DEVICE_ID}/payment-intents`;
+	    const urlCrear = `https://corsproxy.io/?${encodeURIComponent(urlOriginal)}`;
             const dataPost = {
                 amount: lineaTarjeta.monto,
                 description: "Cobro Caja Deluxe",

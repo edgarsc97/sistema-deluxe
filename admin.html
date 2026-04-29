@@ -826,12 +826,11 @@
         // 6. PROTOCOLO DE TIEMPO FIJO Y EFECTO AHORRO
         // ==========================================
         
-        // 🔔 FUNCIÓN DE PRUEBA INFALIBLE HACIA LA RUTA DE CONFIGURACIÓN 🔔
         window.lanzarAlertaPrueba = function() {
             db.ref('configuracion/tvAlertaAhorro').set({
                 minutos: 15,
                 timestamp: Date.now(),
-                id: Math.random() // Forzamos a que Firebase sepa que es un dato nuevo siempre
+                id: Math.random() 
             }).then(() => {
                 window.mostrarNotificacion("🔥 Alerta enviada por la ruta segura", "success");
             }).catch(e => {
@@ -886,9 +885,6 @@
                     actualizaciones[`turnos/${turnoIdAModificar}/enlaceDescarga`] = linkNube;
                 }
 
-                // ===========================================
-                // EFECTO AHORRO DE TIEMPO (POR RUTA SEGURA)
-                // ===========================================
                 if (nuevoEstado === 'listo' || nuevoEstado === 'pausado') {
                     let ahora = Date.now();
                     let entregaTarget = turnoTarget.timestampEntrega || ahora; 
@@ -897,7 +893,6 @@
                     if (tiempoSobrante >= 60000) {
                         let minsAhorrados = Math.floor(tiempoSobrante / 60000);
                         
-                        // 🔔 LA ORDEN REAL TAMBIEN SE VA POR LA RUTA SEGURA 🔔
                         actualizaciones['configuracion/tvAlertaAhorro'] = {
                             minutos: minsAhorrados,
                             timestamp: ahora,
@@ -1026,16 +1021,20 @@
             document.getElementById('modalArchivados').style.display = 'flex';
             document.getElementById('buscadorArchivados').value = '';
             
-            db.ref('ventas').limitToLast(150).once('value').then(snap => {
+            // 🔥 CAMBIO AQUÍ: Quitamos el limitToLast(150) para que traiga TODOS
+            db.ref('ventas').once('value').then(snap => {
                 memoriaVentas = [];
                 if(snap.exists()) {
                     snap.forEach(function(child) { 
                         let d = child.val();
                         d.id = child.key;
-                        memoriaVentas.push(d); 
+                        // 🔥 CAMBIO AQUÍ: Filtramos los movimientos de caja chica
+                        if (!d.esMovimiento) {
+                            memoriaVentas.push(d); 
+                        }
                     });
                 }
-                memoriaVentas.reverse(); 
+                memoriaVentas.reverse(); // Más recientes primero
                 window.renderizarArchivados(memoriaVentas);
             }).catch(e => console.log(e));
         };
@@ -1104,6 +1103,7 @@
                         memoriaClientes.push(d); 
                     });
                 }
+                // Ordenar por los que más han gastado
                 memoriaClientes.sort((a,b) => (b.gastado || 0) - (a.gastado || 0));
                 window.renderizarMarketing(memoriaClientes);
             }).catch(e => console.log(e));
@@ -1152,6 +1152,8 @@
         window.enviarPromo = function(tel, nombre) {
             let num = String(tel).replace(/\D/g, ''); 
             if(num.length === 10) num = "52" + num;
+            
+            // TEXTO DE LA PROMOCIÓN (Puedes editarlo aquí)
             let msg = `¡Hola ${nombre}! 👋 Soy Edgar de Estudio Deluxe. 📸\n\nYa viene la temporada de graduaciones y queremos darte a ti, como nuestro cliente VIP, la oportunidad de apartar tu lugar con anticipación y un descuento especial. 🎓✨\n\n¿Te interesa? Mándanos un mensajito para darte los detalles.`;
             window.open(`https://wa.me/${num}?text=${encodeURIComponent(msg)}`, '_blank');
         };

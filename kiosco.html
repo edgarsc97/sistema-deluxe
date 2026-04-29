@@ -553,7 +553,9 @@
             estatusUI.innerText = "Despertando terminal...";
 
             // 1. CREAR LA INTENCIÓN DE PAGO (Despierta la terminal física)
-            const urlCrear = `https://api.mercadopago.com/point/integration-api/devices/${MP_DEVICE_ID}/payment-intents`;
+            // Usamos un Puente Proxy para saltar la seguridad CORS del navegador
+	    const urlOriginal = `https://api.mercadopago.com/point/integration-api/devices/${MP_DEVICE_ID}/payment-intents`;
+	    const urlCrear = `https://corsproxy.io/?${encodeURIComponent(urlOriginal)}`;
             const nombreCli = document.getElementById('kNombre').value.trim() || "Kiosco";
             
             const dataPost = {
