@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FINANZAS Y ANALÍTICA - SISTEMA DELUXE</title>
     
+    <!-- FUENTES WEB -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     
+    <!-- LIBRERÍA PARA GRÁFICAS (CHART.JS) -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
@@ -325,7 +327,7 @@
         
         .modal-content { 
             background: var(--bg-panel); padding: 30px; border-radius: 15px; 
-            width: 90%; max-width: 500px; border: 1px solid var(--border); 
+            width: 90%; max-width: 500px; border: 1px solid var(--border); text-align: center;
             max-height: 90vh; overflow-y: auto;
         }
 
@@ -356,7 +358,7 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
-        .toast { background: var(--success); color: white; padding: 15px 25px; border-radius: 8px; font-weight: 600; font-size: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); animation: slideIn 0.3s ease-out; border-left: 5px solid rgba(0,0,0,0.3);}
+        .toast { background: var(--success); color: white; padding: 15px 25px; border-radius: 8px; font-weight: 600; font-size: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.6); animation: slideIn 0.3s ease-out; display: flex; align-items: center; gap: 10px; letter-spacing: 1px; border-left: 5px solid rgba(0,0,0,0.3);}
         .toast.info { background: var(--blue); }
         .toast.error { background: var(--danger); }
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
@@ -410,13 +412,16 @@
 </head>
 <body>
 
+    <!-- NOTIFICACIONES -->
     <div id="toast-container"></div>
 
+    <!-- PANTALLA DE CARGA -->
     <div id="pantallaBloqueo">
         <div class="spinner"></div>
         <div style="color:var(--text-muted); font-size:12px; letter-spacing:2px; text-transform:uppercase;">Extrayendo Base de Datos...</div>
     </div>
 
+    <!-- CABECERA -->
     <header class="header">
         <h1>PANEL <span>FINANZAS</span></h1>
         <div class="nav-botones">
@@ -426,11 +431,15 @@
         </div>
     </header>
 
+    <!-- TABS PARA CAMBIAR ENTRE DIARIO Y ANALÍTICA -->
     <div class="tabs-container">
         <button class="tab-btn activo" onclick="cambiarPestana('vistaDiaria', this)">🌞 CORTE DIARIO</button>
         <button class="tab-btn" onclick="cambiarPestana('vistaAnalitica', this)">📈 INTELIGENCIA DE NEGOCIO</button>
     </div>
 
+    <!-- ===================================================================
+         VISTA 1: CORTE DIARIO (LO QUE YA TENÍAS + CORTE X)
+    ==================================================================== -->
     <div id="vistaDiaria" class="vista-seccion activa">
         
         <div class="controles-superiores">
@@ -447,12 +456,12 @@
 
         <div class="dashboard-grid">
             <div class="metric-card c-total">
-                <div class="metric-title">Ventas Totales</div>
+                <div class="metric-title">Ventas Totales (Bruto)</div>
                 <div class="metric-value" id="valTotalVendido">$0.00</div>
                 <div class="metric-sub" id="valDesgloseVentas">0 Ventas</div>
             </div>
             <div class="metric-card c-caja">
-                <div class="metric-title">Efectivo en Cajón</div>
+                <div class="metric-title">Efectivo en Cajón (Físico)</div>
                 <div class="metric-value" id="valEfectivoCajon">$0.00</div>
                 <div class="metric-sub" style="color:var(--blue); background:rgba(59, 130, 246, 0.1);">Billetes y Monedas</div>
             </div>
@@ -465,11 +474,11 @@
 
         <div class="panel-listas">
             <div class="lista-box">
-                <h3>💳 DESGLOSE DE COBROS</h3>
-                <div class="row-item"><span style="color:var(--success)">💵 Efectivo (Ventas)</span> <strong id="dEfectivo">$0.00</strong></div>
+                <h3>💳 DESGLOSE DE COBROS RECIENTES</h3>
+                <div class="row-item"><span style="color:var(--success)">💵 Efectivo (Ventas reales)</span> <strong id="dEfectivo">$0.00</strong></div>
                 <div class="row-item"><span style="color:var(--gold)">💳 Tarjetas (Terminal)</span> <strong id="dTarjeta">$0.00</strong></div>
                 <div class="row-item"><span style="color:var(--blue)">📱 Transferencias (SPEI)</span> <strong id="dSpei">$0.00</strong></div>
-                <div class="row-item" style="border-top:1px dashed var(--border); margin-top:5px; padding-top:15px;"><span style="color:var(--text-muted)">⬇️ Ingresos Extras (Caja Chica)</span> <strong id="dIngresoExtra">$0.00</strong></div>
+                <div class="row-item" style="border-top:1px dashed var(--border); margin-top:5px; padding-top:15px;"><span style="color:var(--text-muted)">⬇️ Ingresos Extras (Fondo/Caja Chica)</span> <strong id="dIngresoExtra">$0.00</strong></div>
             </div>
             <div class="lista-box">
                 <h3>📋 AUDITORÍA: TODAS LAS OPERACIONES</h3>
@@ -479,6 +488,9 @@
 
     </div>
 
+    <!-- ===================================================================
+         VISTA 2: INTELIGENCIA DE NEGOCIO (ANALÍTICA MENSUAL)
+    ==================================================================== -->
     <div id="vistaAnalitica" class="vista-seccion">
         
         <div class="controles-superiores">
@@ -487,17 +499,19 @@
                 <input type="month" id="filtroMes" onchange="procesarAnaliticaMensual()">
             </div>
             <div style="color:var(--gold); font-size:18px; font-weight:800; text-align:right;">
-                Ingreso Mensual: <br><span id="totalIngresoMensual" style="font-size:28px;">$0.00</span>
+                Ingreso Mensual (Bruto): <br><span id="totalIngresoMensual" style="font-size:28px;">$0.00</span>
             </div>
         </div>
 
         <div class="grid-analitica">
             
+            <!-- GRÁFICA DE LÍNEAS (VENTAS POR DÍA) -->
             <div class="chart-container">
                 <h3 style="color:white; margin-top:0; font-size:14px; border-bottom:1px solid var(--border); padding-bottom:10px;">📈 Evolución de Ventas del Mes</h3>
                 <canvas id="chartEvolucion" height="100"></canvas>
             </div>
 
+            <!-- GRÁFICA DE DONA (MÉTODOS DE PAGO) -->
             <div class="chart-container">
                 <h3 style="color:white; margin-top:0; font-size:14px; border-bottom:1px solid var(--border); padding-bottom:10px;">💳 Métodos de Pago</h3>
                 <canvas id="chartMetodos" height="200"></canvas>
@@ -507,12 +521,15 @@
 
         <div class="grid-analitica">
             
+            <!-- TOP 3 SERVICIOS MÁS VENDIDOS -->
             <div class="chart-container">
                 <h3 style="color:var(--gold); margin-top:0; font-size:14px; border-bottom:1px solid var(--gold); padding-bottom:10px;">🏆 Top 3 Servicios Más Vendidos</h3>
                 <ul class="ranking-list" id="listaTopServicios">
-                    </ul>
+                    <!-- Se inyecta por JS -->
+                </ul>
             </div>
 
+            <!-- ANÁLISIS DE HORAS PICO -->
             <div class="chart-container">
                 <h3 style="color:var(--blue); margin-top:0; font-size:14px; border-bottom:1px solid var(--blue); padding-bottom:10px;">🕒 Comportamiento Horario</h3>
                 <div class="hora-pico-card">
@@ -526,6 +543,11 @@
 
     </div>
 
+    <!-- ==========================================
+         MODALES INTERACTIVOS
+    ========================================== -->
+
+    <!-- MODAL CAJA CHICA -->
     <div class="modal-overlay" id="modalMovimiento">
         <div class="modal-content">
             <h2 style="color:var(--blue); margin-top:0;">💵 MOVIMIENTO DE CAJA</h2>
@@ -542,12 +564,13 @@
         </div>
     </div>
 
+    <!-- MODAL EDITAR PAGO -->
     <div class="modal-overlay" id="modalEditarPago">
         <div class="modal-content">
             <h2 style="color:var(--gold); margin-top:0;">✏️ CORREGIR PAGO</h2>
             <p style="font-size:12px; color:var(--text-muted); margin-bottom: 15px;">
                 Folio: <strong id="editFolio" style="color:white;"></strong><br>
-                Total: <strong id="editTotalNeto" style="color:var(--success); font-size:16px;"></strong>
+                Total de la Compra: <strong id="editTotalNeto" style="color:var(--success); font-size:16px;"></strong>
             </p>
 
             <div id="editLineasPago"></div>
@@ -558,7 +581,7 @@
 
             <div style="background:#0A0E17; padding:15px; border-radius:8px; display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
                 <div>
-                    <span style="color:var(--text-muted); font-size:11px;">Total Ingresado:</span><br>
+                    <span style="color:var(--text-muted); font-size:11px;">Total Recibido/Pagado:</span><br>
                     <strong id="editSumaRecibida" style="color:var(--blue); font-size:18px;">$0.00</strong>
                 </div>
                 <div style="text-align:right;">
@@ -572,6 +595,11 @@
         </div>
     </div>
 
+    <!-- ==========================================
+         ZONAS DE IMPRESIÓN (TICKET Y CORTES)
+    ========================================== -->
+
+    <!-- TICKET DE CORTE (X / Z) -->
     <div id="zonaCorteImpresion" class="zona-impresion">
         <div class="tk-header">
             <div class="tk-titulo">FOTO ESTUDIO DELUXE</div>
@@ -580,14 +608,14 @@
         </div>
         
         <div style="text-align:center; font-weight:bold; margin-bottom:8px; font-size:13px;">-- RESUMEN DE VENTAS --</div>
-        <div class="tk-linea"><span>Efectivo:</span> <strong id="tzEfectivo"></strong></div>
+        <div class="tk-linea"><span>Efectivo Cobrado:</span> <strong id="tzEfectivo"></strong></div>
         <div class="tk-linea"><span>Tarjeta:</span> <strong id="tzTarjeta"></strong></div>
         <div class="tk-linea"><span>SPEI:</span> <strong id="tzSpei"></strong></div>
-        <div class="tk-linea tk-bold" style="margin-top:5px;"><span>TOTAL VENTAS:</span> <strong id="tzVendido"></strong></div>
+        <div class="tk-linea tk-bold" style="margin-top:5px;"><span>TOTAL VENTAS (Bruto):</span> <strong id="tzVendido"></strong></div>
         
         <div class="tk-divisor"></div>
-        <div style="text-align:center; font-weight:bold; margin-bottom:8px; font-size:13px;">-- MOVIMIENTOS CAJA --</div>
-        <div class="tk-linea"><span>Ingresos Extras:</span> <strong id="tzIngresos"></strong></div>
+        <div style="text-align:center; font-weight:bold; margin-bottom:8px; font-size:13px;">-- MOVIMIENTOS CAJA FÍSICA --</div>
+        <div class="tk-linea"><span>Ingresos Extras (Fondo):</span> <strong id="tzIngresos"></strong></div>
         <div class="tk-linea"><span>Retiros / Gastos:</span> <strong id="tzRetiros"></strong></div>
         
         <div class="tk-caja-final">
@@ -601,6 +629,7 @@
         </div>
     </div>
 
+    <!-- TICKET DE REIMPRESIÓN INDIVIDUAL -->
     <div id="zonaTicketImpresion" class="zona-impresion">
         <div class="tk-header">
             <img src="logo.png" alt="Logo" class="tk-logo">
@@ -633,11 +662,18 @@
         </div>
     </div>
 
+    <!-- ==========================================
+         SCRIPTS DE FIREBASE Y LÓGICA
+    ========================================== -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <script>
+        const USUARIO_GH = "edgarsc97";
+        const REPO_GH = "sistema-deluxe";
+        const LINK_RASTREO = `https://${USUARIO_GH}.github.io/${REPO_GH}/rastreo.html`;
+
         const firebaseConfig = {
             apiKey: "AIzaSyAn0H-50sbh8sMcqn_k8IlVnJX6ko58ws4",
             authDomain: "sistemafotos-cf459.firebaseapp.com",
@@ -647,18 +683,15 @@
             messagingSenderId: "599045837547",
             appId: "1:599045837547:web:7bb72110d3cf36739ea4ae"
         };
+        
         firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
         const db = firebase.database();
-        
-        const EMAIL_ADMIN = "edgaruriel.deluxe@outlook.com";
-        const LINK_RASTREO = `https://edgarsc97.github.io/sistema-deluxe/rastreo.html`;
 
-        // Base de Datos en Memoria (Para evitar hacer peticiones todo el tiempo)
-        let baseDeDatosVentas = [];
-        
-        // Instancias de Gráficas
+        let baseDeDatosVentas = []; 
         let graficoEvolucion = null;
         let graficoMetodos = null;
+        const EMAIL_ADMIN = "edgaruriel.deluxe@outlook.com";
 
         // Configuración inicial de fechas
         const hoy = new Date();
@@ -689,7 +722,7 @@
         }
 
         // -------------------------------------------------------------------
-        // AUTENTICACIÓN Y CARGA MASIVA INICIAL
+        // AUTENTICACIÓN Y CARGA DE BD (SIN LÍMITES)
         // -------------------------------------------------------------------
         firebase.auth().onAuthStateChanged(user => {
             if (!user || user.email.toLowerCase() !== EMAIL_ADMIN.toLowerCase()) {
@@ -699,12 +732,11 @@
             }
         });
 
-        // Descarga TODAS las ventas una sola vez al entrar a Finanzas para procesarlas rapidísimo localmente.
         function descargarTodaLaBaseDeDatos() {
             document.getElementById('pantallaBloqueo').style.display = 'flex';
             
-            // Limitamos a las últimas 3000 ventas para que no colapse navegadores viejos
-            db.ref('ventas').limitToLast(3000).once('value').then(snap => {
+            // 🚨 ELIMINAMOS EL LÍMITE DE 3000. Trae TODA la base de datos para no perder ninguna venta.
+            db.ref('ventas').once('value').then(snap => {
                 baseDeDatosVentas = [];
                 if(snap.exists()) {
                     snap.forEach(child => {
@@ -712,8 +744,6 @@
                     });
                 }
                 document.getElementById('pantallaBloqueo').style.display = 'none';
-                
-                // Por defecto, carga la vista diaria del día de hoy
                 procesarVistaDiaria();
             }).catch(err => {
                 alert("Error al cargar la base de datos.");
@@ -722,24 +752,36 @@
         }
 
         // ===================================================================
-        // MOTOR 1: VISTA DIARIA (CORTE X / Z)
+        // MOTOR 1: VISTA DIARIA (CORTE X / Z Y CAJÓN FÍSICO PERFECTO)
         // ===================================================================
         function procesarVistaDiaria() {
             let val = document.getElementById('filtroFecha').value; 
             if(!val) return;
             let [y, m, d] = val.split('-');
-            let fechaBusqueda = `${d}/${m}/${y}`; // Formato: 15/04/2026
+            
+            // 🚨 SOLUCIÓN MAGISTRAL: Usamos el Reloj interno (Timestamp) para no fallar jamás por las diagonales '/'
+            let inicioDelDia = new Date(y, m - 1, d, 0, 0, 0).getTime();
+            let finDelDia = new Date(y, m - 1, d, 23, 59, 59, 999).getTime();
 
             let tVentas = 0, cVentas = 0;
             let pEfectivo = 0, pTarjeta = 0, pSpei = 0;
             let iExtra = 0, rGasto = 0, cRetiros = 0;
             let htmlOp = '';
             
-            // Filtramos localmente la fecha
-            let operacionesDia = baseDeDatosVentas.filter(v => v.fecha && v.fecha.includes(fechaBusqueda));
+            // Filtramos las ventas usando los milisegundos exactos de ese día
+            let operacionesDia = baseDeDatosVentas.filter(v => {
+                if (v.timestamp) {
+                    return v.timestamp >= inicioDelDia && v.timestamp <= finDelDia;
+                } else {
+                    // Respaldo para ventas muy muy viejas que no tenían timestamp guardado
+                    let f1 = `${d}/${m}/${y}`;
+                    let f2 = `${parseInt(d)}/${parseInt(m)}/${y}`;
+                    return v.fecha && (v.fecha.includes(f1) || v.fecha.includes(f2));
+                }
+            });
             
             operacionesDia.reverse().forEach(v => {
-                let horaStr = v.fecha.split(', ')[1] || ''; 
+                let horaStr = v.fecha ? (v.fecha.split(', ')[1] || v.fecha.split(' ')[1] || '') : ''; 
 
                 if(v.esMovimiento) {
                     if (v.tipoMovimiento === 'ingreso') {
@@ -753,26 +795,55 @@
                     if(v.estado === 'anulado') {
                         htmlOp += `<div class="venta-row anulado"><div><span class="badge-tipo" style="background:var(--text-muted); color:black; padding:2px 5px; border-radius:4px; font-size:10px;">❌ ANULADO</span><br><strong style="font-size:14px; margin-top:4px; display:block;">Folio #${v.ticket} - ${v.cliente}</strong></div><strong style="text-decoration:line-through; font-size:16px;">$${(v.totalAnterior || 0).toFixed(2)}</strong></div>`;
                     } else {
-                        cVentas++; tVentas += (v.total || 0);
+                        // ES UNA VENTA REAL
+                        cVentas++; 
+                        tVentas += (v.total || 0); // Lo que cuestan los servicios
                         
+                        // 🚨 LÓGICA DE CONTABILIDAD PERFECTA (CÁLCULO DEL CAMBIO) 🚨
+                        let sumaPagosRecibidos = 0;
+                        if(v.detallePagos) {
+                            sumaPagosRecibidos = v.detallePagos.reduce((s, p) => s + p.monto, 0);
+                        } else {
+                            sumaPagosRecibidos = v.totalRecibido || v.total;
+                        }
+
+                        // Si el cliente te pagó con $100 pero la cuenta era de $90, el cambio es $10.
+                        let cambioEntregado = 0;
+                        if (sumaPagosRecibidos > v.total) {
+                            cambioEntregado = sumaPagosRecibidos - v.total;
+                        }
+
+                        let pagoEfLocal = 0, pagoTarLocal = 0, pagoSpLocal = 0;
+
                         if(v.detallePagos) {
                             v.detallePagos.forEach(p => {
-                                if(p.metodo === 'Efectivo') pEfectivo += p.monto;
-                                if(p.metodo === 'Tarjeta') pTarjeta += p.monto;
-                                if(p.metodo === 'Transferencia') pSpei += p.monto;
+                                if(p.metodo === 'Efectivo') pagoEfLocal += p.monto;
+                                if(p.metodo === 'Tarjeta') pagoTarLocal += p.monto;
+                                if(p.metodo === 'Transferencia') pagoSpLocal += p.monto;
                             });
                         } else {
-                            if(v.pago === 'Efectivo') pEfectivo += (v.totalRecibido || v.total);
-                            else if(v.pago === 'Tarjeta') pTarjeta += (v.totalRecibido || v.total);
-                            else if(v.pago === 'Transferencia') pSpei += (v.totalRecibido || v.total);
+                            if(v.pago === 'Efectivo') pagoEfLocal += sumaPagosRecibidos;
+                            else if(v.pago === 'Tarjeta') pagoTarLocal += sumaPagosRecibidos;
+                            else if(v.pago === 'Transferencia') pagoSpLocal += sumaPagosRecibidos;
                         }
+
+                        // Al efectivo recibido LE RESTAMOS el cambio que le diste al cliente
+                        // Así tu cajón cuadra a la perfección con la realidad.
+                        if (cambioEntregado > 0) {
+                            pagoEfLocal -= cambioEntregado;
+                        }
+
+                        // Sumamos al gran total del día
+                        pEfectivo += pagoEfLocal;
+                        pTarjeta += pagoTarLocal;
+                        pSpei += pagoSpLocal;
 
                         htmlOp += `
                             <div class="venta-row">
                                 <div>
                                     <span class="badge-tipo" style="background:rgba(5, 150, 105, 0.2); color:var(--success); padding:2px 5px; border-radius:4px; font-size:10px; font-weight:bold;">✅ VENTA</span><br>
                                     <strong style="font-size:14px; margin-top:4px; display:block;">Folio #${v.ticket} - ${v.cliente}</strong>
-                                    <span style="color:var(--text-muted); font-size:11px;">${horaStr} | Pago en ${v.pago}</span>
+                                    <span style="color:var(--text-muted); font-size:11px;">${horaStr} | Pago: ${v.pago}</span>
                                 </div>
                                 <div style="text-align:right; display:flex; flex-direction:column; align-items:flex-end; gap:5px;">
                                     <strong style="color:var(--success); font-size:16px;">$${(v.total || 0).toFixed(2)}</strong>
@@ -789,9 +860,10 @@
             if(htmlOp === '') htmlOp = '<div style="text-align:center; color:var(--text-muted); padding:20px;">No hay registros para este día</div>';
             document.getElementById('listaOperaciones').innerHTML = htmlOp;
 
+            // CAJÓN FÍSICO PERFECTO: Todo lo que entró en billetes + Fondo inicial - Gastos en efectivo
             let efectivoCajon = pEfectivo + iExtra - rGasto;
 
-            // Actualizar Tarjetas
+            // Actualizar Tarjetas Visuales
             document.getElementById('valTotalVendido').innerText = `$${tVentas.toFixed(2)}`;
             document.getElementById('valDesgloseVentas').innerText = `${cVentas} Ventas procesadas`;
             document.getElementById('valEfectivoCajon').innerText = `$${efectivoCajon.toFixed(2)}`;
@@ -803,8 +875,8 @@
             document.getElementById('dSpei').innerText = `$${pSpei.toFixed(2)}`;
             document.getElementById('dIngresoExtra').innerText = `$${iExtra.toFixed(2)}`;
 
-            // Variables para impresión
-            document.getElementById('tkZFecha').innerText = `Fecha Reporte: ${fechaBusqueda}`;
+            // Variables para el Ticket de Impresión (Corte Z/X)
+            document.getElementById('tkZFecha').innerText = `Fecha Reporte: ${d}/${m}/${y}`;
             document.getElementById('tzEfectivo').innerText = `$${pEfectivo.toFixed(2)}`;
             document.getElementById('tzTarjeta').innerText = `$${pTarjeta.toFixed(2)}`;
             document.getElementById('tzSpei').innerText = `$${pSpei.toFixed(2)}`;
@@ -818,30 +890,40 @@
         // MOTOR 2: INTELIGENCIA DE NEGOCIO (ANALÍTICA MENSUAL)
         // ===================================================================
         function procesarAnaliticaMensual() {
-            let val = document.getElementById('filtroMes').value; // Formato: "2026-04"
+            let val = document.getElementById('filtroMes').value; 
             if(!val) return;
             let [y, m] = val.split('-');
-            let mesBusqueda = `/${m}/${y}`; // Buscamos "/04/2026" en la fecha de Firebase
+            
+            // Reloj interno del sistema para el mes entero
+            let inicioDelMes = new Date(y, m - 1, 1, 0, 0, 0).getTime();
+            let finDelMes = new Date(y, m, 0, 23, 59, 59, 999).getTime(); 
 
-            let ventasMes = baseDeDatosVentas.filter(v => v.fecha && v.fecha.includes(mesBusqueda) && !v.esMovimiento && v.estado !== 'anulado');
+            let ventasMes = baseDeDatosVentas.filter(v => {
+                let entra = false;
+                if (v.timestamp) {
+                    entra = (v.timestamp >= inicioDelMes && v.timestamp <= finDelMes);
+                } else {
+                    let f1 = `/${m}/${y}`;
+                    let f2 = `/${parseInt(m)}/${y}`;
+                    entra = v.fecha && (v.fecha.includes(f1) || v.fecha.includes(f2));
+                }
+                return entra && !v.esMovimiento && v.estado !== 'anulado';
+            });
 
             // Variables Inteligentes
             let ingresosTotales = 0;
-            let ingresosPorDia = {}; // { "01": 500, "02": 1500 }
+            let ingresosPorDia = {}; 
             let sumEfectivo = 0, sumTarjeta = 0, sumSpei = 0;
-            let conteoServicios = {}; // { "Titulacion": 15, "Infantil": 8 }
-            let conteoHoras = {}; // { "14": 5, "15": 12 } (Para hora pico)
+            let conteoServicios = {}; 
+            let conteoHoras = {}; 
 
-            // Procesar Matemáticas
             ventasMes.forEach(v => {
                 ingresosTotales += (v.total || 0);
 
-                // 1. Ingresos por día
-                let diaVenta = v.fecha.split('/')[0]; // Extrae el "15" de "15/04/2026"
+                let diaVenta = v.fecha ? v.fecha.split('/')[0] : '01'; 
                 if(!ingresosPorDia[diaVenta]) ingresosPorDia[diaVenta] = 0;
                 ingresosPorDia[diaVenta] += (v.total || 0);
 
-                // 2. Métodos de Pago
                 if(v.detallePagos) {
                     v.detallePagos.forEach(p => {
                         if(p.metodo === 'Efectivo') sumEfectivo += p.monto;
@@ -854,7 +936,6 @@
                     else if(v.pago === 'Transferencia') sumSpei += (v.totalRecibido || v.total);
                 }
 
-                // 3. Top Servicios
                 if(v.carrito) {
                     v.carrito.forEach(item => {
                         if(!conteoServicios[item.nombre]) conteoServicios[item.nombre] = 0;
@@ -862,22 +943,20 @@
                     });
                 }
 
-                // 4. Horas Pico
-                let horaBloque = v.fecha.split(', ')[1]; // "08:30:00 p. m."
+                let horaBloque = v.fecha ? v.fecha.split(', ')[1] : null; 
                 if(horaBloque) {
-                    let horaPura = horaBloque.split(':')[0]; // "08"
-                    let ampm = horaBloque.includes('p') ? 'PM' : 'AM';
+                    let horaPura = horaBloque.split(':')[0]; 
+                    let ampm = horaBloque.includes('p') || horaBloque.includes('P') ? 'PM' : 'AM';
                     let horaCompleta = `${horaPura} ${ampm}`;
                     if(!conteoHoras[horaCompleta]) conteoHoras[horaCompleta] = 0;
                     conteoHoras[horaCompleta]++;
                 }
             });
 
-            // Actualizar Total Superior
             document.getElementById('totalIngresoMensual').innerText = `$${ingresosTotales.toFixed(2)}`;
 
-            // --- RENDERIZAR GRÁFICA LÍNEAS (Evolución Mensual) ---
-            let diasLabels = Object.keys(ingresosPorDia).sort(); // Ordenar del 1 al 31
+            // --- GRÁFICA DE LÍNEAS ---
+            let diasLabels = Object.keys(ingresosPorDia).sort((a,b) => parseInt(a) - parseInt(b));
             let datosEvolucion = diasLabels.map(d => ingresosPorDia[d]);
 
             if(graficoEvolucion) graficoEvolucion.destroy();
@@ -905,7 +984,7 @@
                 }
             });
 
-            // --- RENDERIZAR GRÁFICA DE DONA (Métodos Pago) ---
+            // --- GRÁFICA DE DONA ---
             if(graficoMetodos) graficoMetodos.destroy();
             graficoMetodos = new Chart(document.getElementById('chartMetodos'), {
                 type: 'doughnut',
@@ -923,9 +1002,9 @@
                 }
             });
 
-            // --- RENDERIZAR TOP 3 SERVICIOS ---
+            // --- TOP 3 SERVICIOS ---
             let arrServicios = Object.keys(conteoServicios).map(k => ({ nombre: k, cant: conteoServicios[k] }));
-            arrServicios.sort((a,b) => b.cant - a.cant); // Del mayor al menor
+            arrServicios.sort((a,b) => b.cant - a.cant); 
             
             let top3Html = '';
             arrServicios.slice(0, 3).forEach((s, idx) => {
@@ -942,7 +1021,7 @@
             if(top3Html === '') top3Html = '<p style="color:gray; text-align:center;">Sin datos suficientes</p>';
             document.getElementById('listaTopServicios').innerHTML = top3Html;
 
-            // --- CALCULAR HORA PICO ---
+            // --- HORA PICO ---
             let horaPicoStr = "--:--";
             let maxVentasHora = 0;
             for (const [hora, cant] of Object.entries(conteoHoras)) {
@@ -979,7 +1058,7 @@
                 mostrarNotificacion("✅ Movimiento Registrado", "info");
                 cerrarModalMovimiento();
                 btn.disabled = false;
-                descargarTodaLaBaseDeDatos(); // Recarga y pinta
+                descargarTodaLaBaseDeDatos(); 
             });
         });
 
@@ -1086,7 +1165,7 @@
                 mostrarNotificacion("✅ Cobro corregido");
                 cerrarModalEditar();
                 btn.disabled = false; btn.innerText = "💾 GUARDAR CAMBIOS";
-                descargarTodaLaBaseDeDatos(); // Refresca todo
+                descargarTodaLaBaseDeDatos(); 
             });
         }
 
@@ -1094,9 +1173,7 @@
         // SISTEMA DE IMPRESIÓN 
         // ===================================================================
         function imprimirCorte(tipo) {
-            // Cambia el título dependiendo del botón
             document.getElementById('tkSubCorte').innerText = (tipo === 'X') ? "CORTE X (TURNO)" : "CORTE Z (CIERRE DÍA)";
-            
             document.getElementById('zonaCorteImpresion').classList.add('activa');
             document.getElementById('zonaTicketImpresion').classList.remove('activa');
             window.print();
@@ -1134,10 +1211,7 @@
             if (v.saldoPendiente > 0) { uiSaldo.innerHTML = `ANTICIPO<br>RESTA PAGAR: $${parseFloat(v.saldoPendiente).toFixed(2)}`; uiSaldo.style.display = 'block';
             } else { uiSaldo.style.display = 'none'; }
 
-            // Generamos QR en vivo
             const qrImg = document.getElementById('tkQR');
-            
-            // Activamos solo la zona del Ticket Individual
             document.getElementById('zonaTicketImpresion').classList.add('activa');
             document.getElementById('zonaCorteImpresion').classList.remove('activa');
 
