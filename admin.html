@@ -669,7 +669,20 @@
                     else if (p.estado === 'pausado') pausados.push(p);
                 });
                 
-                pendientes.sort((a,b) => a.timestampEntrega - b.timestampEntrega); 
+                // 🚨 ORDENAMIENTO CONTROLADO: Por entrada/llegada, protegido contra saltos de fila
+                pendientes.sort((a, b) => {
+                    // Si ya manipulaste la fila arrastrándolos, respetamos ese orden manual exacto
+                    if (a.ordenManual !== undefined && b.ordenManual !== undefined) {
+                        return a.ordenManual - b.ordenManual;
+                    }
+                    // Si entra un cliente nuevo de la caja (no tiene orden manual), se va al final de los arrastrados
+                    if (a.ordenManual !== undefined) return -1;
+                    if (b.ordenManual !== undefined) return 1;
+                    
+                    // Si ninguno tiene orden manual, se acomodan SÍ O SÍ por su orden de entrada estricto (ID de Firebase)
+                    return a.id.localeCompare(b.id);
+                });
+
                 listos.sort((a,b) => a.timestampEstado - b.timestampEstado); 
                 pausados.sort((a,b) => a.timestampEstado - b.timestampEstado); 
 
@@ -800,19 +813,23 @@
             }, { offset: Number.NEGATIVE_INFINITY }).element;
         }
 
-        function recalcularFilaPorDragAndDrop() {
+  function recalcularFilaPorDragAndDrop() {
             const cards = document.querySelectorAll('#listaPedidos .pedido-card');
             let actualizaciones = {};
             let tiempoAcumulado = Date.now();
 
-            cards.forEach((card) => {
+            cards.forEach((card, index) => {
                 let id = card.getAttribute('data-id');
                 let mins = parseInt(card.getAttribute('data-mins')) || 15;
                 
                 tiempoAcumulado += (mins * 60000);
                 
+                // Mantenemos tus campos actuales para la TV y compatibilidad de tiempos
                 actualizaciones[`turnos/${id}/timestampEntrega`] = tiempoAcumulado;
                 actualizaciones[`turnos/${id}/horaFormateada`] = new Date(tiempoAcumulado).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true});
+                
+                // 🚨 Grabamos la secuencia exacta del arrastre para congelar la posición elegida
+                actualizaciones[`turnos/${id}/ordenManual`] = index;
             });
 
             if(Object.keys(actualizaciones).length > 0) {
@@ -859,7 +876,7 @@
             window.recalcularFilaEntera(id, 'listo', link);
         };
 
-        window.recalcularFilaEntera = function(turnoIdAModificar, nuevoEstado, linkNube = "") {
+    window.recalcularFilaEntera = function(turnoIdAModificar, nuevoEstado, linkNube = "") {
             db.ref('turnos').once('value').then(snap => {
                 if(!snap.exists()) return;
                 
@@ -885,44 +902,15 @@
                     actualizaciones[`turnos/${turnoIdAModificar}/enlaceDescarga`] = linkNube;
                 }
 
-                if (nuevoEstado === 'listo' || nuevoEstado === 'pausado') {
-                    let ahora = Date.now();
-                    let entregaTarget = turnoTarget.timestampEntrega || ahora; 
-                    let tiempoSobrante = entregaTarget - ahora;
-                    
-                    if (tiempoSobrante >= 60000) {
-                        let minsAhorrados = Math.floor(tiempoSobrante / 60000);
-                        
-                        actualizaciones['configuracion/tvAlertaAhorro'] = {
-                            minutos: minsAhorrados,
-                            timestamp: ahora,
-                            id: Math.random()
-                        };
-                        
-                        turnosArr.forEach(t => {
-                            if (t.estado === 'pendiente' && t.id !== turnoIdAModificar) {
-                                if (t.timestampEntrega > entregaTarget) {
-                                    let nuevoTiempo = t.timestampEntrega - tiempoSobrante;
-                                    let tiempoMinimo = ahora + ((t.minutosServicio || 15) * 60000);
-                                    if (nuevoTiempo < tiempoMinimo) nuevoTiempo = tiempoMinimo;
-                                    
-                                    actualizaciones[`turnos/${t.id}/timestampEntrega`] = nuevoTiempo;
-                                    actualizaciones[`turnos/${t.id}/horaFormateada`] = new Date(nuevoTiempo).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true});
-                                }
-                            }
-                        });
-                    }
-                }
-
+                // Al finalizar o pausar, el usuario cambia de estado y sale de la fila de forma limpia.
+                // No alteramos los tiempos de los demás competidores para evitar colapsos u ordenamientos cruzados.
                 db.ref().update(actualizaciones).then(() => {
                     window.mostrarNotificacion(nuevoEstado === 'listo' ? `✅ Orden Finalizada` : `✅ Fila actualizada`);
-                }).catch(err => {
-                    console.error("Error al actualizar la fila: ", err);
-                    alert("Error de conexión. Intenta de nuevo.");
                 });
             });
         };
 
+        
         // ==========================================
         // 7. BOTONES EXTRAS DE PRODUCCIÓN
         // ==========================================

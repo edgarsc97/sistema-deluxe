@@ -1209,21 +1209,32 @@
         // ----------------------------------------------------
         // FOLIOS Y CAJA CHICA
         // ----------------------------------------------------
-        function generarFolioConsecutivo(carrito, callback) { 
+   function generarFolioConsecutivo(carrito, callback) { 
             let textoCarrito = carrito.map(p => String(p.nombre || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()).join(" "); 
+            
             let categoriaDB = "general"; 
             let numBase = 40000; 
             
-            if (textoCarrito.includes("titul")) { 
+            // 🚨 REGLA REPARADA: Evaluamos Titulación primero
+            if (textoCarrito.includes("titulacion") || textoCarrito.includes("titul")) { 
                 categoriaDB = "titulacion"; 
                 numBase = 10000; 
-            } else if (textoCarrito.includes("servicio") || textoCarrito.includes("serv")) { 
-                categoriaDB = "servicio"; 
-                numBase = 20000; 
-            } else if (textoCarrito.includes("infantil") || textoCarrito.includes("infan")) { 
+            } 
+            // 🚨 REGLA REPARADA: Metemos todos los subtipos a la misma bolsa de Infantiles (30000)
+            else if (textoCarrito.includes("infantil") || textoCarrito.includes("infan") || textoCarrito.includes("servicio social") || textoCarrito.includes("tsu")) { 
                 categoriaDB = "infantil"; 
                 numBase = 30000; 
             } 
+            // Evaluamos Servicio genérico SOLO si no cayó en la bolsa anterior (20000)
+            else if (textoCarrito.includes("servicio") || textoCarrito.includes("serv")) { 
+                categoriaDB = "servicio"; 
+                numBase = 20000; 
+            } 
+            // Lo demás cae en General (40000)
+            else { 
+                categoriaDB = "general"; 
+                numBase = 40000; 
+            }
             
             db.ref('configuracion/folios/' + categoriaDB).transaction( 
                 function(val) { return (val || numBase) + 1; }, 
@@ -1233,7 +1244,7 @@
                 } 
             ); 
         }
-
+        
         document.getElementById('formCaja').addEventListener('submit', e => { 
             e.preventDefault(); 
             const tipo = document.getElementById('tipoMovimiento').value; 

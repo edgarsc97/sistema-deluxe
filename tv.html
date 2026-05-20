@@ -869,7 +869,19 @@
                 }
                 
                 // ORDENAR PENDIENTES (El que sale primero, va arriba)
-                pendientes.sort((a, b) => a.timestampEntrega - b.timestampEntrega);
+                // 🚨 ORDENAMIENTO CONTROLADO: Por entrada/llegada, protegido contra saltos de fila
+                pendientes.sort((a, b) => {
+                    // Si ya manipulaste la fila arrastrándolos, respetamos ese orden manual exacto
+                    if (a.ordenManual !== undefined && b.ordenManual !== undefined) {
+                        return a.ordenManual - b.ordenManual;
+                    }
+                    // Si entra un cliente nuevo de la caja (no tiene orden manual), se va al final de los arrastrados
+                    if (a.ordenManual !== undefined) return -1;
+                    if (b.ordenManual !== undefined) return 1;
+                    
+                    // Si ninguno tiene orden manual, se acomodan SÍ O SÍ por su orden de entrada estricto (ID de Firebase)
+                    return a.id.localeCompare(b.id);
+                });
                 
                 // ORDENAR LISTOS (Los finalizados más recientemente, van arriba)
                 listos.sort((a, b) => (b.timestampEstado || b.timestampEntrega) - (a.timestampEstado || a.timestampEntrega));
