@@ -847,7 +847,27 @@
             <button onclick="cerrarModalHistorial()" style="margin-top:20px; background:none; border:none; color:var(--text-muted); cursor:pointer; font-weight: bold;">Cerrar Historial</button>
         </div>
     </div>
-
+<style>
+        @keyframes latido-reloj { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.15); } }
+    </style>
+    <div class="modal-overlay" id="modalEstimacionTiempo" style="z-index: 9999;">
+        <div class="modal-content" style="max-width: 400px; text-align: center; background: linear-gradient(135deg, #0A0E17 0%, #111827 100%); border: 2px solid var(--gold); padding: 40px 30px;">
+            <div style="font-size: 60px; margin-bottom: 10px; animation: latido-reloj 1.5s infinite;">⏱️</div>
+            <h2 style="color:var(--gold); margin-top:0; font-size: 22px; text-transform: uppercase;">Estado de Producción</h2>
+            
+            <div style="background: rgba(255,255,255,0.05); padding: 25px; border-radius: 12px; margin: 20px 0; border: 1px dashed var(--border);">
+                <p style="color: var(--text-muted); font-size: 14px; margin: 0 0 5px 0;">Clientes en espera antes de ti:</p>
+                <strong id="uiClientesDelante" style="font-size: 45px; color: white; display: block; margin-bottom: 15px;">0</strong>
+                
+                <p style="color: var(--text-muted); font-size: 14px; margin: 0 0 5px 0;">Hora aproximada de entrega:</p>
+                <strong id="uiHoraEntregaEst" style="font-size: 32px; color: var(--success); display: block;">--:--</strong>
+                
+                <p id="uiMinutosEspera" style="color: var(--gold); font-size: 15px; margin-top: 15px; font-weight: bold;"></p>
+            </div>
+            
+            <p style="color: var(--text-muted); font-size: 12px; margin-bottom: 0;">Enviando a impresión... cerrando en <strong id="uiContadorCerrar" style="color:white; font-size:14px;">6</strong>s</p>
+        </div>
+    </div>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -1862,10 +1882,31 @@
                                 }
                             });
 
-                            db.ref().update(actualizaciones).then(() => { 
-                                imprimirTicketAvanzado(dataVenta); 
-                                limpiarCajaCobro(btnConf, false, true); 
-                            });
+                            ddb.ref().update(actualizaciones).then(() => { 
+                        let clientesDelante = turnosActivos.length;
+                        let horaAprox = nuevoTurno.horaFormateada;
+                        let minsEspera = Math.ceil((nuevoTurno.timestampEntrega - Date.now()) / 60000);
+                        if (minsEspera < 0) minsEspera = 0;
+                        
+                        document.getElementById('uiClientesDelante').innerText = clientesDelante;
+                        document.getElementById('uiHoraEntregaEst').innerText = horaAprox;
+                        document.getElementById('uiMinutosEspera').innerText = `(Tiempo aprox. de espera: ~${minsEspera} min)`;
+                        
+                        document.getElementById('modalEstimacionTiempo').style.display = 'flex';
+                        imprimirTicketAvanzado(dataVenta); 
+                        
+                        let segundos = 6;
+                        document.getElementById('uiContadorCerrar').innerText = segundos;
+                        let intervaloCierre = setInterval(() => {
+                            segundos--;
+                            document.getElementById('uiContadorCerrar').innerText = segundos;
+                            if(segundos <= 0) {
+                                clearInterval(intervaloCierre);
+                                document.getElementById('modalEstimacionTiempo').style.display = 'none';
+                                limpiarCajaCobro(btnConf, esVIP, esGrupo && !window.grupoActivoTurnoId ? false : esGrupo); 
+                            }
+                        }, 1000);
+                    });
                             return; 
                         }
                     }
@@ -1914,9 +1955,31 @@
                     }
                     
                     db.ref().update(actualizaciones).then(() => { 
-                        imprimirTicketAvanzado(dataVenta); 
-                        limpiarCajaCobro(btnConf, esVIP, esGrupo && !window.grupoActivoTurnoId ? false : esGrupo); 
-                    });
+                                let clientesDelante = turnosActivos.length - 1; 
+                                if(clientesDelante < 0) clientesDelante = 0;
+                                let horaAprox = new Date(nTFinal).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true});
+                                let minsEspera = Math.ceil((nTFinal - Date.now()) / 60000);
+                                if (minsEspera < 0) minsEspera = 0;
+                                
+                                document.getElementById('uiClientesDelante').innerText = clientesDelante;
+                                document.getElementById('uiHoraEntregaEst').innerText = horaAprox;
+                                document.getElementById('uiMinutosEspera').innerText = `(Tiempo aprox. de espera: ~${minsEspera} min)`;
+                                
+                                document.getElementById('modalEstimacionTiempo').style.display = 'flex';
+                                imprimirTicketAvanzado(dataVenta); 
+                                
+                                let segundos = 6;
+                                document.getElementById('uiContadorCerrar').innerText = segundos;
+                                let intervaloCierre = setInterval(() => {
+                                    segundos--;
+                                    document.getElementById('uiContadorCerrar').innerText = segundos;
+                                    if(segundos <= 0) {
+                                        clearInterval(intervaloCierre);
+                                        document.getElementById('modalEstimacionTiempo').style.display = 'none';
+                                        limpiarCajaCobro(btnConf, false, true); 
+                                    }
+                                }, 1000);
+                            });
                 });
             });
         }
