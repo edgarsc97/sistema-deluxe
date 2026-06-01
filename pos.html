@@ -1125,7 +1125,7 @@
             db.ref('clientes').on('value', snap => { 
                 baseClientes = []; 
                 const contUI = document.getElementById('listaDirectorioUI'); 
-                if(contUI) contUI.innerHTML = ''; 
+                let htmlDirectorio = ''; // Guardamos todo en texto para no trabar la pantalla
                 
                 if(snap.exists()) { 
                     snap.forEach(child => { 
@@ -1135,20 +1135,19 @@
                             let v = c.visitas || 0; 
                             let g = c.gastado || 0; 
                             
-                            if(contUI) {
-                                contUI.innerHTML += `
-                                    <div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid var(--border); align-items:center;">
-                                        <div>
-                                            <strong style="color:white; font-size:14px;">${c.nombre}</strong> 
-                                            <span style="color:var(--gold); font-size:10px;">(Visitas: ${v} | $${parseFloat(g).toFixed(2)})</span><br>
-                                            <span style="color:var(--text-muted); font-size:12px;">📞 ${c.telefono || 'Sin registro'}</span>
-                                        </div>
-                                        <button onclick="borrarClienteCRM('${c.id}')" style="color:var(--danger); background:none; border:1px solid var(--danger); padding:4px 8px; border-radius:4px; cursor:pointer; font-size:10px;">Borrar</button>
-                                    </div>`; 
-                            }
+                            htmlDirectorio += `
+                                <div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid var(--border); align-items:center;">
+                                    <div>
+                                        <strong style="color:white; font-size:14px;">${c.nombre}</strong> 
+                                        <span style="color:var(--gold); font-size:10px;">(Visitas: ${v} | $${parseFloat(g).toFixed(2)})</span><br>
+                                        <span style="color:var(--text-muted); font-size:12px;">📞 ${c.telefono || 'Sin registro'}</span>
+                                    </div>
+                                    <button onclick="borrarClienteCRM('${c.id}')" style="color:var(--danger); background:none; border:1px solid var(--danger); padding:4px 8px; border-radius:4px; cursor:pointer; font-size:10px;">Borrar</button>
+                                </div>`; 
                         } 
                     }); 
                 } 
+                if(contUI) contUI.innerHTML = htmlDirectorio; // Lo pintamos todo de un golpe
             }); 
         }
 
@@ -1158,37 +1157,136 @@
             }
         };
 
+        // ----------------------------------------------------
+        // AUTOCORRECTOR Y DIRECTORIO (FUZZY SEARCH)
+        // ----------------------------------------------------
+        const nombresComunesMexico = ["ALEJANDRO", "ALFONSO", "ANGEL", "ANTONIO", "ARTURO", "CARLOS", "CARMEN", "CLAUDIA", "DANIEL", "DAVID", "DIANA", "EDGAR", "EDUARDO", "FERNANDO", "FRANCISCO", "GABRIELA", "GERARDO", "GUADALUPE", "GUSTAVO", "HUGO", "JAVIER", "JAZMIN", "JESUS", "JORGE", "JOSE", "JUAN", "JUANA", "JULIO", "LETICIA", "LUIS", "MANUEL", "MARGARITA", "MARIA", "MARIO", "MARTIN", "MIGUEL", "OSCAR", "PABLO", "PAOLA", "PEDRO", "RAFAEL", "RAUL", "RENE", "RICARDO", "ROBERTO", "ROCIO", "RODRIGO", "ROSA", "RUBEN", "SILVIA", "TERESA", "VERONICA", "VICTOR"];
+
+        // Algoritmo matemático para contar errores de dedo (Distancia Levenshtein)
+        function calcularErrorOrtografico(a, b) {
+            if(a.length === 0) return b.length;
+            if(b.length === 0) return a.length;
+            let mat = [];
+            for(let i = 0; i <= b.length; i++) mat[i] = [i];
+            for(let j = 0; j <= a.length; j++) mat[0][j] = j;
+            for(let i = 1; i <= b.length; i++){
+                for(let j = 1; j <= a.length; j++){
+                    if(b.charAt(i-1) === a.charAt(j-1)) mat[i][j] = mat[i-1][j-1];
+                    else mat[i][j] = Math.min(mat[i-1][j-1] + 1, Math.min(mat[i][j-1] + 1, mat[i-1][j] + 1));
+                }
+            }
+            return mat[b.length][a.length];
+        }
+
+        // ----------------------------------------------------
+        // AUTOCORRECTOR Y DIRECTORIO (ASISTENTE DE ESCRITURA)
+        // ----------------------------------------------------
+        
+        // Base de datos de nombres comunes (Puedes agregar más entre comillas si gustas)
+ 
+        // Algoritmo matemático para cazar errores de dedo
+        function calcularErrorOrtografico(a, b) {
+            if(a.length === 0) return b.length;
+            if(b.length === 0) return a.length;
+            let mat = [];
+            for(let i = 0; i <= b.length; i++) mat[i] = [i];
+            for(let j = 0; j <= a.length; j++) mat[0][j] = j;
+            for(let i = 1; i <= b.length; i++){
+                for(let j = 1; j <= a.length; j++){
+                    if(b.charAt(i-1) === a.charAt(j-1)) mat[i][j] = mat[i-1][j-1];
+                    else mat[i][j] = Math.min(mat[i-1][j-1] + 1, Math.min(mat[i][j-1] + 1, mat[i-1][j] + 1));
+                }
+            }
+            return mat[b.length][a.length];
+        }
+
         function buscarCliente(texto) { 
             const box = document.getElementById('sugerenciasClientes'); 
             box.innerHTML = ''; 
             
-            if(!texto || texto.trim().length < 1) { 
+            // Reacciona desde que escribes la segunda letra
+            if(!texto || texto.trim().length < 2) { 
                 box.style.display = 'none'; 
                 return; 
             } 
             
-            const query = texto.toLowerCase().trim(); 
+            // NO usamos trim() aquí para poder detectar cuando escribes espacios para los apellidos
+            const query = texto.toUpperCase(); 
+            const queryLimpio = query.trim();
             let unicos = []; 
             let vistos = new Set(); 
             
+            // 1. BUSCAR EN TU BASE DE CLIENTES (Prioridad a los que ya existen)
             baseClientes.forEach(c => { 
                 if(c && c.nombre) { 
-                    const nomLower = String(c.nombre).toLowerCase(); 
-                    if(nomLower.includes(query) && !vistos.has(nomLower)) { 
-                        vistos.add(nomLower); 
+                    const nomUpper = String(c.nombre).toUpperCase(); 
+                    if(nomUpper.includes(queryLimpio) && !vistos.has(nomUpper)) { 
+                        vistos.add(nomUpper); 
                         unicos.push(c); 
                     } 
                 } 
             }); 
             
+            // 2. ASISTENTE PARA CLIENTES NUEVOS (Autocompletado y Corrector)
+            let palabras = query.split(' ');
+            let primeraPalabra = palabras[0]; // Aislamos el primer nombre para corregirlo
+            let restoDelNombre = query.substring(primeraPalabra.length); // Conservamos los apellidos que ya tecleaste
+
+            nombresComunesMexico.forEach(nomBase => {
+                // A) Si el usuario está tecleando el inicio bien ("MIG" -> "MIGUEL")
+                let esPrefijo = nomBase.startsWith(primeraPalabra); 
+                
+                // B) Si se equivocó en una o dos letras ("MIGEUL" -> "MIGUEL")
+                let esErrorDeDedo = false; 
+                if (primeraPalabra.length >= 3 && Math.abs(primeraPalabra.length - nomBase.length) <= 2) {
+                    let error = calcularErrorOrtografico(primeraPalabra, nomBase);
+                    if (error <= 2) esErrorDeDedo = true;
+                }
+
+                if (esPrefijo || esErrorDeDedo) {
+                    // Juntamos el nombre corregido con los apellidos que el usuario lleve escritos
+                    let sugerenciaFinal = nomBase + restoDelNombre; 
+                    sugerenciaFinal = sugerenciaFinal.trim();
+                    
+                    if(!vistos.has(sugerenciaFinal)) {
+                        vistos.add(sugerenciaFinal);
+                        unicos.push({ 
+                            nombre: sugerenciaFinal, 
+                            telefono: "", 
+                            visitas: 0, 
+                            gastado: 0, 
+                            esSugerencia: true 
+                        }); 
+                    }
+                }
+            });
+
+            // 3. RENDERIZAR EN PANTALLA
             if(unicos.length > 0) { 
-                unicos.slice(0, 8).forEach(c => { 
+                // Mostramos máximo 6 opciones para no saturar la pantalla
+                unicos.slice(0, 6).forEach(c => { 
                     let v = c.visitas || 0; 
                     let g = c.gastado || 0; 
+                    
+                    let infoExtra = "";
+                    let colorNombre = "white";
+                    let colorEtiqueta = "var(--gold)";
+
+                    // Diferenciamos visualmente si es un cliente real o una corrección nueva
+                    if (c.esSugerencia) {
+                        infoExtra = '✨ Autocompletar / Corregir';
+                        colorNombre = 'var(--blue)'; // Azul para que sepas que es una corrección
+                        colorEtiqueta = 'var(--text-muted)';
+                    } else if (c.telefono) {
+                        infoExtra = c.telefono;
+                    } else {
+                        infoExtra = 'Sin teléfono';
+                    }
+                    
                     box.innerHTML += `
                         <div class="sugerencia-item" onmousedown="seleccionarCliente('${c.nombre}', '${c.telefono || ''}', ${v}, ${g})">
-                            <span style="font-weight:600; color:white;">${c.nombre}</span>
-                            <span style="color:var(--gold); font-size:12px; margin-left:15px;">${c.telefono ? c.telefono : 'Sin teléfono'}</span>
+                            <span style="font-weight:800; color:${colorNombre}; letter-spacing: 1px;">${c.nombre}</span>
+                            <span style="color:${colorEtiqueta}; font-size:11px; margin-left:15px; text-transform: uppercase;">${infoExtra}</span>
                         </div>`; 
                 }); 
                 box.style.display = 'block'; 
@@ -1502,17 +1600,75 @@
         // ----------------------------------------------------
         // MÓDULO DE PAGOS AVANZADOS
         // ----------------------------------------------------
-        function abrirModalPagoAvanzado() { 
+function abrirModalPagoAvanzado() { 
             document.getElementById('mpValorDesc').value = '0'; 
             
+            // 🚨 Corrección: Ahora empieza en 0 para que tú le indiques cuánto te pagan
             if(lineasDePago.length === 0) {
-                lineasDePago = [{ id: Date.now(), metodo: 'Efectivo', monto: subtotalCarrito }]; 
+                lineasDePago = [{ id: Date.now(), metodo: 'Efectivo', monto: 0 }]; 
             }
             
             document.getElementById('modalPagoAvanzado').style.display = 'flex'; 
             renderizarLineasPago(); 
             calcularTotalesPago(); 
         }
+
+        function calcularTotalesPago() {
+            const tipoDesc = document.getElementById('mpTipoDesc').value; 
+            const valorDesc = parseFloat(document.getElementById('mpValorDesc').value) || 0; 
+            
+            descuentoTotal = 0; 
+            if (tipoDesc === 'fijo') { descuentoTotal = valorDesc; } 
+            else if (tipoDesc === 'porcentaje') { descuentoTotal = subtotalCarrito * (valorDesc / 100); }
+            
+            if (descuentoTotal > subtotalCarrito) descuentoTotal = subtotalCarrito; 
+            totalNetoPagar = subtotalCarrito - descuentoTotal;
+            
+            let sumaPagos = lineasDePago.reduce((sum, p) => sum + p.monto, 0); 
+            let diferencia = sumaPagos - totalNetoPagar; 
+            let esAbono = diferencia < 0;
+            
+            document.getElementById('mpSubtotal').innerText = `$${subtotalCarrito.toFixed(2)}`; 
+            document.getElementById('mpTotalNeto').innerText = `$${totalNetoPagar.toFixed(2)}`; 
+            document.getElementById('mpTotalRecibido').innerText = `$${sumaPagos.toFixed(2)}`;
+            
+            const lblSaldo = document.getElementById('mpLabelSaldo'); 
+            const valSaldo = document.getElementById('mpValorSaldo'); 
+            const btnConf = document.getElementById('btnConfirmarPagoFinal');
+            
+            if (sumaPagos === 0 && totalNetoPagar > 0) { 
+                lblSaldo.innerText = "SE PAGA EN ENTREGA:"; 
+                lblSaldo.style.color = "var(--danger)"; 
+                valSaldo.innerText = `$${totalNetoPagar.toFixed(2)}`; 
+                valSaldo.style.color = "var(--danger)"; 
+                btnConf.disabled = false; btnConf.innerText = "ENVIAR (SIN PAGO)"; btnConf.style.background = "var(--danger)";
+            } 
+            else if (esAbono) { 
+                lblSaldo.innerText = "ANTICIPO. Resta:"; 
+                lblSaldo.style.color = "var(--gold)"; 
+                valSaldo.innerText = `$${Math.abs(diferencia).toFixed(2)}`; 
+                valSaldo.style.color = "var(--gold)"; 
+                btnConf.disabled = false; btnConf.innerText = "COBRAR ANTICIPO"; btnConf.style.background = "var(--success)";
+            } 
+            else { 
+                if (diferencia > 0) { 
+                    let hayEfectivo = lineasDePago.some(p => p.metodo === 'Efectivo'); 
+                    if (hayEfectivo) { 
+                        lblSaldo.innerText = "CAMBIO:"; lblSaldo.style.color = "var(--text-muted)"; 
+                        valSaldo.innerText = `$${diferencia.toFixed(2)}`; valSaldo.style.color = "var(--success)"; 
+                    } else { 
+                        lblSaldo.innerText = "SOBREPAGO:"; lblSaldo.style.color = "var(--danger)"; 
+                        valSaldo.innerText = `$${diferencia.toFixed(2)}`; valSaldo.style.color = "var(--danger)"; 
+                    } 
+                } else { 
+                    lblSaldo.innerText = "PAGO EXACTO"; lblSaldo.style.color = "var(--text-muted)"; 
+                    valSaldo.innerText = `$0.00`; valSaldo.style.color = "var(--success)"; 
+                } 
+                btnConf.disabled = false; btnConf.innerText = "COBRAR E IMPRIMIR"; btnConf.style.background = "var(--success)";
+            }
+            // 🚨 Corrección: Eliminada la llamada a renderizarLineasPago() para que no borre lo que escribes
+        }
+
         
         function cerrarModalPagoAvanzado() { 
             if(mpCajaInterval) clearInterval(mpCajaInterval);
@@ -1576,82 +1732,7 @@
             }
         }
 
-        function calcularTotalesPago() {
-            const tipoDesc = document.getElementById('mpTipoDesc').value; 
-            const valorDesc = parseFloat(document.getElementById('mpValorDesc').value) || 0; 
-            
-            descuentoTotal = 0; 
-            if (tipoDesc === 'fijo') { 
-                descuentoTotal = valorDesc; 
-            } else if (tipoDesc === 'porcentaje') { 
-                descuentoTotal = subtotalCarrito * (valorDesc / 100); 
-            }
-            
-            if (descuentoTotal > subtotalCarrito) descuentoTotal = subtotalCarrito; 
-            totalNetoPagar = subtotalCarrito - descuentoTotal;
-            
-            let sumaPagos = lineasDePago.reduce((sum, p) => sum + p.monto, 0); 
-            let diferencia = sumaPagos - totalNetoPagar; 
-            let esAbono = diferencia < 0;
-            
-            document.getElementById('mpSubtotal').innerText = `$${subtotalCarrito.toFixed(2)}`; 
-            document.getElementById('mpTotalNeto').innerText = `$${totalNetoPagar.toFixed(2)}`; 
-            document.getElementById('mpTotalRecibido').innerText = `$${sumaPagos.toFixed(2)}`;
-            
-            const lblSaldo = document.getElementById('mpLabelSaldo'); 
-            const valSaldo = document.getElementById('mpValorSaldo'); 
-            const btnConf = document.getElementById('btnConfirmarPagoFinal');
-            
-            // LÓGICA DEL BOTÓN
-            if (sumaPagos === 0 && totalNetoPagar > 0) { 
-                lblSaldo.innerText = "SE PAGA EN ENTREGA:"; 
-                lblSaldo.style.color = "var(--danger)"; 
-                valSaldo.innerText = `$${totalNetoPagar.toFixed(2)}`; 
-                valSaldo.style.color = "var(--danger)"; 
-                
-                btnConf.disabled = false; 
-                btnConf.innerText = "ENVIAR (SIN PAGO)"; 
-                btnConf.style.background = "var(--danger)";
-            } 
-            else if (esAbono) { 
-                lblSaldo.innerText = "ANTICIPO. Resta:"; 
-                lblSaldo.style.color = "var(--gold)"; 
-                valSaldo.innerText = `$${Math.abs(diferencia).toFixed(2)}`; 
-                valSaldo.style.color = "var(--gold)"; 
-                
-                btnConf.disabled = false; 
-                btnConf.innerText = "COBRAR ANTICIPO"; 
-                btnConf.style.background = "var(--success)";
-            } 
-            else { 
-                if (diferencia > 0) { 
-                    let hayEfectivo = lineasDePago.some(p => p.metodo === 'Efectivo'); 
-                    if (hayEfectivo) { 
-                        lblSaldo.innerText = "CAMBIO:"; 
-                        lblSaldo.style.color = "var(--text-muted)"; 
-                        valSaldo.innerText = `$${diferencia.toFixed(2)}`; 
-                        valSaldo.style.color = "var(--success)"; 
-                    } else { 
-                        lblSaldo.innerText = "SOBREPAGO:"; 
-                        lblSaldo.style.color = "var(--danger)"; 
-                        valSaldo.innerText = `$${diferencia.toFixed(2)}`; 
-                        valSaldo.style.color = "var(--danger)"; 
-                    } 
-                } else { 
-                    lblSaldo.innerText = "PAGO EXACTO"; 
-                    lblSaldo.style.color = "var(--text-muted)"; 
-                    valSaldo.innerText = `$0.00`; 
-                    valSaldo.style.color = "var(--success)"; 
-                } 
-                
-                btnConf.disabled = false; 
-                btnConf.innerText = "COBRAR E IMPRIMIR"; 
-                btnConf.style.background = "var(--success)";
-            }
-            
-            renderizarLineasPago(); 
-        }
-
+       
         // ----------------------------------------------------
         // 🚀 INTEGRACIÓN REAL: MANDAR A TERMINAL DESDE LA CAJA
         // ----------------------------------------------------
@@ -1746,6 +1827,9 @@
         }
 
         // ----------------------------------------------------
+        // GUARDAR ORDEN FINAL EN BASE DE DATOS
+        // ----------------------------------------------------
+       // ----------------------------------------------------
         // GUARDAR ORDEN FINAL EN BASE DE DATOS
         // ----------------------------------------------------
         function confirmarPagoAvanzado() {
@@ -1845,6 +1929,48 @@
                     let actualizaciones = {};
                     let tiempoBaseActual = Date.now(); 
 
+                    // ⚡ FUNCIÓN DE SEGURIDAD (EL PARACAÍDAS QUE EVITA CRASHEOS) ⚡
+                    // ⚡ FUNCIÓN DE SEGURIDAD (EL PARACAÍDAS QUE EVITA CRASHEOS) ⚡
+                    const mostrarAnimacionYTerminar = (clientesDelante, horaAprox, minsEspera, esVIPParaLimpiar, esGrupoParaLimpiar) => {
+                        try {
+                            let modal = document.getElementById('modalEstimacionTiempo');
+                            if(modal) {
+                                if(minsEspera < 0) minsEspera = 0;
+                                document.getElementById('uiClientesDelante').innerText = clientesDelante;
+                                document.getElementById('uiHoraEntregaEst').innerText = horaAprox;
+                                document.getElementById('uiMinutosEspera').innerText = `(Tiempo aprox. de espera: ~${minsEspera} min)`;
+
+                                // 🚨 Corrección: Mandamos a imprimir PRIMERO, y le decimos qué hacer DESPUÉS de imprimir
+                                imprimirTicketAvanzado(dataVenta, function() {
+                                    // Esto sucederá JUSTO DESPUÉS de que el usuario cierre el cuadro de impresión
+                                    modal.style.display = 'flex';
+                                    
+                                    let segundos = 6;
+                                    document.getElementById('uiContadorCerrar').innerText = segundos;
+                                    let intervaloCierre = setInterval(() => {
+                                        segundos--;
+                                        document.getElementById('uiContadorCerrar').innerText = segundos;
+                                        
+                                        if(segundos <= 0) {
+                                            clearInterval(intervaloCierre);
+                                            modal.style.display = 'none';
+                                            limpiarCajaCobro(btnConf, esVIPParaLimpiar, esGrupoParaLimpiar); 
+                                        }
+                                    }, 1000);
+                                });
+                                
+                            } else {
+                                imprimirTicketAvanzado(dataVenta, function() {
+                                    limpiarCajaCobro(btnConf, esVIPParaLimpiar, esGrupoParaLimpiar);
+                                });
+                            }
+                        } catch(e) {
+                            console.error("Error en animación:", e);
+                            imprimirTicketAvanzado(dataVenta, function() {
+                                limpiarCajaCobro(btnConf, esVIPParaLimpiar, esGrupoParaLimpiar);
+                            });
+                        }
+                    };
                     // --- LÓGICA DE FUSIÓN (MODO GRUPO) ---
                     if (esGrupo && window.grupoActivoTurnoId) {
                         let tGrupo = turnosActivos.find(x => x.key === window.grupoActivoTurnoId);
@@ -1862,6 +1988,7 @@
                             let nTFinal = tGrupo.timestampEntrega + (minsTotal * 60000);
                             
                             let nuevoCarritoGrupo = (tGrupo.carrito || []).concat(carritoParaProduccion);
+                            let horaFormateadaGrupo = new Date(nTFinal).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true});
 
                             actualizaciones[`turnos/${tGrupo.key}/nombre`] = nuevoNombre;
                             actualizaciones[`turnos/${tGrupo.key}/numeroTicket`] = nTicket;
@@ -1871,7 +1998,7 @@
                             actualizaciones[`turnos/${tGrupo.key}/totalVenta`] = nTot;
                             actualizaciones[`turnos/${tGrupo.key}/timestampEntrega`] = nTFinal;
                             actualizaciones[`turnos/${tGrupo.key}/carrito`] = nuevoCarritoGrupo;
-                            actualizaciones[`turnos/${tGrupo.key}/horaFormateada`] = new Date(nTFinal).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true});
+                            actualizaciones[`turnos/${tGrupo.key}/horaFormateada`] = horaFormateadaGrupo;
 
                             // Desplaza los de abajo
                             turnosActivos.forEach(other => {
@@ -1882,31 +2009,16 @@
                                 }
                             });
 
-                            ddb.ref().update(actualizaciones).then(() => { 
-                        let clientesDelante = turnosActivos.length;
-                        let horaAprox = nuevoTurno.horaFormateada;
-                        let minsEspera = Math.ceil((nuevoTurno.timestampEntrega - Date.now()) / 60000);
-                        if (minsEspera < 0) minsEspera = 0;
-                        
-                        document.getElementById('uiClientesDelante').innerText = clientesDelante;
-                        document.getElementById('uiHoraEntregaEst').innerText = horaAprox;
-                        document.getElementById('uiMinutosEspera').innerText = `(Tiempo aprox. de espera: ~${minsEspera} min)`;
-                        
-                        document.getElementById('modalEstimacionTiempo').style.display = 'flex';
-                        imprimirTicketAvanzado(dataVenta); 
-                        
-                        let segundos = 6;
-                        document.getElementById('uiContadorCerrar').innerText = segundos;
-                        let intervaloCierre = setInterval(() => {
-                            segundos--;
-                            document.getElementById('uiContadorCerrar').innerText = segundos;
-                            if(segundos <= 0) {
-                                clearInterval(intervaloCierre);
-                                document.getElementById('modalEstimacionTiempo').style.display = 'none';
-                                limpiarCajaCobro(btnConf, esVIP, esGrupo && !window.grupoActivoTurnoId ? false : esGrupo); 
-                            }
-                        }, 1000);
-                    });
+                            db.ref().update(actualizaciones).then(() => { 
+                                let indexGrupo = turnosActivos.findIndex(x => x.key === window.grupoActivoTurnoId);
+                                let clientesDel = indexGrupo >= 0 ? indexGrupo : 0;
+                                let mEspera = Math.ceil((nTFinal - Date.now()) / 60000);
+                                
+                                mostrarAnimacionYTerminar(clientesDel, horaFormateadaGrupo, mEspera, false, true);
+                            }).catch(e => {
+                                console.error(e);
+                                mostrarAnimacionYTerminar(0, horaFormateadaGrupo, 0, false, true);
+                            });
                             return; 
                         }
                     }
@@ -1955,31 +2067,15 @@
                     }
                     
                     db.ref().update(actualizaciones).then(() => { 
-                                let clientesDelante = turnosActivos.length - 1; 
-                                if(clientesDelante < 0) clientesDelante = 0;
-                                let horaAprox = new Date(nTFinal).toLocaleTimeString('es-MX', {hour:'2-digit', minute:'2-digit', hour12:true});
-                                let minsEspera = Math.ceil((nTFinal - Date.now()) / 60000);
-                                if (minsEspera < 0) minsEspera = 0;
-                                
-                                document.getElementById('uiClientesDelante').innerText = clientesDelante;
-                                document.getElementById('uiHoraEntregaEst').innerText = horaAprox;
-                                document.getElementById('uiMinutosEspera').innerText = `(Tiempo aprox. de espera: ~${minsEspera} min)`;
-                                
-                                document.getElementById('modalEstimacionTiempo').style.display = 'flex';
-                                imprimirTicketAvanzado(dataVenta); 
-                                
-                                let segundos = 6;
-                                document.getElementById('uiContadorCerrar').innerText = segundos;
-                                let intervaloCierre = setInterval(() => {
-                                    segundos--;
-                                    document.getElementById('uiContadorCerrar').innerText = segundos;
-                                    if(segundos <= 0) {
-                                        clearInterval(intervaloCierre);
-                                        document.getElementById('modalEstimacionTiempo').style.display = 'none';
-                                        limpiarCajaCobro(btnConf, false, true); 
-                                    }
-                                }, 1000);
-                            });
+                        let clientesDel = esVIP ? 0 : turnosActivos.length;
+                        let mEspera = Math.ceil((nuevoTurno.timestampEntrega - Date.now()) / 60000);
+                        let cleanGrupo = esGrupo && !window.grupoActivoTurnoId ? false : esGrupo;
+                        
+                        mostrarAnimacionYTerminar(clientesDel, nuevoTurno.horaFormateada, mEspera, esVIP, cleanGrupo);
+                    }).catch(e => {
+                        console.error(e);
+                        mostrarAnimacionYTerminar(0, nuevoTurno.horaFormateada, 0, esVIP, esGrupo);
+                    });
                 });
             });
         }
@@ -2012,7 +2108,10 @@
         // ----------------------------------------------------
         // IMPRESIÓN Y REIMPRESIÓN DE TICKETS
         // ----------------------------------------------------
-        function imprimirTicketAvanzado(venta) { 
+        // ----------------------------------------------------
+        // IMPRESIÓN Y REIMPRESIÓN DE TICKETS
+        // ----------------------------------------------------
+        function imprimirTicketAvanzado(venta, callbackPostPrint) { 
             document.getElementById('tkFecha').innerText = venta.fecha; 
             
             if(venta.esVIP) { 
@@ -2080,9 +2179,22 @@
             } 
             
             const qrImg = document.getElementById('tkQR'); 
-            qrImg.onload = function() { setTimeout(() => { window.print(); }, 100); }; 
-            qrImg.onerror = function() { setTimeout(() => { window.print(); }, 100); }; 
-            qrImg.src = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" + encodeURIComponent(LINK_RASTREO + "?folio=" + venta.ticket); 
+            
+            // 🚨 Corrección: Esperamos a que imprimas para lanzar el aviso (callback)
+            qrImg.onload = function() { 
+                setTimeout(() => { 
+                    window.print(); 
+                    if(callbackPostPrint) callbackPostPrint(); 
+                }, 100); 
+            }; 
+            qrImg.onerror = function() { 
+                setTimeout(() => { 
+                    window.print(); 
+                    if(callbackPostPrint) callbackPostPrint(); 
+                }, 100); 
+            }; 
+            
+            qrImg.src = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" + encodeURIComponent(LINK_RASTREO + "?folio=" + venta.ticket) + "&t=" + new Date().getTime();
         }
 
         // ----------------------------------------------------
